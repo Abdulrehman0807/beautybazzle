@@ -1296,7 +1296,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               color: Colors.grey,
                             ),
                             hintText: 'Search Salon Specialist, products',
-                            hintStyle: const TextStyle(color: Colors.grey),
+                            hintStyle: const TextStyle(
+                                color: Colors.grey,
+                                overflow: TextOverflow.ellipsis),
                           ),
                           keyboardType: TextInputType.name,
                         ),
