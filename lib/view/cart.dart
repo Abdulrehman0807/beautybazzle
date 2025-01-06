@@ -1,4 +1,3 @@
-import 'package:beautybazzle/model/servic_data.dart';
 import 'package:beautybazzle/view/check_out.dart';
 import 'package:flutter/material.dart';
 
@@ -71,7 +70,7 @@ class _CartScreenState extends State<CartScreen> {
                   // Header
                   Container(
                     height: height * 0.09,
-                    width: width * 0.94,
+                    width: width * 0.96,
                     color: Colors.white,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,

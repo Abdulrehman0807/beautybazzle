@@ -1,22 +1,22 @@
 import 'package:beautybazzle/model/servic_data.dart';
 import 'package:beautybazzle/utiils/static_data.dart';
-import 'package:beautybazzle/view/appointment_book.dart';
+
 import 'package:beautybazzle/view/beauty_product.dart';
 import 'package:beautybazzle/view/bottom_Nav_bar.dart';
-import 'package:beautybazzle/view/salon.dart';
+import 'package:beautybazzle/view/editProfile.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_stars/flutter_rating_stars.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+class MyProfileScreen extends StatefulWidget {
+  const MyProfileScreen({super.key});
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  State<MyProfileScreen> createState() => _MyProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen>
+class _MyProfileScreenState extends State<MyProfileScreen>
     with TickerProviderStateMixin {
   double rating = 4.0;
   PageController controller = PageController();
@@ -46,17 +46,6 @@ class _ProfileScreenState extends State<ProfileScreen>
     setState(() {
       isFavorite = !isFavorite; // Toggle favorite state
     });
-
-    // Show toast message
-    Fluttertoast.showToast(
-      msg: isFavorite
-          ? "Successfully added to favorites"
-          : "Removed from favorites",
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.CENTER,
-      backgroundColor: Colors.pink[200],
-      textColor: Colors.black,
-    );
   }
 
   @override
@@ -158,7 +147,6 @@ class _ProfileScreenState extends State<ProfileScreen>
                             width: width,
                             child: Row(
                               children: [
-                                // Icon(Icons.link),
                                 IconButton(
                                   icon: FaIcon(
                                     FontAwesomeIcons.youtube,
@@ -166,7 +154,6 @@ class _ProfileScreenState extends State<ProfileScreen>
                                   ),
                                   onPressed: () {},
                                 ),
-
                                 SizedBox(
                                   width: width * 0.01,
                                 ),
@@ -266,6 +253,34 @@ class _ProfileScreenState extends State<ProfileScreen>
                             ),
                           ),
                           Container(
+                            height: height * 0.09,
+                            width: width * 0.92,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: ListTile(
+                              leading: const CircleAvatar(
+                                radius: 28,
+                                backgroundImage:
+                                    AssetImage("images/salon.jpeg"),
+                              ),
+                              title: Text(
+                                "${StaticData.userModel!.SalonName}",
+                                style: TextStyle(
+                                  fontSize: width * 0.04,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              subtitle: Text(
+                                "${StaticData.userModel!.Address}",
+                                style: TextStyle(
+                                    fontSize: width * 0.032,
+                                    fontWeight: FontWeight.w400,
+                                    overflow: TextOverflow.ellipsis),
+                              ),
+                            ),
+                          ),
+                          Container(
                             height: height * 0.07,
                             width: width,
                             child: Row(
@@ -277,37 +292,12 @@ class _ProfileScreenState extends State<ProfileScreen>
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) =>
-                                              AppointmentBookScreen(),
+                                              EditProfileScreen(),
                                         ));
                                   },
-                                  child: Card(
-                                    elevation: 3,
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(10)),
-                                    child: Container(
-                                      height: height * 0.04,
-                                      width: width * 0.35,
-                                      decoration: BoxDecoration(
-                                          color: Colors.pink[200],
-                                          borderRadius:
-                                              BorderRadius.circular(10)),
-                                      child: Center(
-                                          child: Text(
-                                        "Book Now",
-                                        style: TextStyle(
-                                            fontSize: width * 0.05,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.white),
-                                      )),
-                                    ),
-                                  ),
-                                ),
-                                GestureDetector(
-                                  onTap: () {},
                                   child: Container(
                                     height: height * 0.04,
-                                    width: width * 0.35,
+                                    width: width * 0.8,
                                     decoration: BoxDecoration(
                                         border: Border.all(color: Colors.black),
                                         color: Colors.white,
@@ -315,109 +305,23 @@ class _ProfileScreenState extends State<ProfileScreen>
                                             BorderRadius.circular(10)),
                                     child: Center(
                                         child: Text(
-                                      "Message",
+                                      "Edit Profile",
                                       style: TextStyle(
                                           fontSize: width * 0.05,
                                           fontWeight: FontWeight.w500),
                                     )),
                                   ),
                                 ),
-                                GestureDetector(
-                                  onTap: toggleFavorite,
-                                  child: CircleAvatar(
-                                      backgroundColor: Colors.white,
-                                      radius: 18,
-                                      child: Center(
-                                        child: Icon(
-                                          isFavorite
-                                              ? Icons.favorite
-                                              : Icons.favorite_border,
-                                          color: isFavorite
-                                              ? Colors.red
-                                              : Colors.grey,
-                                          size: 25,
-                                        ),
-                                      )),
-                                ),
+                                CircleAvatar(
+                                  radius: 15,
+                                  backgroundColor: Colors.white,
+                                  child: Icon(
+                                    Icons.settings,
+                                    color: Colors.black,
+                                  ),
+                                )
                               ],
                             ),
-                          ),
-                          // SizedBox(
-                          //   height: height * 0.006,
-                          // ),
-                          Container(
-                            height: height * 0.028,
-                            width: width * 0.9,
-                            child: Text(
-                              "Visit Now",
-                              style: TextStyle(
-                                fontSize: width * 0.035,
-                                fontWeight: FontWeight.w500,
-                                overflow: TextOverflow.fade,
-                              ),
-                            ),
-                          ),
-                          Card(
-                            elevation: 3,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Container(
-                              height: height * 0.09,
-                              width: width * 0.92,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: ListTile(
-                                leading: const CircleAvatar(
-                                  radius: 28,
-                                  backgroundImage:
-                                      AssetImage("images/salon.jpeg"),
-                                ),
-                                title: Text(
-                                  "${StaticData.userModel!.SalonName}",
-                                  style: TextStyle(
-                                    fontSize: width * 0.04,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                subtitle: Text(
-                                  "${StaticData.userModel!.Address}",
-                                  style: TextStyle(
-                                      fontSize: width * 0.032,
-                                      fontWeight: FontWeight.w400,
-                                      overflow: TextOverflow.ellipsis),
-                                ),
-                                trailing: GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => SalonScreen(),
-                                        ));
-                                  },
-                                  child: Container(
-                                    height: height * 0.04,
-                                    width: width * 0.2,
-                                    decoration: BoxDecoration(
-                                      color: Colors.pink[200],
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        "View Profile",
-                                        style: TextStyle(
-                                            fontSize: width * 0.03,
-                                            color: Colors.white),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: height * 0.01,
                           ),
                           Container(
                               height: height * 0.12,
@@ -484,7 +388,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                               height: height * 0.15,
                               width: width,
                               child: ListView.builder(
-                                itemCount: 5,
+                                itemCount: 2,
                                 scrollDirection: Axis.horizontal,
                                 itemBuilder: (context, index) {
                                   return Padding(
@@ -895,7 +799,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                 height: height * 0.035,
                                 width: width * 0.93,
                                 child: Text(
-                                  " Products",
+                                  "Special Offer Products",
                                   style: TextStyle(
                                     fontSize: width * 0.04,
                                     fontWeight: FontWeight.bold,
@@ -920,7 +824,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                   height: height * 0.15,
                                   width: width,
                                   child: ListView.builder(
-                                    itemCount: 5,
+                                    itemCount: 2,
                                     scrollDirection: Axis.horizontal,
                                     itemBuilder: (context, index) {
                                       return GestureDetector(
@@ -951,6 +855,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                   ),
                                 ),
                               ),
+
                               TweenAnimationBuilder(
                                 tween: Tween<double>(begin: 0.0, end: 1.0),
                                 duration: Duration(milliseconds: 800),
@@ -1017,10 +922,10 @@ class _ProfileScreenState extends State<ProfileScreen>
                                   ),
                                 ),
                               ),
-
                               SizedBox(
                                 height: height * 0.02,
                               ),
+
                               // Repeated animation structure for "Tips and Tricks"
                               TweenAnimationBuilder(
                                 tween: Tween<double>(begin: 0.0, end: 1.0),

@@ -124,7 +124,7 @@ class _OrderDoneScreenState extends State<OrderDoneScreen> {
                         style: TextStyle(
                           fontSize: width * 0.045,
                           fontWeight: FontWeight.w500,
-                          color: Colors.black,
+                          color: Colors.white,
                         ),
                       ),
                     ),

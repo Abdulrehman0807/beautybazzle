@@ -1180,83 +1180,69 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   SizedBox(
                     height: height * 0.045,
                   ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ProfileScreen(),
-                          ));
-                    },
-                    child: ListTile(
-                      leading: CircleAvatar(
-                        radius: 25,
-                        backgroundImage: AssetImage(StaticData.myDp),
-                      ),
-                      title: RichText(
-                          text: TextSpan(children: [
-                        TextSpan(
-                            text: "Hello, ",
-                            style: TextStyle(
+                  ListTile(
+                    title: RichText(
+                        text: TextSpan(children: [
+                      TextSpan(
+                          text: "Hello, ",
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: width * 0.06,
+                              fontWeight: FontWeight.w300)),
+                      TextSpan(
+                          text: "${StaticData.userModel!.name}",
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: width * 0.05,
+                              fontWeight: FontWeight.w600))
+                    ])),
+                    subtitle: Text(
+                      "Welcome to ${StaticData.name}",
+                      style: TextStyle(fontSize: width * 0.035),
+                    ),
+                    trailing: Container(
+                      height: height * 0.05,
+                      width: width * 0.2,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => CartScreen(),
+                                  ));
+                            },
+                            child: CircleAvatar(
+                              radius: 18,
+                              backgroundColor: Colors.white,
+                              child: Icon(
+                                Icons.shopping_bag,
+                                size: 24,
                                 color: Colors.black,
-                                fontSize: width * 0.06,
-                                fontWeight: FontWeight.w300)),
-                        TextSpan(
-                            text: "Jerry",
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: width * 0.06,
-                                fontWeight: FontWeight.w600))
-                      ])),
-                      subtitle: Text(
-                        "Welcome to ${StaticData.name}",
-                        style: TextStyle(fontSize: width * 0.035),
-                      ),
-                      trailing: Container(
-                        height: height * 0.05,
-                        width: width * 0.2,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => CartScreen(),
-                                    ));
-                              },
-                              child: CircleAvatar(
-                                radius: 18,
-                                backgroundColor: Colors.white,
-                                child: Icon(
-                                  Icons.shopping_bag,
-                                  size: 24,
-                                  color: Colors.black,
-                                ),
                               ),
                             ),
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          NotificationScreen(),
-                                    ));
-                              },
-                              child: CircleAvatar(
-                                radius: 18,
-                                backgroundColor: Colors.white,
-                                child: Icon(
-                                  Icons.notifications,
-                                  size: 24,
-                                  color: Colors.black,
-                                ),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => NotificationScreen(),
+                                  ));
+                            },
+                            child: CircleAvatar(
+                              radius: 18,
+                              backgroundColor: Colors.white,
+                              child: Icon(
+                                Icons.notifications,
+                                size: 24,
+                                color: Colors.black,
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
                   ),

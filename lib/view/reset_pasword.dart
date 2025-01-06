@@ -1,124 +1,8 @@
-// import 'package:beautybazzle/utiils/static_data.dart';
-// import 'package:beautybazzle/view/enter_otp.dart';
-// import 'package:flutter/material.dart';
-
-// class ResetPaswordScreen extends StatefulWidget {
-//   const ResetPaswordScreen({super.key});
-
-//   @override
-//   State<ResetPaswordScreen> createState() => _ResetPaswordScreenState();
-// }
-
-// class _ResetPaswordScreenState extends State<ResetPaswordScreen> {
-//   final TextEditingController _emailController = TextEditingController();
-
-//   @override
-//   Widget build(BuildContext context) {
-//     var height = MediaQuery.of(context).size.height;
-//     var width = MediaQuery.of(context).size.width;
-//     return Scaffold(
-//         body: Container(
-//             height: height,
-//             width: width,
-//             decoration: BoxDecoration(
-//                 color: Colors.white,
-//                 image: DecorationImage(
-//                     fit: BoxFit.cover,
-//                     image: AssetImage("images/background3.jpg"))),
-//             child: Column(children: [
-//               SizedBox(
-//                 height: height * 0.15,
-//               ),
-//               Container(
-//                 height: height * 0.25,
-//                 width: width * 0.7,
-//                 decoration: BoxDecoration(
-//                     image: DecorationImage(
-//                         fit: BoxFit.cover,
-//                         image: AssetImage(StaticData.myLogo))),
-//               ),
-//               SizedBox(
-//                 height: height * 0.02,
-//               ),
-//               SizedBox(
-//                 height: height * 0.06,
-//                 width: width * 0.85,
-//                 child: Text("Forget Password",
-//                     style: TextStyle(
-//                         fontSize: width * 0.07, fontWeight: FontWeight.w500)),
-//               ),
-//               Container(
-//                 height: height * 0.06,
-//                 width: width * 0.85,
-//                 child: Text(
-//                     "Won't worry! Its happens, please enter the email address associated with your account",
-//                     style: TextStyle(
-//                         fontSize: width * 0.035, fontWeight: FontWeight.w400)),
-//               ),
-//               SizedBox(
-//                 height: height * 0.02,
-//               ),
-//               Card(
-//                 elevation: 2,
-//                 shape: RoundedRectangleBorder(
-//                     borderRadius: BorderRadius.circular(10)),
-//                 child: Container(
-//                   height: height * 0.055,
-//                   width: width * 0.85,
-//                   decoration: BoxDecoration(
-//                     borderRadius: BorderRadius.circular(10),
-//                   ),
-//                   child: TextFormField(
-//                     decoration: InputDecoration(
-//                         border: InputBorder.none,
-//                         prefixIcon: const Icon(
-//                           Icons.email,
-//                         ),
-//                         filled: true,
-//                         hintText: "Enter Email Address"),
-//                     controller: _emailController,
-//                     keyboardType: TextInputType.emailAddress,
-//                   ),
-//                 ),
-//               ),
-//               SizedBox(
-//                 height: height * 0.02,
-//               ),
-//               Card(
-//                 shape: RoundedRectangleBorder(
-//                   borderRadius: BorderRadius.circular(8),
-//                 ),
-//                 elevation: 3,
-//                 child: InkWell(
-//                   onTap: () {
-//                     Navigator.push(
-//                         context,
-//                         MaterialPageRoute(
-//                           builder: (context) => OtpScreen(),
-//                         ));
-//                   },
-//                   child: Container(
-//                     height: height * 0.055,
-//                     width: width * 0.85,
-//                     decoration: BoxDecoration(
-//                       color: Colors.pink[200],
-//                       borderRadius: BorderRadius.circular(8),
-//                     ),
-//                     child: Center(
-//                       child: Text("Send Code",
-//                           style: TextStyle(
-//                               fontSize: width * 0.05,
-//                               fontWeight: FontWeight.w500)),
-//                     ),
-//                   ),
-//                 ),
-//               ),
-//             ])));
-//   }
-// }
 import 'package:beautybazzle/utiils/static_data.dart';
 import 'package:beautybazzle/view/enter_otp.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
   const ResetPasswordScreen({super.key});
@@ -129,6 +13,55 @@ class ResetPasswordScreen extends StatefulWidget {
 
 class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   final TextEditingController _emailController = TextEditingController();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  // Method to reset password
+  void _resetPassword() async {
+    String email = _emailController.text.trim();
+
+    if (email.isEmpty) {
+      Fluttertoast.showToast(
+        msg: "Please enter your email address",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+      return;
+    }
+
+    try {
+      // Send the password reset email
+      await _auth.sendPasswordResetEmail(email: email);
+      Fluttertoast.showToast(
+        msg: "Password reset email sent. Please check your inbox.",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+
+      // Optionally navigate to another screen after successful password reset
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) =>
+              OtpScreen(), // Navigate to OTP screen or wherever needed
+        ),
+      );
+    } catch (e) {
+      Fluttertoast.showToast(
+        msg: "Error: $e",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -273,14 +206,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     ),
                     elevation: 3,
                     child: InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => OtpScreen(),
-                          ),
-                        );
-                      },
+                      onTap: _resetPassword, // Call resetPassword on tap
                       child: Container(
                         height: height * 0.055,
                         width: width * 0.85,

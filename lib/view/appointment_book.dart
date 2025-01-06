@@ -383,7 +383,7 @@ class _AppointmentBookScreenState extends State<AppointmentBookScreen> {
                     "Book Appointment",
                     style: TextStyle(
                       fontSize: width * 0.04,
-                      color: Colors.black,
+                      color: Colors.white,
                       fontWeight: FontWeight.w600,
                     ),
                   ),

@@ -176,7 +176,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                   style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black),
+                      color: Colors.white),
                 ),
               ),
             ),

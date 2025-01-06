@@ -1,7 +1,6 @@
 import 'package:beautybazzle/view/address.dart';
 import 'package:beautybazzle/view/order_done.dart';
 import 'package:beautybazzle/view/payment_method.dart';
-
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -416,7 +415,7 @@ class BottomBar extends StatelessWidget {
                   style: TextStyle(
                     fontSize: width * 0.04,
                     fontWeight: FontWeight.w500,
-                    color: Colors.black,
+                    color: Colors.white,
                   ),
                 ),
               ),

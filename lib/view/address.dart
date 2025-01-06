@@ -164,7 +164,7 @@ class _NewAddressScreenState extends State<NewAddressScreen> {
                   style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black),
+                      color: Colors.white),
                 ),
               ),
             ),

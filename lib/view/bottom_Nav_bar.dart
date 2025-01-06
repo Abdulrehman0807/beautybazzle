@@ -1,7 +1,7 @@
 import 'package:beautybazzle/view/Dashboard.dart';
 import 'package:beautybazzle/view/apponiment_reminder.dart';
 import 'package:beautybazzle/view/favorite_screen.dart';
-import 'package:beautybazzle/view/profile.dart';
+import 'package:beautybazzle/view/myprofile.dart';
 import 'package:flutter/material.dart';
 import 'package:shaped_bottom_bar/models/shaped_item_object.dart';
 import 'package:shaped_bottom_bar/shaped_bottom_bar.dart';
@@ -21,7 +21,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
     const DashboardScreen(),
     const FavoriteScreen(),
     const AppointmentReminderScreen(),
-    const ProfileScreen()
+    const MyProfileScreen()
   ];
   @override
   Widget build(BuildContext context) {

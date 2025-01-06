@@ -359,7 +359,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                           style: TextStyle(
                             fontSize: width * 0.04,
                             fontWeight: FontWeight.w500,
-                            color: Colors.black,
+                            color: Colors.white,
                           ),
                         ),
                       ),

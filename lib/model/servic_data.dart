@@ -32,10 +32,6 @@ class UserModel {
       icon: Icons.celebration, // Icon for Bridal Services
       name: "Bridal",
     ),
-    UserModel(
-      icon: Icons.more_horiz, // Icon for Other Services
-      name: "More  ",
-    ),
   ];
 }
 

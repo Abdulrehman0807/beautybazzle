@@ -2,7 +2,6 @@ import 'package:beautybazzle/model/servic_data.dart';
 import 'package:beautybazzle/utiils/static_data.dart';
 import 'package:beautybazzle/view/appointment_book.dart';
 import 'package:beautybazzle/view/profile.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_stars/flutter_rating_stars.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -229,7 +228,7 @@ class _SalonScreenState extends State<SalonScreen>
                                   backgroundImage: AssetImage(StaticData.myDp),
                                 ),
                                 title: Text(
-                                  "Alina Shahzad",
+                                  "${StaticData.userModel!.name}",
                                   style: TextStyle(
                                       fontSize: width * 0.04,
                                       fontWeight: FontWeight.w600),
@@ -258,7 +257,9 @@ class _SalonScreenState extends State<SalonScreen>
                                     child: Center(
                                         child: Text(
                                       "View Profile",
-                                      style: TextStyle(fontSize: width * 0.03),
+                                      style: TextStyle(
+                                          fontSize: width * 0.03,
+                                          color: Colors.white),
                                     )),
                                   ),
                                 ),
@@ -1211,7 +1212,7 @@ class _SalonScreenState extends State<SalonScreen>
                           style: TextStyle(
                             fontSize: width * 0.04,
                             fontWeight: FontWeight.w500,
-                            color: Colors.black,
+                            color: Colors.white,
                           ),
                         ),
                       ),

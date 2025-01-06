@@ -1,4 +1,5 @@
 import 'package:beautybazzle/model/servic_data.dart';
+import 'package:beautybazzle/utiils/static_data.dart';
 import 'package:beautybazzle/view/check_out.dart';
 import 'package:beautybazzle/view/profile.dart';
 import 'package:flutter/material.dart';
@@ -87,28 +88,6 @@ class _BeautyProductScreenState extends State<BeautyProductScreen>
                               ),
                             ),
                           ),
-                          // Padding(
-                          //   padding:
-                          //       const EdgeInsets.only(top: 47.0, left: 380),
-                          //   child: GestureDetector(
-                          //     onTap: toggleFavorite,
-                          //     child: CircleAvatar(
-                          //         backgroundColor: Colors.white,
-                          //         radius: 18,
-                          //         child: Center(
-                          //           child:
-
-                          //            Icon(
-                          //             isFavorite
-                          //                 ? Icons.favorite
-                          //                 : Icons.favorite_border,
-                          //             color:
-                          //                 isFavorite ? Colors.red : Colors.grey,
-                          //             size: 25,
-                          //           ),
-                          //         )),
-                          //   ),
-                          // ),
                         ],
                       ),
                     ),
@@ -206,7 +185,7 @@ class _BeautyProductScreenState extends State<BeautyProductScreen>
             backgroundImage: AssetImage("images/girl.jpg"),
           ),
           title: Text(
-            "Alina Shahzad",
+            "${StaticData.userModel!.name}",
             style: TextStyle(
               fontSize: width * 0.04,
               fontWeight: FontWeight.w600,
@@ -237,7 +216,7 @@ class _BeautyProductScreenState extends State<BeautyProductScreen>
               child: Center(
                 child: Text(
                   "View Profile",
-                  style: TextStyle(fontSize: width * 0.03),
+                  style: TextStyle(fontSize: width * 0.03, color: Colors.white),
                 ),
               ),
             ),
@@ -445,7 +424,7 @@ class _BeautyProductScreenState extends State<BeautyProductScreen>
             style: TextStyle(
               fontSize: width * 0.035,
               fontWeight: FontWeight.w600,
-              color: Colors.black,
+              color: Colors.white,
             ),
           ),
         ),

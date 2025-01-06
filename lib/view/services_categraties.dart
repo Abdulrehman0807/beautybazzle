@@ -36,7 +36,7 @@ class _ServicesCategriesScreenState extends State<ServicesCategriesScreen>
     var width = MediaQuery.of(context).size.width;
 
     return DefaultTabController(
-      length: 7,
+      length: 6,
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.white,
@@ -56,7 +56,6 @@ class _ServicesCategriesScreenState extends State<ServicesCategriesScreen>
               Tab(text: "Nails"),
               Tab(text: "Body"),
               Tab(text: "Bridal"),
-              Tab(text: "More"),
             ],
           ),
         ),
