@@ -195,7 +195,7 @@ class _SalonScreenState extends State<SalonScreen>
                                           color: Colors.black,
                                         )),
                                     Text(
-                                      "Ghoeer town bahwalpur",
+                                      "${StaticData.userModel!.Address}",
                                       style: TextStyle(
                                           fontSize: width * 0.04,
                                           fontWeight: FontWeight.w400),

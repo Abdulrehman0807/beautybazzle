@@ -30,6 +30,7 @@ class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController _instagramController = TextEditingController();
   final TextEditingController _tiktokController = TextEditingController();
   final TextEditingController _aboutMeController = TextEditingController();
+  final TextEditingController _salonPictureController = TextEditingController();
 
   bool isLoading = false;
 
@@ -52,12 +53,13 @@ class _SignupScreenState extends State<SignupScreen> {
     String phoneNumber = _phoneNumberController.text.trim();
     String salonName = _salonNameController.text.trim();
     String address = _addressController.text.trim();
-    String profilePicture = _profilePictureController.text.trim(); // Store URL
+    String profilePicture = _profilePictureController.text.trim(); 
     String youtube = _youtubeController.text.trim();
     String facebook = _facebookController.text.trim();
     String instagram = _instagramController.text.trim();
     String tiktok = _tiktokController.text.trim();
     String aboutMe = _aboutMeController.text.trim();
+    String salonPicture = _salonPictureController.text.trim();
 
     setState(() {
       isLoading = true;
@@ -101,6 +103,7 @@ class _SignupScreenState extends State<SignupScreen> {
         Instagram: instagram,
         TikTok: tiktok,
         AboutMe: aboutMe,
+        SalonPicture: salonPicture,
       );
 
       await FirebaseFirestore.instance

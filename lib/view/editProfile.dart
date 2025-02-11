@@ -1,8 +1,7 @@
-import 'dart:io';
 import 'package:beautybazzle/model/signup_model.dart';
 import 'package:beautybazzle/utiils/static_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -18,8 +17,7 @@ class EditProfileScreen extends StatefulWidget {
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final TextEditingController _salonNameController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
-  final TextEditingController _profilePictureController =
-      TextEditingController();
+
   final TextEditingController _youtubeController = TextEditingController();
   final TextEditingController _facebookController = TextEditingController();
   final TextEditingController _instagramController = TextEditingController();
@@ -68,6 +66,146 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     return tiktokRegex.hasMatch(url);
   }
 
+  final firebase_storage.FirebaseStorage storage =
+      firebase_storage.FirebaseStorage.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  final ImagePicker _picker = ImagePicker();
+  XFile? _photo;
+  bool _isLoadingSalon = false; // Loading indicator for salon picture
+  bool _isLoadingProfile = false; // Loading indicator for profile picture
+
+  // Upload Salon Picture
+  Future<void> pickSalonPicture() async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Select Image Source'),
+          content: const Text('Choose an image from the camera or gallery.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _pickFromCamera(isSalon: true);
+              },
+              child: const Text('Camera'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _pickFromGallery(isSalon: true);
+              },
+              child: const Text('Gallery'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // Upload Profile Picture
+  Future<void> pickProfilePicture() async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Select Image Source'),
+          content: const Text('Choose an image from the camera or gallery.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _pickFromCamera(isSalon: false);
+              },
+              child: const Text('Camera'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _pickFromGallery(isSalon: false);
+              },
+              child: const Text('Gallery'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _pickFromGallery({required bool isSalon}) async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _photo = pickedFile;
+      });
+      _uploadImage(isSalon: isSalon);
+    }
+  }
+
+  Future<void> _pickFromCamera({required bool isSalon}) async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.camera);
+    if (pickedFile != null) {
+      setState(() {
+        _photo = pickedFile;
+      });
+      _uploadImage(isSalon: isSalon);
+    }
+  }
+
+  Future<void> _uploadImage({required bool isSalon}) async {
+    if (_photo == null) return;
+
+    setState(() {
+      if (isSalon) {
+        _isLoadingSalon = true;
+      } else {
+        _isLoadingProfile = true;
+      }
+    });
+
+    try {
+      final folder = isSalon ? 'salon_pictures' : 'profile_pictures';
+      final ref = storage.ref().child('$folder/${_photo!.name}');
+
+      // Upload the image to Firebase Storage
+      await ref.putData(
+        await _photo!.readAsBytes(),
+        firebase_storage.SettableMetadata(contentType: 'image/jpeg'),
+      );
+
+      // Get the download URL
+      final downloadUrl = await ref.getDownloadURL();
+
+      // Save the URL to Firestore
+      await _firestore.collection(folder).add({
+        'imageUrl': downloadUrl,
+        'uploadedAt': FieldValue.serverTimestamp(),
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text(
+                '${isSalon ? "Salon" : "Profile"} image uploaded successfully!')),
+      );
+    } catch (e) {
+      print('Error uploading image: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text(
+                'Failed to upload ${isSalon ? "salon" : "profile"} image!')),
+      );
+    } finally {
+      setState(() {
+        if (isSalon) {
+          _isLoadingSalon = false;
+        } else {
+          _isLoadingProfile = false;
+        }
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
@@ -99,144 +237,63 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          // Column(
-                          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          //   children: [
-                          //     CircleAvatar(
-                          //       radius: 35,
-                          //       backgroundColor: Colors.pink[200],
-                          //       child: Icon(
-                          //         Icons.camera_alt,
-                          //         color: Colors.white,
-                          //       ),
-                          //     ),
-                          //     Text(
-                          //       "Profile Picture",
-                          //       style: TextStyle(fontSize: width * 0.03),
-                          //     ),
-                          //   ],
-                          // ),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              GestureDetector(
-                                onTap: () async {
-                                  // Pick an image from the gallery
-                                  final XFile? pickedImage = await ImagePicker()
-                                      .pickImage(source: ImageSource.gallery);
-
-                                  if (pickedImage != null) {
-                                    File imageFile = File(pickedImage.path);
-
-                                    try {
-                                      // Show a loading toast while uploading
-                                      Fluttertoast.showToast(
-                                        msg: "Uploading image...",
-                                        toastLength: Toast.LENGTH_SHORT,
-                                        gravity: ToastGravity.BOTTOM,
-                                        backgroundColor: Colors.orange,
-                                        textColor: Colors.white,
-                                        fontSize: 16.0,
-                                      );
-
-                                      // Generate a unique file name using UUID
-                                      String userId =
-                                          StaticData.userModel!.UserId;
-                                      String fileName =
-                                          "profile_pictures/$userId.jpg";
-
-                                      // Upload to Firebase Storage
-                                      Reference storageRef = FirebaseStorage
-                                          .instance
-                                          .ref()
-                                          .child(fileName);
-                                      UploadTask uploadTask =
-                                          storageRef.putFile(imageFile);
-
-                                      // Wait for the upload to complete
-                                      TaskSnapshot taskSnapshot =
-                                          await uploadTask.whenComplete(() {});
-                                      String downloadUrl = await taskSnapshot
-                                          .ref
-                                          .getDownloadURL();
-
-                                      // Update the user's profile picture URL in Firestore
-                                      await FirebaseFirestore.instance
-                                          .collection("Users")
-                                          .doc(userId)
-                                          .update(
-                                              {'ProfilePicture': downloadUrl});
-
-                                      // Update StaticData with new profile picture URL
-                                      StaticData.userModel =
-                                          StaticData.userModel!.copyWith(
-                                        ProfilePicture: downloadUrl,
-                                      );
-
-                                      // Show success toast
-                                      Fluttertoast.showToast(
-                                        msg:
-                                            "Profile picture updated successfully!",
-                                        toastLength: Toast.LENGTH_SHORT,
-                                        gravity: ToastGravity.BOTTOM,
-                                        backgroundColor: Colors.green,
-                                        textColor: Colors.white,
-                                        fontSize: 16.0,
-                                      );
-                                    } catch (e) {
-                                      // Show error toast
-                                      Fluttertoast.showToast(
-                                        msg: "Error uploading image: $e",
-                                        toastLength: Toast.LENGTH_SHORT,
-                                        gravity: ToastGravity.BOTTOM,
-                                        backgroundColor: Colors.red,
-                                        textColor: Colors.white,
-                                        fontSize: 16.0,
-                                      );
-                                    }
-                                  } else {
-                                    // If no image is picked
-                                    Fluttertoast.showToast(
-                                      msg: "No image selected",
-                                      toastLength: Toast.LENGTH_SHORT,
-                                      gravity: ToastGravity.BOTTOM,
-                                      backgroundColor: Colors.grey,
-                                      textColor: Colors.white,
-                                      fontSize: 16.0,
-                                    );
-                                  }
-                                },
-                                child: CircleAvatar(
-                                  radius: 35,
-                                  backgroundColor: Colors.pink[200],
-                                  child: Icon(
-                                    Icons.camera_alt,
-                                    color: Colors.white,
-                                  ),
+                          GestureDetector(
+                            onTap: pickProfilePicture,
+                            child: Column(
+                              children: [
+                                Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    CircleAvatar(
+                                      radius: 35,
+                                      backgroundColor: Colors.blue[200],
+                                      child: const Icon(
+                                        Icons.person,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    if (_isLoadingProfile)
+                                      const CircularProgressIndicator(
+                                        color: Colors.white,
+                                      ),
+                                  ],
                                 ),
-                              ),
-                              Text(
-                                "Profile Picture",
-                                style: TextStyle(fontSize: width * 0.03),
-                              ),
-                            ],
+                                const SizedBox(height: 10),
+                                Text(
+                                  "Profile Picture",
+                                  style: TextStyle(fontSize: width * 0.03),
+                                ),
+                              ],
+                            ),
                           ),
-
-                          Column(
-                            children: [
-                              CircleAvatar(
-                                radius: 35,
-                                backgroundColor: Colors.pink[200],
-                                child: Icon(
-                                  Icons.camera_alt,
-                                  color: Colors.white,
+                          GestureDetector(
+                            onTap: pickSalonPicture,
+                            child: Column(
+                              children: [
+                                Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    CircleAvatar(
+                                      radius: 35,
+                                      backgroundColor: Colors.pink[200],
+                                      child: const Icon(
+                                        Icons.camera_alt,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    if (_isLoadingSalon)
+                                      const CircularProgressIndicator(
+                                        color: Colors.white,
+                                      ),
+                                  ],
                                 ),
-                              ),
-                              Text(
-                                "Salon Picture",
-                                style: TextStyle(fontSize: width * 0.03),
-                              ),
-                            ],
+                                const SizedBox(height: 10),
+                                Text(
+                                  "Salon Picture",
+                                  style: TextStyle(fontSize: width * 0.03),
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
@@ -248,7 +305,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         ),
                         child: TextFormField(
                           controller: _salonNameController,
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                             labelText: "Salon Name",
                             hintText: "Enter your salon's name",
                           ),
@@ -265,7 +322,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         width: width * 0.85,
                         child: TextFormField(
                           controller: _addressController,
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                             labelText: "Address",
                             hintText: "Enter your salon's address",
                           ),

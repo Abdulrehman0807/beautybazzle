@@ -10,6 +10,7 @@ class UserModels {
   String SalonName;
   String Address;
   String ProfilePicture;
+  String SalonPicture;
   String YouTube;
   String Facebook;
   String Instagram;
@@ -25,6 +26,7 @@ class UserModels {
     this.SalonName = "",
     this.Address = "",
     this.ProfilePicture = "",
+    this.SalonPicture = "",
     this.YouTube = "",
     this.Facebook = "",
     this.Instagram = "",
@@ -41,6 +43,7 @@ class UserModels {
     String? SalonName,
     String? Address,
     String? ProfilePicture,
+    String? SalonPicture,
     String? YouTube,
     String? Facebook,
     String? Instagram,
@@ -56,6 +59,7 @@ class UserModels {
       SalonName: SalonName ?? this.SalonName,
       Address: Address ?? this.Address,
       ProfilePicture: ProfilePicture ?? this.ProfilePicture,
+      SalonPicture: SalonPicture ?? this.SalonPicture,
       YouTube: YouTube ?? this.YouTube,
       Facebook: Facebook ?? this.Facebook,
       Instagram: Instagram ?? this.Instagram,
@@ -74,6 +78,7 @@ class UserModels {
       'SalonName': SalonName,
       'Address': Address,
       'ProfilePicture': ProfilePicture,
+      'SalonPicture': SalonPicture,
       'YouTube': YouTube,
       'Facebook': Facebook,
       'Instagram': Instagram,
@@ -92,6 +97,7 @@ class UserModels {
       SalonName: map['SalonName'] as String,
       Address: map['Address'] as String,
       ProfilePicture: map['ProfilePicture'] as String,
+      SalonPicture: map['SalonPicture'] as String,
       YouTube: map['YouTube'] as String,
       Facebook: map['Facebook'] as String,
       Instagram: map['Instagram'] as String,
@@ -107,7 +113,7 @@ class UserModels {
 
   @override
   String toString() {
-    return 'UserModels(name: $name, email: $email, password: $password, PhoneNumber: $PhoneNumber, UserId: $UserId, SalonName: $SalonName, Address: $Address, ProfilePicture: $ProfilePicture, YouTube: $YouTube, Facebook: $Facebook, Instagram: $Instagram, TikTok: $TikTok, AboutMe: $AboutMe)';
+    return 'UserModels(name: $name, email: $email, password: $password, PhoneNumber: $PhoneNumber, UserId: $UserId, SalonName: $SalonName, Address: $Address, ProfilePicture: $ProfilePicture, SalonPicture: $SalonPicture, YouTube: $YouTube, Facebook: $Facebook, Instagram: $Instagram, TikTok: $TikTok, AboutMe: $AboutMe)';
   }
 
   @override
@@ -122,6 +128,7 @@ class UserModels {
         other.SalonName == SalonName &&
         other.Address == Address &&
         other.ProfilePicture == ProfilePicture &&
+        other.SalonPicture == SalonPicture &&
         other.YouTube == YouTube &&
         other.Facebook == Facebook &&
         other.Instagram == Instagram &&
@@ -139,6 +146,7 @@ class UserModels {
         SalonName.hashCode ^
         Address.hashCode ^
         ProfilePicture.hashCode ^
+        SalonPicture.hashCode ^
         YouTube.hashCode ^
         Facebook.hashCode ^
         Instagram.hashCode ^

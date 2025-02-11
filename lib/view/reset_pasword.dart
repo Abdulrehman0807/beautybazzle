@@ -47,8 +47,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) =>
-              OtpScreen(), // Navigate to OTP screen or wherever needed
+          builder: (context) => OtpScreen(
+              email: email), // Navigate to OTP screen or wherever needed
         ),
       );
     } catch (e) {
@@ -218,9 +218,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                           child: Text(
                             "Send Code",
                             style: TextStyle(
-                              fontSize: width * 0.05,
-                              fontWeight: FontWeight.w500,
-                            ),
+                                fontSize: width * 0.05,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.white),
                           ),
                         ),
                       ),

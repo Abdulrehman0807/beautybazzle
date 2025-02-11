@@ -104,8 +104,8 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                           CircleAvatar(
                             radius: 50,
                             foregroundColor: Colors.black,
-                            backgroundImage: AssetImage(
-                                StaticData.userModel!.ProfilePicture),
+                            // backgroundImage: AssetImage(
+                            //     StaticData.userModel!.ProfilePicture),
                           ),
                         ],
                       ),
@@ -116,7 +116,7 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                         children: [
                           Center(
                             child: Container(
-                              height: height * 0.04,
+                              height: height * 0.045,
                               width: width * 0.95,
                               child: Text(
                                 "${StaticData.userModel!.name}",
