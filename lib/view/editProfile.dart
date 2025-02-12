@@ -178,11 +178,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       final downloadUrl = await ref.getDownloadURL();
 
       // Save the URL to Firestore
-      await _firestore.collection(folder).add({
-        'imageUrl': downloadUrl,
-        'uploadedAt': FieldValue.serverTimestamp(),
+      await _firestore
+          .collection("Users")
+          .doc(StaticData.userModel!.UserId)
+          .update({
+        'ProfilePicture': downloadUrl,
       });
-
+      await _firestore
+          .collection("Users")
+          .doc(StaticData.userModel!.UserId)
+          .update({
+        'SalonPicture': downloadUrl,
+      });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
             content: Text(

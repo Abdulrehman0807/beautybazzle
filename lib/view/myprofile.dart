@@ -104,8 +104,8 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                           CircleAvatar(
                             radius: 50,
                             foregroundColor: Colors.black,
-                            // backgroundImage: AssetImage(
-                            //     StaticData.userModel!.ProfilePicture),
+                            backgroundImage: NetworkImage(
+                                StaticData.userModel!.ProfilePicture),
                           ),
                         ],
                       ),
@@ -126,157 +126,183 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                               ),
                             ),
                           ),
-                          Container(
-                            height: height * 0.035,
-                            width: width * 0.95,
-                            child: Row(
-                              children: [
-                                Icon(Icons.location_on),
-                                Text(
-                                  "${StaticData.userModel!.Address}",
-                                  style: TextStyle(fontSize: width * 0.04),
-                                )
-                              ],
-                            ),
-                          ),
-                          Container(
-                            height: height * 0.035,
-                            width: width,
-                            child: Row(
-                              children: [
-                                IconButton(
-                                  icon: FaIcon(
-                                    FontAwesomeIcons.youtube,
-                                    size: width * 0.04,
+                          StaticData.userModel!.Address == ""
+                              ? SizedBox()
+                              : Container(
+                                  height: height * 0.035,
+                                  width: width * 0.95,
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.location_on),
+                                      SizedBox(
+                                        width: width * 0.02,
+                                      ),
+                                      Text(
+                                        "${StaticData.userModel!.Address}",
+                                        style:
+                                            TextStyle(fontSize: width * 0.04),
+                                      )
+                                    ],
                                   ),
-                                  onPressed: () {},
                                 ),
-                                SizedBox(
-                                  width: width * 0.01,
-                                ),
-                                Text("${StaticData.userModel!.YouTube}",
-                                    style: TextStyle(
-                                        fontSize: width * 0.027,
-                                        overflow: TextOverflow.ellipsis))
-                              ],
-                            ),
-                          ),
-                          Container(
-                            height: height * 0.035,
-                            width: width,
-                            child: Row(
-                              children: [
-                                IconButton(
-                                  icon: FaIcon(
-                                    FontAwesomeIcons.facebook,
-                                    size: width * 0.04,
+                          StaticData.userModel!.YouTube == ""
+                              ? SizedBox()
+                              : Container(
+                                  height: height * 0.038,
+                                  width: width,
+                                  child: Row(
+                                    children: [
+                                      IconButton(
+                                        icon: FaIcon(
+                                          FontAwesomeIcons.youtube,
+                                          size: width * 0.04,
+                                          color: Colors.red,
+                                        ),
+                                        onPressed: () {},
+                                      ),
+                                      SizedBox(
+                                        width: width * 0.003,
+                                      ),
+                                      Container(
+                                        width: width * 0.8,
+                                        child: Text(
+                                            "${StaticData.userModel!.YouTube}",
+                                            style: TextStyle(
+                                                fontSize: width * 0.028,
+                                                overflow:
+                                                    TextOverflow.ellipsis)),
+                                      )
+                                    ],
                                   ),
-                                  onPressed: () {},
                                 ),
-                                SizedBox(
-                                  width: width * 0.01,
-                                ),
-                                Text(
-                                  "${StaticData.userModel!.Facebook}",
-                                  style: TextStyle(
-                                      fontSize: width * 0.027,
-                                      overflow: TextOverflow.ellipsis),
-                                )
-                              ],
-                            ),
-                          ),
-                          Container(
-                            height: height * 0.035,
-                            width: width,
-                            child: Row(
-                              children: [
-                                IconButton(
-                                  icon: FaIcon(
-                                    FontAwesomeIcons.instagram,
-                                    size: width * 0.04,
+                          StaticData.userModel!.Facebook == ""
+                              ? SizedBox()
+                              : Container(
+                                  height: height * 0.035,
+                                  width: width,
+                                  child: Row(
+                                    children: [
+                                      IconButton(
+                                        icon: FaIcon(
+                                          FontAwesomeIcons.facebook,
+                                          size: width * 0.04,
+                                          color: Colors.blue,
+                                        ),
+                                        onPressed: () {},
+                                      ),
+                                      SizedBox(
+                                        width: width * 0.003,
+                                      ),
+                                      Text(
+                                        "${StaticData.userModel!.Facebook}",
+                                        style: TextStyle(
+                                            fontSize: width * 0.027,
+                                            overflow: TextOverflow.ellipsis),
+                                      )
+                                    ],
                                   ),
-                                  onPressed: () {},
                                 ),
-                                SizedBox(
-                                  width: width * 0.015,
-                                ),
-                                Text("${StaticData.userModel!.Instagram}",
-                                    style: TextStyle(
-                                        fontSize: width * 0.027,
-                                        overflow: TextOverflow.ellipsis))
-                              ],
-                            ),
-                          ),
-                          Container(
-                            height: height * 0.035,
-                            width: width,
-                            child: Row(
-                              children: [
-                                IconButton(
-                                  icon: FaIcon(
-                                    FontAwesomeIcons.tiktok,
-                                    size: width * 0.04,
+                          StaticData.userModel!.Instagram == ""
+                              ? SizedBox()
+                              : Container(
+                                  height: height * 0.035,
+                                  width: width,
+                                  child: Row(
+                                    children: [
+                                      IconButton(
+                                        icon: FaIcon(
+                                          FontAwesomeIcons.instagram,
+                                          size: width * 0.04,
+                                          color: Colors.redAccent,
+                                        ),
+                                        onPressed: () {},
+                                      ),
+                                      SizedBox(
+                                        width: width * 0.003,
+                                      ),
+                                      Text("${StaticData.userModel!.Instagram}",
+                                          style: TextStyle(
+                                              fontSize: width * 0.027,
+                                              overflow: TextOverflow.ellipsis))
+                                    ],
                                   ),
-                                  onPressed: () {},
                                 ),
-                                SizedBox(
-                                  width: width * 0.015,
+                          StaticData.userModel!.TikTok == ""
+                              ? SizedBox()
+                              : Container(
+                                  height: height * 0.035,
+                                  width: width,
+                                  child: Row(
+                                    children: [
+                                      IconButton(
+                                        icon: FaIcon(
+                                          FontAwesomeIcons.tiktok,
+                                          size: width * 0.04,
+                                        ),
+                                        onPressed: () {},
+                                      ),
+                                      SizedBox(
+                                        width: width * 0.003,
+                                      ),
+                                      Text("${StaticData.userModel!.TikTok}",
+                                          style: TextStyle(
+                                              fontSize: width * 0.027,
+                                              overflow: TextOverflow.ellipsis))
+                                    ],
+                                  ),
                                 ),
-                                Text("${StaticData.userModel!.TikTok}",
-                                    style: TextStyle(
-                                        fontSize: width * 0.027,
-                                        overflow: TextOverflow.ellipsis))
-                              ],
-                            ),
-                          ),
-                          Container(
-                            height: height * 0.15,
-                            width: width,
-                            child: ListTile(
-                              title: Text(
-                                "About Me",
-                                style: TextStyle(
-                                  fontSize: width * 0.05,
-                                  fontWeight: FontWeight.w600,
+                          StaticData.userModel!.AboutMe == ""
+                              ? SizedBox()
+                              : Container(
+                                  height: height * 0.15,
+                                  width: width,
+                                  child: ListTile(
+                                    title: Text(
+                                      "About Me",
+                                      style: TextStyle(
+                                        fontSize: width * 0.05,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    subtitle: Text(
+                                      "${StaticData.userModel!.AboutMe}",
+                                      style: TextStyle(
+                                          fontSize: width * 0.036,
+                                          fontWeight: FontWeight.w400,
+                                          overflow: TextOverflow.fade),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                              subtitle: Text(
-                                "${StaticData.userModel!.AboutMe}",
-                                style: TextStyle(
-                                  fontSize: width * 0.036,
-                                  fontWeight: FontWeight.w400,
+                          StaticData.userModel!.SalonName == ""
+                              ? SizedBox()
+                              : Container(
+                                  height: height * 0.09,
+                                  width: width * 0.92,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: ListTile(
+                                    leading: CircleAvatar(
+                                      radius: 28,
+                                      backgroundImage: NetworkImage(
+                                          StaticData.userModel!.SalonPicture),
+                                    ),
+                                    title: Text(
+                                      "${StaticData.userModel!.SalonName}",
+                                      style: TextStyle(
+                                        fontSize: width * 0.04,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    subtitle: Text(
+                                      "${StaticData.userModel!.Address}",
+                                      style: TextStyle(
+                                          fontSize: width * 0.032,
+                                          fontWeight: FontWeight.w400,
+                                          overflow: TextOverflow.ellipsis),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                          ),
-                          Container(
-                            height: height * 0.09,
-                            width: width * 0.92,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: ListTile(
-                              leading: const CircleAvatar(
-                                radius: 28,
-                                backgroundImage:
-                                    AssetImage("images/salon.jpeg"),
-                              ),
-                              title: Text(
-                                "${StaticData.userModel!.SalonName}",
-                                style: TextStyle(
-                                  fontSize: width * 0.04,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              subtitle: Text(
-                                "${StaticData.userModel!.Address}",
-                                style: TextStyle(
-                                    fontSize: width * 0.032,
-                                    fontWeight: FontWeight.w400,
-                                    overflow: TextOverflow.ellipsis),
-                              ),
-                            ),
-                          ),
                           Container(
                             height: height * 0.07,
                             width: width,
