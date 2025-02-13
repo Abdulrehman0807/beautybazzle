@@ -1,5 +1,5 @@
 import 'package:beautybazzle/utiils/static_data.dart';
-import 'package:beautybazzle/view/bottom_Nav_bar.dart';
+import 'package:beautybazzle/view/bottom_bar/bottom_Nav_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 

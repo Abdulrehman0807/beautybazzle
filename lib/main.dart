@@ -1,4 +1,4 @@
-import 'package:beautybazzle/view/splach.dart';
+import 'package:beautybazzle/view/splachscreen/splach.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 

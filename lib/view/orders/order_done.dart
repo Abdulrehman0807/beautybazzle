@@ -1,4 +1,4 @@
-import 'package:beautybazzle/view/Dashboard.dart';
+import 'package:beautybazzle/view/dashboard/Dashboard.dart';
 import 'package:flutter/material.dart';
 
 class OrderDoneScreen extends StatefulWidget {

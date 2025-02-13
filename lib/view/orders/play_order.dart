@@ -1,6 +1,6 @@
-import 'package:beautybazzle/view/address.dart';
-import 'package:beautybazzle/view/order_done.dart';
-import 'package:beautybazzle/view/payment_method.dart';
+import 'package:beautybazzle/view/orders/address.dart';
+import 'package:beautybazzle/view/orders/order_done.dart';
+import 'package:beautybazzle/view/orders/payment_method.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 

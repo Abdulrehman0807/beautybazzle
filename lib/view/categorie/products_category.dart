@@ -1,20 +1,21 @@
-import 'package:beautybazzle/view/salon.dart';
+import 'package:beautybazzle/view/categorie/beauty_product.dart';
 import 'package:flutter/material.dart';
 
-class SalonCategoryScreen extends StatefulWidget {
-  const SalonCategoryScreen({super.key});
+class ProductScreen extends StatefulWidget {
+  const ProductScreen({super.key});
 
   @override
-  State<SalonCategoryScreen> createState() => _SalonCategoryScreenState();
+  State<ProductScreen> createState() => _ProductScreenState();
 }
 
-class _SalonCategoryScreenState extends State<SalonCategoryScreen> {
+class _ProductScreenState extends State<ProductScreen> {
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
+
     return DefaultTabController(
-      length: 2, // Number of tabs
+      length: 6, // Number of tabs
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.white,
@@ -22,23 +23,25 @@ class _SalonCategoryScreenState extends State<SalonCategoryScreen> {
             color: Colors.black, // Set the back (pop) icon color to black
           ),
           title: const Text(
-            "Salons Categroies",
+            "Product Categories",
             style: TextStyle(color: Colors.black),
           ),
           bottom: const TabBar(
-            isScrollable: false,
+            isScrollable: true,
             labelColor: Colors.black, // Active tab text color
-            unselectedLabelColor: Colors.black54, // Makes the TabBar scrollable
+            unselectedLabelColor: Colors.black54, // Inactive tab text color
             tabs: [
-              Tab(
-                text: "Nearby",
-              ),
-              Tab(text: "OverAll"),
+              Tab(text: "Cream"),
+              Tab(text: "Facial"),
+              Tab(text: "Mask"),
+              Tab(text: "Losion"),
+              Tab(text: "Deal Box"),
+              Tab(text: "Makeup"),
             ],
           ),
         ),
         body: TabBarView(
-          children: List.generate(2, (index) {
+          children: List.generate(6, (index) {
             return TweenAnimationBuilder(
               tween: Tween<double>(begin: 0.0, end: 1.0),
               duration: const Duration(milliseconds: 500),
@@ -63,7 +66,7 @@ class _SalonCategoryScreenState extends State<SalonCategoryScreen> {
     return Container(
       height: height * 0.7,
       child: ListView.builder(
-        itemCount: 5,
+        itemCount: 10,
         itemBuilder: (context, index) {
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 4.0),
@@ -72,37 +75,44 @@ class _SalonCategoryScreenState extends State<SalonCategoryScreen> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => SalonScreen(),
+                      builder: (context) => BeautyProductScreen(),
                     ));
               },
               child: Container(
                 height: height * 0.12,
                 width: width,
                 decoration: BoxDecoration(
-                    border: Border.all(
-                        color: Colors.black12, width: width * 0.002)),
+                  border:
+                      Border.all(color: Colors.black12, width: width * 0.002),
+                  borderRadius: BorderRadius.circular(10),
+                ),
                 child: Center(
                   child: ListTile(
                     leading: Container(
                       height: height * 0.07,
                       width: width * 0.15,
                       decoration: BoxDecoration(
-                          image: DecorationImage(
-                              fit: BoxFit.cover,
-                              image: AssetImage("images/salon.jpeg")),
-                          borderRadius: BorderRadius.circular(10)),
+                        image: DecorationImage(
+                          fit: BoxFit.cover,
+                          image: AssetImage("images/product.jpg"),
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
                     title: Text(
-                      "Ajoba BeautyPalour",
+                      "Fizza Beauty Cream",
                       style: TextStyle(
-                          fontSize: width * 0.04, fontWeight: FontWeight.w500),
+                        fontSize: width * 0.04,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                     subtitle: Text(
-                      "Enhancing your natural beauty with personalized care and expertise at Ajoba Beauty Parlor.",
+                      "A nourishing cream that brightens, hydrates, and smooths skin for a radiant, even-toned glow.",
                       style: TextStyle(
-                          fontSize: width * 0.03,
-                          fontWeight: FontWeight.w400,
-                          overflow: TextOverflow.ellipsis),
+                        fontSize: width * 0.03,
+                        fontWeight: FontWeight.w400,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                   ),
                 ),

@@ -1,4 +1,4 @@
-import 'package:beautybazzle/view/selectmethod.dart';
+import 'package:beautybazzle/view/signup_methods/selectmethod.dart';
 import 'package:flutter/material.dart';
 import 'package:intro_screen_onboarding_flutter/intro_app.dart';
 

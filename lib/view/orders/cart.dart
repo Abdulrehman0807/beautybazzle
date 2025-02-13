@@ -1,4 +1,4 @@
-import 'package:beautybazzle/view/check_out.dart';
+import 'package:beautybazzle/view/orders/check_out.dart';
 import 'package:flutter/material.dart';
 
 class CartScreen extends StatefulWidget {

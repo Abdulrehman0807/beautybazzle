@@ -1,5 +1,5 @@
 import 'package:beautybazzle/model/servic_data.dart';
-import 'package:beautybazzle/view/appointment_book.dart';
+import 'package:beautybazzle/view/appoinment/appointment_book.dart';
 import 'package:flutter/material.dart';
 
 class ServicesCategriesScreen extends StatefulWidget {

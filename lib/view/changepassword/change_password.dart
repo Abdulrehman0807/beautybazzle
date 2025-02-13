@@ -1,5 +1,5 @@
 import 'package:beautybazzle/utiils/static_data.dart';
-import 'package:beautybazzle/view/Signin.dart';
+import 'package:beautybazzle/view/signup_methods/Signin.dart';
 import 'package:flutter/material.dart';
 
 class ChangePassword extends StatefulWidget {

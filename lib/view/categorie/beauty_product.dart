@@ -1,7 +1,7 @@
 import 'package:beautybazzle/model/servic_data.dart';
 import 'package:beautybazzle/utiils/static_data.dart';
-import 'package:beautybazzle/view/check_out.dart';
-import 'package:beautybazzle/view/profile.dart';
+import 'package:beautybazzle/view/orders/check_out.dart';
+import 'package:beautybazzle/view/profiles/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_stars/flutter_rating_stars.dart';
 import 'package:fluttertoast/fluttertoast.dart';

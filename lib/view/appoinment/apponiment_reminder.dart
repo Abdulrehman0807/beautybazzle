@@ -1,4 +1,4 @@
-import 'package:beautybazzle/view/bottom_Nav_bar.dart';
+import 'package:beautybazzle/view/bottom_bar/bottom_Nav_bar.dart';
 import 'package:flutter/material.dart';
 
 class AppointmentReminderScreen extends StatefulWidget {

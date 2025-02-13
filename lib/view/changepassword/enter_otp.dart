@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:beautybazzle/utiils/static_data.dart';
-import 'package:beautybazzle/view/change_password.dart';
+import 'package:beautybazzle/view/changepassword/change_password.dart';
 import 'package:flutter/material.dart';
 
 class OtpScreen extends StatefulWidget {

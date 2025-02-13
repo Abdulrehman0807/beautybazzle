@@ -1,5 +1,5 @@
 import 'package:beautybazzle/utiils/static_data.dart';
-import 'package:beautybazzle/view/enter_otp.dart';
+import 'package:beautybazzle/view/changepassword/enter_otp.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';

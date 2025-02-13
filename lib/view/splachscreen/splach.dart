@@ -1,5 +1,5 @@
 import 'package:beautybazzle/utiils/static_data.dart';
-import 'package:beautybazzle/view/intro.dart';
+import 'package:beautybazzle/view/introduction/intro.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 

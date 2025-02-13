@@ -2,9 +2,9 @@ import 'package:beautybazzle/model/signup_model.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:beautybazzle/view/reset_pasword.dart';
-import 'package:beautybazzle/view/signup.dart';
-import 'package:beautybazzle/view/bottom_Nav_bar.dart';
+import 'package:beautybazzle/view/changepassword/reset_pasword.dart';
+import 'package:beautybazzle/view/signup_methods/signup.dart';
+import 'package:beautybazzle/view/bottom_bar/bottom_Nav_bar.dart';
 import 'package:beautybazzle/utiils/static_data.dart';
 
 class SigninScreen extends StatefulWidget {

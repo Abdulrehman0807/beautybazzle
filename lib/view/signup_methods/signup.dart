@@ -1,7 +1,7 @@
 import 'package:beautybazzle/model/signup_model.dart';
 import 'package:beautybazzle/utiils/static_data.dart';
-import 'package:beautybazzle/view/Signin.dart';
-import 'package:beautybazzle/view/bottom_Nav_bar.dart';
+import 'package:beautybazzle/view/signup_methods/Signin.dart';
+import 'package:beautybazzle/view/bottom_bar/bottom_Nav_bar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';

@@ -52,7 +52,7 @@ dependencies:
   flutter_facebook_auth:
   shared_preferences:
   image_picker: 
-  
+  get: 
  
  
 

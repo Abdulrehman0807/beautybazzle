@@ -1,5 +1,5 @@
 import 'package:beautybazzle/utiils/static_data.dart';
-import 'package:beautybazzle/view/profile.dart';
+import 'package:beautybazzle/view/profiles/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_stars/flutter_rating_stars.dart';
 
