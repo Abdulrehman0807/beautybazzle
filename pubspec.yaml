@@ -53,7 +53,7 @@ dependencies:
   shared_preferences:
   image_picker: 
   get: 
- 
+  flutter_spinkit:
  
 
 
