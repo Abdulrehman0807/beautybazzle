@@ -1,7 +1,9 @@
 import 'package:beautybazzle/controller/editprofilecontroller.dart';
+import 'package:beautybazzle/utiils/static_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get_state_manager/get_state_manager.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+
 import 'package:get/get.dart';
 
 class EditProfileScreen extends StatefulWidget {
@@ -12,7 +14,28 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  @override
+  void initState() {
+    // print(StaticData.userModel!.ProfilePicture);
+    ProfileController.to.nameController.text =
+        ProfileController.to.usermodel!.name;
+    ProfileController.to.salonNameController.text =
+        ProfileController.to.usermodel!.SalonName;
+    ProfileController.to.addressController.text =
+        ProfileController.to.usermodel!.Address;
+    ProfileController.to.youtubeController.text =
+        ProfileController.to.usermodel!.YouTube;
+    ProfileController.to.facebookController.text =
+        ProfileController.to.usermodel!.Facebook;
+    ProfileController.to.instagramController.text =
+        ProfileController.to.usermodel!.Instagram;
+    ProfileController.to.tiktokController.text =
+        ProfileController.to.usermodel!.TikTok;
+    ProfileController.to.aboutMeController.text =
+        ProfileController.to.usermodel!.AboutMe;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,13 +43,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     var width = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      body: GetBuilder<EditProfileController>(
+      body: GetBuilder<ProfileController>(
         builder: (obj) {
           return Stack(
             children: [
               SingleChildScrollView(
                 child: Form(
-                  key: obj.formKey,
+                  key: formKey,
                   child: Center(
                     child: TweenAnimationBuilder(
                       tween: Tween<double>(begin: 0.8, end: 1.0),
@@ -41,7 +64,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Container(
-                              height: height * 0.8,
+                              height: height,
                               width: width * 0.92,
                               padding: const EdgeInsets.all(16),
                               child: Column(
@@ -53,8 +76,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                         MainAxisAlignment.spaceEvenly,
                                     children: [
                                       GestureDetector(
-                                        onTap: () async {
-                                          await obj.pickProfilePicture(context);
+                                        onTap: () {
+                                          obj.pickProfilePicture(context);
                                         },
                                         child: Column(
                                           children: [
@@ -63,15 +86,28 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                               children: [
                                                 CircleAvatar(
                                                   radius: 35,
+                                                  backgroundImage: obj
+                                                              .usermodel!
+                                                              .ProfilePicture !=
+                                                          ""
+                                                      ? NetworkImage(obj
+                                                          .usermodel!
+                                                          .ProfilePicture)
+                                                      : null, // Show profile picture if available, otherwise default background color
                                                   backgroundColor:
                                                       Colors.blue[200],
-                                                  child: const Icon(
-                                                    Icons.person,
-                                                    color: Colors.white,
-                                                  ),
+                                                  child: obj.usermodel!
+                                                              .ProfilePicture ==
+                                                          ""
+                                                      ? const Icon(
+                                                          Icons.camera_alt,
+                                                          size: 30,
+                                                          color: Colors.white,
+                                                        ) // Show the camera icon if no profile picture is set
+                                                      : null, // No icon if profile picture exists
                                                 ),
                                                 if (obj.isLoadingProfile)
-                                                  const CircularProgressIndicator(
+                                                  const SpinKitSpinningLines(
                                                     color: Colors.white,
                                                   ),
                                               ],
@@ -96,15 +132,28 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                               children: [
                                                 CircleAvatar(
                                                   radius: 35,
-                                                  backgroundColor:
-                                                      Colors.pink[200],
-                                                  child: const Icon(
-                                                    Icons.camera_alt,
-                                                    color: Colors.white,
-                                                  ),
+                                                  backgroundImage: obj
+                                                              .usermodel!
+                                                              .SalonPicture !=
+                                                          ""
+                                                      ? NetworkImage(StaticData
+                                                          .userModel!
+                                                          .SalonPicture) // Show the salon picture if available
+                                                      : null, // If no salon picture, it will be null
+                                                  backgroundColor: Colors.pink[
+                                                      200], // Background color if no image
+                                                  child: obj.usermodel!
+                                                              .SalonPicture ==
+                                                          ""
+                                                      ? const Icon(
+                                                          Icons.camera_alt,
+                                                          size: 30,
+                                                          color: Colors.white,
+                                                        ) // Show camera icon if no salon picture is set
+                                                      : null, // No icon if salon picture exists
                                                 ),
                                                 if (obj.isLoadingSalon)
-                                                  const CircularProgressIndicator(
+                                                  const SpinKitSpinningLines(
                                                     color: Colors.white,
                                                   ),
                                               ],
@@ -120,7 +169,21 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                       ),
                                     ],
                                   ),
-                                  const SizedBox(height: 20),
+                                  const SizedBox(height: 10),
+                                  TextFormField(
+                                    controller: obj.nameController,
+                                    decoration: const InputDecoration(
+                                      labelText: " Name",
+                                      hintText: "Enter your name",
+                                    ),
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return " Name is required";
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  const SizedBox(height: 10),
                                   TextFormField(
                                     controller: obj.salonNameController,
                                     decoration: const InputDecoration(
@@ -453,7 +516,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   const SizedBox(height: 10),
                                   TextFormField(
                                     controller: obj.aboutMeController,
-                                    maxLines: 3,
+                                    maxLines: 2,
                                     decoration: const InputDecoration(
                                       labelText: "About Me",
                                       hintText: "Tell us about yourself",
@@ -468,10 +531,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   const SizedBox(height: 20),
                                   ElevatedButton(
                                     onPressed: () async {
-                                      if (obj.formKey.currentState!
-                                          .validate()) {
-                                        await obj.saveProfileData(context);
-                                      }
+                                      await obj.saveProfileData(context);
                                     },
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.pink[200],
@@ -500,13 +560,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   ),
                 ),
               ),
-              if (obj.isLoading)
-                Container(
-                  color: Colors.black.withOpacity(0.5),
-                  child: const Center(
-                    child: CircularProgressIndicator(color: Colors.pink),
-                  ),
-                ),
+              obj.isLoading
+                  ? Container(
+                      height: height,
+                      width: width,
+                      color: Colors.pink.withOpacity(0.3),
+                      child: Center(
+                          child: SpinKitSpinningLines(color: Colors.pink)),
+                    )
+                  : SizedBox()
             ],
           );
         },

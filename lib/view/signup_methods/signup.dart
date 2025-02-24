@@ -2,6 +2,7 @@ import 'package:beautybazzle/controller/mycontroller.dart';
 import 'package:beautybazzle/utiils/static_data.dart';
 import 'package:beautybazzle/view/signup_methods/Signin.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -13,9 +14,7 @@ class SignupScreen extends StatefulWidget {
 
 class _SignupScreenState extends State<SignupScreen> {
   @override
-  void initState() {
-    super.initState();
-  }
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +39,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   ),
                 ),
                 child: Form(
-                  key: obj.formKey,
+                  key: formKey,
                   child: Column(
                     children: [
                       SizedBox(height: height * 0.08),
@@ -265,7 +264,9 @@ class _SignupScreenState extends State<SignupScreen> {
                                 ),
                               ),
                               onPressed: () async {
-                                await obj.signUpUser(context);
+                                if (formKey.currentState!.validate()) {
+                                  await obj.signUpUser(context);
+                                }
                               },
                               child: Text(
                                 "Sign up",
@@ -298,6 +299,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                 ),
                                 TextButton(
                                   onPressed: () {
+                                    LOginSignupController.to.clearDAta();
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -328,7 +330,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       width: width,
                       color: Colors.pink.withOpacity(0.3),
                       child: Center(
-                          child: CircularProgressIndicator(color: Colors.pink)),
+                          child: SpinKitSpinningLines(color: Colors.pink)),
                     )
                   : SizedBox()
             ],
@@ -365,9 +367,25 @@ class _SignupScreenState extends State<SignupScreen> {
               width: width * 0.85,
               child: TextFormField(
                 controller: controller,
+                obscureText: index == 2 ? !_passwordVisible : false,
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   prefixIcon: Icon(icon),
+                  suffixIcon: index == 2
+                      ? IconButton(
+                          icon: Icon(
+                            _passwordVisible
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                            color: Theme.of(context).primaryColorDark,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _passwordVisible = !_passwordVisible;
+                            });
+                          },
+                        )
+                      : null,
                   filled: true,
                   hintText: hintText,
                 ),
@@ -379,4 +397,6 @@ class _SignupScreenState extends State<SignupScreen> {
       },
     );
   }
+
+  bool _passwordVisible = false;
 }

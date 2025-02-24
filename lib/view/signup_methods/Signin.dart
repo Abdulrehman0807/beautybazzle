@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:beautybazzle/view/changepassword/reset_pasword.dart';
 import 'package:beautybazzle/view/signup_methods/signup.dart';
 import 'package:beautybazzle/utiils/static_data.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 
 class SigninScreen extends StatefulWidget {
@@ -14,6 +15,7 @@ class SigninScreen extends StatefulWidget {
 
 class _SigninScreenState extends State<SigninScreen>
     with SingleTickerProviderStateMixin {
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   @override
   void initState() {
     Get.put(LOginSignupController());
@@ -43,7 +45,7 @@ class _SigninScreenState extends State<SigninScreen>
                   ),
                 ),
                 child: Form(
-                  key: obj.formKey,
+                  key: formKey,
                   child: Column(
                     children: [
                       SizedBox(height: height * 0.1),
@@ -78,43 +80,29 @@ class _SigninScreenState extends State<SigninScreen>
                       // Fields and Buttons
                       Column(
                         children: [
-                          _buildAnimatedTextField(
-                            index: 0,
-                            controller: obj.nameController,
-                            icon: Icons.person,
-                            hintText: "Name",
-                            width: width,
-                            height: height,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return "Name is required";
-                              }
-                              if (value.length < 3) {
-                                return "Name must be at least 3 characters";
-                              }
-                              return null;
-                            },
-                          ),
                           SizedBox(height: height * 0.01),
-                          _buildAnimatedTextField(
-                            index: 1,
-                            controller: obj.emailController,
-                            icon: Icons.email,
-                            hintText: "Email",
-                            width: width,
-                            height: height,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return "Email is required";
-                              }
-                              if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                                  .hasMatch(value)) {
-                                return "Enter a valid email address";
-                              }
-                              return null;
-                            },
+
+                          Container(
+                            child: _buildAnimatedTextField(
+                              index: 1,
+                              controller: obj.emailController,
+                              icon: Icons.email,
+                              hintText: "Email",
+                              width: width,
+                              height: height,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Email is required";
+                                }
+                                if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                                    .hasMatch(value)) {
+                                  return "Enter a valid email address";
+                                }
+                                return null;
+                              },
+                            ),
                           ),
-                          SizedBox(height: height * 0.01),
+                          SizedBox(height: height * 0.015),
                           _buildAnimatedTextField(
                             index: 2,
                             controller: obj.passwordController,
@@ -150,13 +138,12 @@ class _SigninScreenState extends State<SigninScreen>
                                         ));
                                   },
                                   child: Text("Forget Password?",
-                                      style:
-                                          TextStyle(fontSize: width * 0.045)),
+                                      style: TextStyle(fontSize: width * 0.04)),
                                 ),
                               ],
                             ),
                           ),
-                          SizedBox(height: height * 0.02),
+                          SizedBox(height: height * 0.025),
 
                           // Sign In Button
                           ElevatedButton(
@@ -168,7 +155,9 @@ class _SigninScreenState extends State<SigninScreen>
                               ),
                             ),
                             onPressed: () async {
-                              obj.handleSignIn(context);
+                              if (formKey.currentState!.validate()) {
+                                await obj.handleSignIn(context);
+                              }
                             },
                             child: Text(
                               "Sign in",
@@ -178,7 +167,7 @@ class _SigninScreenState extends State<SigninScreen>
                               ),
                             ),
                           ),
-                          SizedBox(height: height * 0.01),
+                          SizedBox(height: height * 0.015),
 
                           // Sign Up Link
                           Row(
@@ -188,6 +177,7 @@ class _SigninScreenState extends State<SigninScreen>
                                   style: TextStyle(fontSize: width * 0.04)),
                               TextButton(
                                 onPressed: () {
+                                  LOginSignupController.to.clearDAta();
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -216,7 +206,7 @@ class _SigninScreenState extends State<SigninScreen>
                       width: width,
                       color: Colors.pink.withOpacity(0.3),
                       child: const Center(
-                          child: CircularProgressIndicator(color: Colors.pink)),
+                          child: SpinKitSpinningLines(color: Colors.pink)),
                     )
                   : const SizedBox()
             ],
@@ -233,7 +223,7 @@ class _SigninScreenState extends State<SigninScreen>
     required String hintText,
     required double width,
     required double height,
-    String? Function(String?)? validator,
+    required String? Function(String?) validator,
   }) {
     return Card(
       elevation: 2,
@@ -245,9 +235,25 @@ class _SigninScreenState extends State<SigninScreen>
         width: width * 0.85,
         child: TextFormField(
           controller: controller,
+          obscureText: index == 2 ? !_passwordVisible : false,
           decoration: InputDecoration(
             border: InputBorder.none,
             prefixIcon: Icon(icon),
+            suffixIcon: index == 2
+                ? IconButton(
+                    icon: Icon(
+                      _passwordVisible
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                      color: Theme.of(context).primaryColorDark,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _passwordVisible = !_passwordVisible;
+                      });
+                    },
+                  )
+                : null,
             filled: true,
             hintText: hintText,
           ),
@@ -256,4 +262,6 @@ class _SigninScreenState extends State<SigninScreen>
       ),
     );
   }
+
+  bool _passwordVisible = false;
 }

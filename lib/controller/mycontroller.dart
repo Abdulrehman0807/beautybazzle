@@ -2,17 +2,17 @@ import 'package:beautybazzle/model/signup_model.dart';
 import 'package:beautybazzle/utiils/static_data.dart';
 import 'package:beautybazzle/view/bottom_bar/bottom_Nav_bar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
 class LOginSignupController extends GetxController {
   static LOginSignupController get to => Get.find();
 
-  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController nameController = TextEditingController();
@@ -29,11 +29,26 @@ class LOginSignupController extends GetxController {
   final TextEditingController salonPictureController = TextEditingController();
 
   bool isLoading = false;
-
   bool isChecked = false;
-
   changeLoadingStatus(bool v) {
     isLoading = v;
+    update();
+  }
+
+  clearDAta() {
+    emailController.clear();
+    passwordController.clear();
+    nameController.clear();
+    phoneNumberController.clear();
+    salonNameController.clear();
+    facebookController.clear();
+    youtubeController.clear();
+    instagramController.clear();
+    tiktokController.clear();
+    salonPictureController.clear();
+    aboutMeController.clear();
+    aboutMeController.clear();
+    profilePictureController.clear();
     update();
   }
 
@@ -60,158 +75,58 @@ class LOginSignupController extends GetxController {
   }
 
   Future<void> handleSignIn(BuildContext context) async {
-    if (formKey.currentState!.validate()) {
-      changeLoadingStatus(true);
+    changeLoadingStatus(true);
 
-      try {
-        QuerySnapshot snapshot = await FirebaseFirestore.instance
-            .collection("Users")
-            .where("email", isEqualTo: emailController.text)
-            .where("password", isEqualTo: passwordController.text)
-            .get();
+    try {
+      // Normalize email to lowercase for case-insensitive comparison
+      String emailLowercase = emailController.text.toLowerCase();
 
-        if (snapshot.docs.isEmpty) {
-          Fluttertoast.showToast(
-              msg: "Incorrect Email or Password, ",
-              backgroundColor: Colors.pink[200]);
-          changeLoadingStatus(false);
-        } else {
-          UserModels model = UserModels.fromMap(
-              snapshot.docs[0].data() as Map<String, dynamic>);
-          StaticData.userModel = model;
-          Fluttertoast.showToast(
-              msg: "Login Successfully", backgroundColor: Colors.pink[200]);
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => BottomNavBar(),
-              ));
-          changeLoadingStatus(false);
-        }
-      } catch (e) {
-        Fluttertoast.showToast(msg: "An error occurred: $e");
-      } finally {
+      QuerySnapshot snapshot = await FirebaseFirestore.instance
+          .collection("Users")
+          .where("email",
+              isEqualTo:
+                  emailLowercase) // Use the lowercase version of the email
+          .where("password",
+              isEqualTo: passwordController
+                  .text) // Keep password as it is (case-sensitive)
+          .get();
+
+      if (snapshot.docs.isEmpty) {
+        Fluttertoast.showToast(
+            msg: "Incorrect Email or Password.",
+            backgroundColor: Colors.pink[200]);
         changeLoadingStatus(false);
+      } else {
+        UserModels model =
+            UserModels.fromMap(snapshot.docs[0].data() as Map<String, dynamic>);
+        StaticData.userModel = model;
+        Fluttertoast.showToast(
+            msg: "Login Successfully", backgroundColor: Colors.pink[200]);
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => BottomNavBar(),
+            ));
+        changeLoadingStatus(false);
+        clearDAta();
       }
-    } else {}
+    } catch (e) {
+      Fluttertoast.showToast(msg: "An error occurred: $e");
+    } finally {
+      changeLoadingStatus(false);
+    }
   }
 
-  // Future<void> signUpUser(BuildContext context) async {
-  //   if (!formKey.currentState!.validate()) {
-  //     Fluttertoast.showToast(
-  //       msg: "Please fix the errors in the form",
-  //       toastLength: Toast.LENGTH_SHORT,
-  //       gravity: ToastGravity.BOTTOM,
-  //       backgroundColor: Colors.redAccent,
-  //       textColor: Colors.white,
-  //       fontSize: 16.0,
-  //     );
-  //     return;
-  //   }
-
-  //   String email = emailController.text.trim();
-  //   String name = nameController.text.trim();
-  //   String password = passwordController.text.trim();
-  //   String phoneNumber = phoneNumberController.text.trim();
-  //   String salonName = salonNameController.text.trim();
-  //   String address = addressController.text.trim();
-  //   String profilePicture = profilePictureController.text.trim();
-  //   String youtube = youtubeController.text.trim();
-  //   String facebook = facebookController.text.trim();
-  //   String instagram = instagramController.text.trim();
-  //   String tiktok = tiktokController.text.trim();
-  //   String aboutMe = aboutMeController.text.trim();
-  //   String salonPicture = salonPictureController.text.trim();
-
-  //   changeLoadingStatus(true);
-
-  //   try {
-  //     QuerySnapshot existingUser = await FirebaseFirestore.instance
-  //         .collection("Users")
-  //         .where("email", isEqualTo: email)
-  //         .get();
-
-  //     if (existingUser.docs.isNotEmpty) {
-  //       Fluttertoast.showToast(
-  //         msg: "This email is already registered",
-  //         toastLength: Toast.LENGTH_SHORT,
-  //         gravity: ToastGravity.BOTTOM,
-  //         backgroundColor: Colors.orangeAccent,
-  //         textColor: Colors.black,
-  //         fontSize: 16.0,
-  //       );
-  //       changeLoadingStatus(false);
-  //       return;
-  //     }
-
-  //     var uuid = const Uuid();
-  //     String userId = uuid.v4();
-
-  //     UserModels model = UserModels(
-  //       name: name,
-  //       email: email,
-  //       password: password,
-  //       PhoneNumber: phoneNumber,
-  //       UserId: userId,
-  //       SalonName: salonName,
-  //       Address: address,
-  //       ProfilePicture: profilePicture,
-  //       YouTube: youtube,
-  //       Facebook: facebook,
-  //       Instagram: instagram,
-  //       TikTok: tiktok,
-  //       AboutMe: aboutMe,
-  //       SalonPicture: salonPicture,
-  //     );
-
-  //     await FirebaseFirestore.instance
-  //         .collection("Users")
-  //         .doc(userId)
-  //         .set(model.toMap());
-
-  //     Fluttertoast.showToast(
-  //       msg: "User registered successfully!",
-  //       toastLength: Toast.LENGTH_SHORT,
-  //       gravity: ToastGravity.BOTTOM,
-  //       backgroundColor: Colors.green,
-  //       textColor: Colors.white,
-  //       fontSize: 16.0,
-  //     );
-  //     StaticData.userModel = model;
-  //     Navigator.push(
-  //       context,
-  //       MaterialPageRoute(
-  //         builder: (context) => BottomNavBar(),
-  //       ),
-  //     );
-  //   } catch (e) {
-  //     Fluttertoast.showToast(
-  //       msg: "Error registering user: $e",
-  //       toastLength: Toast.LENGTH_SHORT,
-  //       gravity: ToastGravity.BOTTOM,
-  //       backgroundColor: Colors.red,
-  //       textColor: Colors.white,
-  //       fontSize: 16.0,
-  //     );
-  //   } finally {
-  //     changeLoadingStatus(false);
-  //   }
-  // }
   Future<void> signUpUser(BuildContext context) async {
-    // Validate the form
-    if (!formKey.currentState!.validate()) {
-      Fluttertoast.showToast(
-        msg: "Please fix the errors in the form",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.redAccent,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
-      return;
-    }
+    Fluttertoast.showToast(
+      msg: "Please fix the errors in the form",
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      backgroundColor: Colors.redAccent,
+      textColor: Colors.white,
+      fontSize: 16.0,
+    );
 
-    // Get form data
     String email = emailController.text.trim();
     String name = nameController.text.trim();
     String password = passwordController.text.trim();
@@ -220,6 +135,7 @@ class LOginSignupController extends GetxController {
     String address = addressController.text.trim();
     String profilePicture = profilePictureController.text.trim();
     String youtube = youtubeController.text.trim();
+
     String facebook = facebookController.text.trim();
     String instagram = instagramController.text.trim();
     String tiktok = tiktokController.text.trim();
@@ -229,7 +145,6 @@ class LOginSignupController extends GetxController {
     changeLoadingStatus(true);
 
     try {
-      // Check if the email is already registered in Firestore
       QuerySnapshot existingUser = await FirebaseFirestore.instance
           .collection("Users")
           .where("email", isEqualTo: email)
@@ -244,105 +159,52 @@ class LOginSignupController extends GetxController {
           textColor: Colors.black,
           fontSize: 16.0,
         );
+
         changeLoadingStatus(false);
         return;
       }
 
-      // Create user in Firebase Authentication
-      UserCredential userCredential =
-          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      var uuid = const Uuid();
+      String userId = uuid.v4();
+
+      UserModels model = UserModels(
+        name: name,
         email: email,
         password: password,
+        PhoneNumber: phoneNumber,
+        UserId: userId,
+        SalonName: salonName,
+        Address: address,
+        ProfilePicture: profilePicture,
+        YouTube: youtube,
+        Facebook: facebook,
+        Instagram: instagram,
+        TikTok: tiktok,
+        AboutMe: aboutMe,
+        SalonPicture: salonPicture,
       );
-
-      if (userCredential.user != null) {
-        String userId = userCredential.user!.uid;
-
-        // Create user model
-        UserModels model = UserModels(
-          name: name,
-          email: email,
-          password: password,
-          PhoneNumber: phoneNumber,
-          UserId: userId,
-          SalonName: salonName,
-          Address: address,
-          ProfilePicture: profilePicture,
-          YouTube: youtube,
-          Facebook: facebook,
-          Instagram: instagram,
-          TikTok: tiktok,
-          AboutMe: aboutMe,
-          SalonPicture: salonPicture,
-        );
-
-        // Save user data to Firestore
-        await FirebaseFirestore.instance
-            .collection("Users")
-            .doc(userId)
-            .set(model.toMap())
-            .then((_) {
-          // Update static data
-          StaticData.userModel = model;
-
-          // Show success message
-          Fluttertoast.showToast(
-            msg: "User registered successfully!",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            backgroundColor: Colors.green,
-            textColor: Colors.white,
-            fontSize: 16.0,
-          );
-
-          // Navigate to the next screen
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) =>
-                  BottomNavBar(), // Replace with your next screen
-            ),
-          );
-        }).catchError((e) {
-          // Handle error when saving data to Firestore
-          Fluttertoast.showToast(
-            msg: "Error saving user data: $e",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            backgroundColor: Colors.red,
-            textColor: Colors.white,
-            fontSize: 16.0,
-          );
-          changeLoadingStatus(false);
-        });
-      }
-    } on FirebaseAuthException catch (e) {
-      // Handle Firebase Authentication errors
-      String errorMessage = "An error occurred. Please try again.";
-      switch (e.code) {
-        case 'email-already-in-use':
-          errorMessage = "This email is already registered.";
-          break;
-        case 'weak-password':
-          errorMessage = "The password is too weak.";
-          break;
-        case 'invalid-email':
-          errorMessage = "The email address is invalid.";
-          break;
-        default:
-          errorMessage = e.message ?? errorMessage;
-      }
+      await FirebaseFirestore.instance
+          .collection("Users")
+          .doc(userId)
+          .set(model.toMap());
 
       Fluttertoast.showToast(
-        msg: errorMessage,
+        msg: "User registered successfully!",
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.red,
+        backgroundColor: Colors.green,
         textColor: Colors.white,
         fontSize: 16.0,
       );
+      StaticData.userModel = model;
+      clearDAta();
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => BottomNavBar(),
+        ),
+      );
     } catch (e) {
-      // Handle other errors
       Fluttertoast.showToast(
         msg: "Error registering user: $e",
         toastLength: Toast.LENGTH_SHORT,
@@ -356,7 +218,7 @@ class LOginSignupController extends GetxController {
     }
   }
 
-  Future<void> _saveCredentials(
+  Future<void> saveCredentials(
       String name, String email, String password, BuildContext context) async {
     try {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -396,7 +258,7 @@ class LOginSignupController extends GetxController {
             ),
             ElevatedButton(
               onPressed: () {
-                _saveCredentials(name, email, password, context);
+                saveCredentials(name, email, password, context);
                 Navigator.pop(context); // Close dialog after saving
               },
               child: const Text("Save"),
@@ -407,7 +269,7 @@ class LOginSignupController extends GetxController {
     );
   }
 
-  Future<void> _checkSavedCredentials(BuildContext context) async {
+  Future<void> checkSavedCredentials(BuildContext context) async {
     try {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       final String? savedName = prefs.getString('name');

@@ -1,10 +1,10 @@
+import 'package:beautybazzle/controller/selectedsignupcontoller.dart';
 import 'package:beautybazzle/utiils/static_data.dart';
 import 'package:beautybazzle/view/signup_methods/Signin.dart';
-import 'package:beautybazzle/view/bottom_bar/bottom_Nav_bar.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:get/get.dart';
 
 class SelectedMethod extends StatefulWidget {
   const SelectedMethod({super.key});
@@ -14,49 +14,10 @@ class SelectedMethod extends StatefulWidget {
 }
 
 class _SelectedMethodState extends State<SelectedMethod> {
-  Future<void> signInWithGoogle(BuildContext context) async {
-    try {
-      // Initialize Google Sign-In
-      final GoogleSignIn googleSignIn = GoogleSignIn();
-
-      // Attempt Google Sign-In
-      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
-      if (googleUser == null) {
-        // User canceled the sign-in
-        print('Sign-in aborted by user.');
-        return;
-      }
-
-      // Obtain authentication details from the Google sign-in
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
-
-      // Create a credential for Firebase Authentication
-      final AuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-
-      // Sign in to Firebase with the obtained Google credential
-      final UserCredential userCredential =
-          await FirebaseAuth.instance.signInWithCredential(credential);
-
-      final User? user = userCredential.user;
-
-      if (user != null) {
-        // Successfully signed in
-        print('Signed in as: ${user.displayName}');
-
-        // Navigate to the dashboard
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => BottomNavBar()),
-        );
-      }
-    } catch (e) {
-      // Print and handle errors
-      print('Error signing in with Google: ${e.toString()}');
-    }
+  @override
+  void initState() {
+    Get.put(SelectedSignupContoller());
+    super.initState();
   }
 
   @override
@@ -65,106 +26,125 @@ class _SelectedMethodState extends State<SelectedMethod> {
     var width = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      body: Container(
-        height: height,
-        width: width,
-        child: Stack(
-          children: [
-            Container(
-              height: height * 0.5,
-              width: width,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  fit: BoxFit.cover,
-                  image: AssetImage(StaticData.mybackground),
-                ),
-              ),
-              child: TweenAnimationBuilder(
-                tween: Tween<double>(begin: 0.0, end: 1.0),
-                duration: Duration(seconds: 1),
-                curve: Curves.easeOut,
-                builder: (context, double value, child) {
-                  return Opacity(
-                    opacity: value,
-                    child: Transform.scale(
-                      scale: value,
-                      child: Container(
-                        height: height * 0.25,
-                        width: width * 0.7,
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image: AssetImage(StaticData.myLogo),
-                          ),
+      body: GetBuilder<SelectedSignupContoller>(builder: (obj) {
+        return SizedBox(
+          height: height,
+          width: width,
+          child: Stack(
+            children: [
+              Container(
+                height: height,
+                width: width,
+                child: Stack(
+                  children: [
+                    Container(
+                      height: height * 0.5,
+                      width: width,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          fit: BoxFit.cover,
+                          image: AssetImage(StaticData.mybackground),
                         ),
                       ),
+                      child: TweenAnimationBuilder(
+                        tween: Tween<double>(begin: 0.0, end: 1.0),
+                        duration: Duration(seconds: 1),
+                        curve: Curves.easeOut,
+                        builder: (context, double value, child) {
+                          return Opacity(
+                            opacity: value,
+                            child: Transform.scale(
+                              scale: value,
+                              child: Container(
+                                height: height * 0.25,
+                                width: width * 0.7,
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    fit: BoxFit.cover,
+                                    image: AssetImage(StaticData.myLogo),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
                     ),
-                  );
-                },
-              ),
-            ),
-            Positioned(
-              bottom: 0,
-              child: Container(
-                height: height * 0.57,
-                width: width,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(color: Colors.black),
-                  borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(30),
-                    topLeft: Radius.circular(30),
-                  ),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    SizedBox(
-                      height: height * 0.009,
-                    ),
-                    _buildAnimatedText(
-                      "Sign up or Log in ",
-                      width * 0.055,
-                      FontWeight.w700,
-                    ),
-                    _buildAnimatedText(
-                      "Select your preferred method to continue ",
-                      width * 0.035,
-                      FontWeight.w400,
-                    ),
-                    _buildAnimatedButtonGoogle(
-                      "Continue with Google",
-                      FontAwesomeIcons.google,
-                      Colors.red,
-                      width,
-                      height,
-                    ),
-                    _buildAnimatedButtonFacebook(
-                      "Continue with Facebook",
-                      FontAwesomeIcons.facebook,
-                      Colors.blue,
-                      width,
-                      height,
-                    ),
-                    _buildAnimatedButtonApple(
-                      "Continue with Apple",
-                      FontAwesomeIcons.apple,
-                      Colors.grey,
-                      width,
-                      height,
-                    ),
-                    _buildOrDivider(width),
-                    _buildEmailButton(width, height),
-                    SizedBox(
-                      height: height * 0.01,
+                    Positioned(
+                      bottom: 0,
+                      child: Container(
+                        height: height * 0.57,
+                        width: width,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(color: Colors.black),
+                          borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(30),
+                            topLeft: Radius.circular(30),
+                          ),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            SizedBox(
+                              height: height * 0.009,
+                            ),
+                            _buildAnimatedText(
+                              "Sign up or Log in ",
+                              width * 0.055,
+                              FontWeight.w700,
+                            ),
+                            _buildAnimatedText(
+                              "Select your preferred method to continue ",
+                              width * 0.035,
+                              FontWeight.w400,
+                            ),
+                            _buildAnimatedButtonGoogle(
+                              "Continue with Google",
+                              FontAwesomeIcons.google,
+                              Colors.red,
+                              width,
+                              height,
+                            ),
+                            _buildAnimatedButtonFacebook(
+                              "Continue with Facebook",
+                              FontAwesomeIcons.facebook,
+                              Colors.blue,
+                              width,
+                              height,
+                            ),
+                            _buildAnimatedButtonApple(
+                              "Continue with Apple",
+                              FontAwesomeIcons.apple,
+                              Colors.grey,
+                              width,
+                              height,
+                            ),
+                            _buildOrDivider(width),
+                            _buildEmailButton(width, height),
+                            SizedBox(
+                              height: height * 0.01,
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ],
                 ),
               ),
-            ),
-          ],
-        ),
-      ),
+              obj.isLoading
+                  ? Container(
+                      height: height,
+                      width: width,
+                      color: Colors.pink.withOpacity(0.3),
+                      child: Center(
+                          child: CircularProgressIndicator(color: Colors.pink)),
+                    )
+                  : SizedBox()
+            ],
+          ),
+        );
+      }),
     );
   }
 
@@ -200,7 +180,7 @@ class _SelectedMethodState extends State<SelectedMethod> {
   ) {
     return GestureDetector(
       onTap: () {
-        signInWithGoogle(context);
+        SelectedSignupContoller.to.signInWithGoogle;
       },
       child: TweenAnimationBuilder(
         tween: Tween<double>(begin: 0.8, end: 1.0),
