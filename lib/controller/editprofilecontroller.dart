@@ -440,28 +440,21 @@ class ProfileController extends GetxController {
             .toList());
   }
 
-// Pick image from gallery
   Future<void> pickImage() async {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       offerPic = File(pickedFile.path);
-      // notifyListeners();
+      update();
     }
   }
 
-// Create offer in Firestore
   Future<void> createOfferCollection(BuildContext context) async {
     try {
       var uuid = const Uuid();
       String offerId = uuid.v4();
-      // Generate a unique offerId
       String time = DateTime.now().toIso8601String();
+      String userId = FirebaseAuth.instance.currentUser?.uid ?? uuid.v4();
 
-      // Firebase Authentication current user
-      String userId = FirebaseAuth.instance.currentUser?.uid ??
-          uuid.v4(); // If not logged in, use generated UUID
-
-      // Upload image to Firebase Storage if picked
       String? offerPicUrl;
       if (offerPic != null) {
         firebase_storage.Reference ref = firebase_storage
@@ -472,16 +465,14 @@ class ProfileController extends GetxController {
         offerPicUrl = await ref.getDownloadURL();
       }
 
-      // Create OfferModel
       OfferModel model = OfferModel(
         offerId: offerId,
         offerName: offerNameController.text,
-        offerPic: offerPicUrl ?? '', // Use empty string if no image
+        offerPic: offerPicUrl ?? '',
         time: time,
-        userId: userId, // Use user ID from Firebase Authentication
+        userId: userId,
       );
 
-      // Add to Firestore
       await FirebaseFirestore.instance
           .collection('offers')
           .doc(offerId)
@@ -489,10 +480,15 @@ class ProfileController extends GetxController {
 
       print("Offer created with offerId: $offerId");
 
-      // Show success message
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Offer created successfully!')),
       );
+
+      // Clear the form fields and reset the image picker
+      offerNameController.clear();
+      offerPic = null;
+      // notifyListeners(); // Call this if using state management
+
     } catch (e) {
       print("Error creating offer: $e");
       ScaffoldMessenger.of(context).showSnackBar(
@@ -501,7 +497,6 @@ class ProfileController extends GetxController {
     }
   }
 
-// Delete offer from Firestore
   Future<void> deleteOffer(String offerId) async {
     try {
       await FirebaseFirestore.instance
@@ -514,7 +509,6 @@ class ProfileController extends GetxController {
     }
   }
 
-// Show dialog for creating an offer
   void showOfferDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -527,7 +521,6 @@ class ProfileController extends GetxController {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // Offer Name Field
                   TextFormField(
                     controller: offerNameController,
                     decoration: InputDecoration(
@@ -542,15 +535,11 @@ class ProfileController extends GetxController {
                     },
                   ),
                   SizedBox(height: 16),
-
-                  // Offer Picture Button
                   ElevatedButton(
                     onPressed: pickImage,
                     child: Text('Pick Offer Picture'),
                   ),
                   SizedBox(height: 16),
-
-                  // Image Preview
                   offerPic != null
                       ? Image.file(File(offerPic!.path), height: 150)
                       : Container(
@@ -559,13 +548,11 @@ class ProfileController extends GetxController {
                           child: Center(child: Text('No image selected')),
                         ),
                   SizedBox(height: 24),
-
-                  // Submit Button
                   ElevatedButton(
                     onPressed: () {
                       if (formKey.currentState!.validate()) {
                         createOfferCollection(context);
-                        Navigator.of(context).pop(); // Close the dialog
+                        Navigator.of(context).pop();
                       }
                     },
                     child: Text('Create Offer'),

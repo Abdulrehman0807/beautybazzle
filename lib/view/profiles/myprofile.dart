@@ -491,8 +491,7 @@ class _MyProfileScreenState extends State<MyProfileScreen>
 
                                   Expanded(
                                     child: StreamBuilder<List<OfferModel>>(
-                                      stream: obj
-                                          .getOffers(), // Ensure this returns a Stream<List<OfferModel>>
+                                      stream: obj.getOffers(),
                                       builder: (context, snapshot) {
                                         if (snapshot.connectionState ==
                                             ConnectionState.waiting) {
@@ -513,9 +512,8 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                                         }
 
                                         final offers = snapshot.data!;
-                                        final width = MediaQuery.of(context)
-                                            .size
-                                            .width; // Make sure width is defined here
+                                        final width =
+                                            MediaQuery.of(context).size.width;
                                         return ListView.builder(
                                           scrollDirection: Axis.horizontal,
                                           itemCount: offers.length,
@@ -527,8 +525,7 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                                               child: Stack(
                                                 children: [
                                                   Container(
-                                                    width: width *
-                                                        0.3, // Ensures the width is correctly set
+                                                    width: width * 0.3,
                                                     decoration: BoxDecoration(
                                                       image: DecorationImage(
                                                         fit: BoxFit.cover,
@@ -547,8 +544,8 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                                                       icon: Icon(Icons.delete,
                                                           color: Colors.red),
                                                       onPressed: () =>
-                                                          obj.deleteOffer(offer
-                                                              .offerId), // Ensure this method is defined in _controller
+                                                          obj.deleteOffer(
+                                                              offer.offerId),
                                                     ),
                                                   ),
                                                 ],
@@ -1199,39 +1196,65 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                                       ),
                                     );
                                   },
-                                  child: Container(
-                                    height: height * 0.15,
-                                    width: width,
-                                    child: ListView.builder(
-                                      itemCount: 2,
-                                      scrollDirection: Axis.horizontal,
-                                      itemBuilder: (context, index) {
-                                        return GestureDetector(
-                                          onTap: () {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      BeautyProductScreen(),
-                                                ));
-                                          },
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8),
-                                            child: Container(
-                                              width: width * 0.3,
-                                              decoration: BoxDecoration(
-                                                image: DecorationImage(
-                                                    fit: BoxFit.cover,
-                                                    image: AssetImage(
-                                                        "images/product.jpg")),
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                              ),
-                                            ),
+                                  child: Row(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 8.0, top: 8, bottom: 8),
+                                        child: Container(
+                                          width: width * 0.3,
+                                          height: height * 0.13,
+                                          decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: Colors.black45),
+                                              borderRadius:
+                                                  BorderRadius.circular(10)),
+                                          child: Icon(
+                                            Icons.camera_alt,
+                                            size: width * 0.1,
+                                            color: Colors.black45,
                                           ),
-                                        );
-                                      },
-                                    ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Container(
+                                          height: height * 0.15,
+                                          width: width,
+                                          child: ListView.builder(
+                                            itemCount: 2,
+                                            scrollDirection: Axis.horizontal,
+                                            itemBuilder: (context, index) {
+                                              return GestureDetector(
+                                                onTap: () {
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            BeautyProductScreen(),
+                                                      ));
+                                                },
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8),
+                                                  child: Container(
+                                                    width: width * 0.3,
+                                                    decoration: BoxDecoration(
+                                                      image: DecorationImage(
+                                                          fit: BoxFit.cover,
+                                                          image: AssetImage(
+                                                              "images/product.jpg")),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
 
@@ -1274,31 +1297,57 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                                       ),
                                     );
                                   },
-                                  child: Container(
-                                    height: height * 0.15,
-                                    width: width,
-                                    child: ListView.builder(
-                                      itemCount: 5,
-                                      scrollDirection: Axis.horizontal,
-                                      itemBuilder: (context, index) {
-                                        return Padding(
-                                          padding: const EdgeInsets.all(8),
-                                          child: Container(
-                                            height: height * 0.1,
-                                            width: width * 0.3,
-                                            decoration: BoxDecoration(
-                                              image: DecorationImage(
-                                                fit: BoxFit.cover,
-                                                image: AssetImage(
-                                                    "images/work.jpg"),
-                                              ),
+                                  child: Row(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 8.0, top: 8, bottom: 8),
+                                        child: Container(
+                                          width: width * 0.3,
+                                          height: height * 0.13,
+                                          decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: Colors.black45),
                                               borderRadius:
-                                                  BorderRadius.circular(10),
-                                            ),
+                                                  BorderRadius.circular(10)),
+                                          child: Icon(
+                                            Icons.camera_alt,
+                                            size: width * 0.1,
+                                            color: Colors.black45,
                                           ),
-                                        );
-                                      },
-                                    ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Container(
+                                          height: height * 0.15,
+                                          width: width,
+                                          child: ListView.builder(
+                                            itemCount: 5,
+                                            scrollDirection: Axis.horizontal,
+                                            itemBuilder: (context, index) {
+                                              return Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8),
+                                                child: Container(
+                                                  height: height * 0.1,
+                                                  width: width * 0.3,
+                                                  decoration: BoxDecoration(
+                                                    image: DecorationImage(
+                                                      fit: BoxFit.cover,
+                                                      image: AssetImage(
+                                                          "images/work.jpg"),
+                                                    ),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                                 SizedBox(
