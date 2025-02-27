@@ -27,6 +27,8 @@ class LOginSignupController extends GetxController {
   final TextEditingController tiktokController = TextEditingController();
   final TextEditingController aboutMeController = TextEditingController();
   final TextEditingController salonPictureController = TextEditingController();
+  final TextEditingController salonDescriptionController =
+      TextEditingController();
 
   bool isLoading = false;
   bool isChecked = false;
@@ -49,6 +51,7 @@ class LOginSignupController extends GetxController {
     aboutMeController.clear();
     aboutMeController.clear();
     profilePictureController.clear();
+    salonDescriptionController.clear();
     update();
   }
 
@@ -141,6 +144,7 @@ class LOginSignupController extends GetxController {
     String tiktok = tiktokController.text.trim();
     String aboutMe = aboutMeController.text.trim();
     String salonPicture = salonPictureController.text.trim();
+    String salonDescription = salonDescriptionController.text.trim();
 
     changeLoadingStatus(true);
 
@@ -182,6 +186,7 @@ class LOginSignupController extends GetxController {
         TikTok: tiktok,
         AboutMe: aboutMe,
         SalonPicture: salonPicture,
+        salonDescription: salonDescription,
       );
       await FirebaseFirestore.instance
           .collection("Users")

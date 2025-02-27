@@ -20,6 +20,8 @@ class ProfileController extends GetxController {
   UserModels? usermodel;
   final TextEditingController nameController = TextEditingController();
   final TextEditingController salonNameController = TextEditingController();
+  final TextEditingController salonDescriptionController =
+      TextEditingController();
   final TextEditingController addressController = TextEditingController();
   final TextEditingController youtubeController = TextEditingController();
   final TextEditingController facebookController = TextEditingController();
@@ -40,6 +42,11 @@ class ProfileController extends GetxController {
   final TextEditingController specialistServiceNameController =
       TextEditingController();
   final TextEditingController workTypeController = TextEditingController();
+  final firebase_storage.FirebaseStorage storage =
+      firebase_storage.FirebaseStorage.instance;
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+  XFile? photo;
   File? productPic;
   File? offerPic;
   File? specialistPic;
@@ -58,8 +65,17 @@ class ProfileController extends GetxController {
   bool isFavorite = false;
 
   void toggleFavorite() {
-    isFavorite = !isFavorite; // Toggle favorite state
+    isFavorite = !isFavorite;
     update();
+    Fluttertoast.showToast(
+      msg: isFavorite
+          ? "Successfully added to favorites"
+          : "Removed from favorites",
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.CENTER,
+      backgroundColor: Colors.pink[200],
+      textColor: Colors.black,
+    );
   }
 
   changeLoadingStatus(bool v) {
@@ -108,6 +124,7 @@ class ProfileController extends GetxController {
         'Instagram': instagramController.text.trim(),
         'TikTok': tiktokController.text.trim(),
         'AboutMe': aboutMeController.text.trim(),
+        'salonDescription': salonDescriptionController.text.trim(),
       });
 
       getUserProfile(userId);
@@ -170,12 +187,6 @@ class ProfileController extends GetxController {
       fontSize: 16.0,
     );
   }
-
-  final firebase_storage.FirebaseStorage storage =
-      firebase_storage.FirebaseStorage.instance;
-  final FirebaseFirestore firestore = FirebaseFirestore.instance;
-  // final ImagePicker picker = ImagePicker();
-  XFile? photo;
 
 // Upload Salon Picture
   Future<void> pickSalonPicture(BuildContext context) async {
@@ -296,21 +307,28 @@ class ProfileController extends GetxController {
           .doc(StaticData.userModel!.UserId)
           .update(updateData);
       getUserProfile(StaticData.userModel!.UserId);
-      // Show success message
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-              '${isSalon ? "Salon" : "Profile"} image uploaded successfully!'),
-        ),
+      Fluttertoast.showToast(
+        msg: '${isSalon ? "Salon" : "Profile"} image uploaded successfully!',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+        fontSize: 16.0,
       );
     } catch (e) {
       // Log and show error message if upload fails
       print('Error uploading image: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content:
-              Text('Failed to upload ${isSalon ? "salon" : "profile"} image!'),
-        ),
+
+      // Show error message with Toast
+      Fluttertoast.showToast(
+        msg: 'Failed to upload ${isSalon ? "salon" : "profile"} image!',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0,
       );
     } finally {
       // Hide loading indicator
@@ -364,35 +382,66 @@ class ProfileController extends GetxController {
 
       print("Offer created with offerId: $offerId");
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Offer created successfully!')),
+      Fluttertoast.showToast(
+        msg: "Offer created successfully!",
+        toastLength: Toast.LENGTH_SHORT, // Duration of the toast
+        gravity: ToastGravity.BOTTOM, // Position of the toast
+        backgroundColor: Colors.green, // Background color
+        textColor: Colors.white, // Text color
+        fontSize: 16.0, // Font size
       );
-
       // Clear the form fields and reset the image picker
       offerNameController.clear();
       offerPic = null;
       update();
     } catch (e) {
       print("Error creating offer: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to create offer.')),
+      Fluttertoast.showToast(
+        msg: "Failed to create offer.",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0,
       );
     }
   }
 
   Future<void> deleteOffer(String offerId) async {
     try {
+      // Attempt to delete the offer
       await FirebaseFirestore.instance
           .collection('offers')
           .doc(offerId)
           .delete();
+
       print("Offer deleted with offerId: $offerId");
+
+      // Show a success toast message
+      Fluttertoast.showToast(
+        msg: 'Offer deleted successfully!',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
     } catch (e) {
+      // Show an error toast message
       print("Error deleting offer: $e");
+
+      Fluttertoast.showToast(
+        msg: 'Failed to delete the offer.',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
     }
   }
-
-  void showOfferDialog(BuildContext context) {}
 
   ////////////// add services //////////////////
 
@@ -424,19 +473,25 @@ class ProfileController extends GetxController {
         servicePicUrl = await ref.getDownloadURL();
 
         // Show success toast after the image is uploaded
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Image uploaded successfully!'),
-            backgroundColor: Colors.green,
-          ),
+        Fluttertoast.showToast(
+          msg: "Image uploaded successfully!",
+          toastLength: Toast.LENGTH_SHORT, // Duration of the toast
+          gravity: ToastGravity.BOTTOM, // Position of the toast
+          backgroundColor: Colors.green, // Background color
+          textColor: Colors.white, // Text color
+          fontSize: 16.0, // Font size
         );
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('No image selected!'),
-            backgroundColor: Colors.red,
-          ),
+        // Show error toast message
+        Fluttertoast.showToast(
+          msg: "No image selected!",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0,
         );
+
         return;
       }
 
@@ -454,13 +509,13 @@ class ProfileController extends GetxController {
           .collection('services')
           .doc(serviceId)
           .set(model.toMap());
-
-      // Show success toast for service creation
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Service created successfully!'),
-          backgroundColor: Colors.green,
-        ),
+      Fluttertoast.showToast(
+        msg: "Service created successfully!",
+        toastLength: Toast.LENGTH_SHORT, // Duration of the toast
+        gravity: ToastGravity.BOTTOM, // Position of the toast
+        backgroundColor: Colors.green, // Background color
+        textColor: Colors.white, // Text color
+        fontSize: 16.0, // Font size
       );
 
       // Clear the form fields and reset the image picker
@@ -470,13 +525,13 @@ class ProfileController extends GetxController {
       update();
     } catch (e) {
       print("Error creating service: $e");
-
-      // Show error toast in case of failure
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to create service. Try again!'),
-          backgroundColor: Colors.red,
-        ),
+      Fluttertoast.showToast(
+        msg: "Failed to create service. Try again!",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0,
       );
     }
   }
@@ -490,98 +545,113 @@ class ProfileController extends GetxController {
           .delete();
 
       // Show a success message
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Service deleted successfully!'),
-          backgroundColor: Colors.green,
-        ),
+      Fluttertoast.showToast(
+        msg: "Service deleted successfully!",
+        toastLength: Toast.LENGTH_SHORT, // Duration of the toast
+        gravity: ToastGravity.BOTTOM, // Position of the toast
+        backgroundColor: Colors.green, // Background color
+        textColor: Colors.white, // Text color
+        fontSize: 16.0, // Font size
       );
     } catch (e) {
-      // Show an error message if deletion fails
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error deleting service: $e'),
-          backgroundColor: Colors.red,
-        ),
+      // Show error toast message
+      Fluttertoast.showToast(
+        msg: "Error deleting service: $e",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0,
       );
     }
   }
 
-//////////////////////
-//   void showUpdateServiceDialog(BuildContext context, ServiceModel model) {
-//     // Pre-fill the controllers with existing data
-//     serviceNameController.text = model.serviceName ?? '';
-//     serviceDescriptionController.text = model.serviceDescription ?? '';
+////////////////////// update service//////////////////
 
-//     showDialog(
-//       context: context,
-//       builder: (BuildContext context) {
-//         return AlertDialog(
-//           title: Text('Update Service'),
-//           content: Column(
-//             mainAxisSize: MainAxisSize.min,
-//             children: [
-//               // Service Name Input
-//               TextField(
-//                 controller: serviceNameController,
-//                 decoration: InputDecoration(hintText: 'Service Name'),
-//               ),
-//               SizedBox(height: 10),
-//               // Service Description Input
-//               TextField(
-//                 controller: serviceDescriptionController,
-//                 decoration: InputDecoration(hintText: 'Service Description'),
-//               ),
-//             ],
-//           ),
-//           actions: [
-//             ElevatedButton(
-//               onPressed: () async {
-//                 // Update the service in Firestore
-//                 await updateServiceInFirestore(
-//                   model.serviceId!,
-//                   serviceNameController.text,
-//                   serviceDescriptionController.text,
-//                 );
-//                 Navigator.of(context).pop();
-//               },
-//               child: Text('Save'),
-//             ),
-//             ElevatedButton(
-//               onPressed: () {
-//                 Navigator.of(context).pop();
-//               },
-//               child: Text('Cancel'),
-//             ),
-//           ],
-//         );
-//       },
-//     );
-//   }
+  void showUpdateServiceDialog(BuildContext context, ServiceModel model) {
+    serviceNameController.text = model.serviceName ?? '';
+    serviceDescriptionController.text = model.serviceDescription ?? '';
 
-// // Function to update the service details in Firestore
-//   Future<void> updateServiceInFirestore(
-//     String serviceId,
-//     String newServiceName,
-//     String newDescription,
-//   ) async {
-//     try {
-//       // Update the service data in Firestore
-//       await FirebaseFirestore.instance
-//           .collection('services')
-//           .doc(serviceId)
-//           .update({
-//         'serviceName': newServiceName,
-//         'serviceDescription': newDescription,
-//       });
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Update Service'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 500,
+                child: TextField(
+                  controller: serviceNameController,
+                  decoration: const InputDecoration(hintText: 'Service Name'),
+                ),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: serviceDescriptionController,
+                decoration:
+                    const InputDecoration(hintText: 'Service Description'),
+              ),
+            ],
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () async {
+                if (serviceNameController.text.isNotEmpty &&
+                    serviceDescriptionController.text.isNotEmpty) {
+                  // Update the service in Firestore
+                  await updateServiceInFirestore(
+                    model.serviceId!,
+                    serviceNameController.text,
+                    serviceDescriptionController.text,
+                  );
+                  Navigator.of(context).pop();
+                } else {
+                  // Handle empty field case
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Please fill all fields')),
+                  );
+                }
+              },
+              child: const Text('Save'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
-//       // Show success message
-//       print("Service updated successfully!");
-//     } catch (e) {
-//       // Show error message if update fails
-//       print("Error updating service: $e");
-//     }
-//   }
+  // Function to update the service details in Firestore
+  Future<void> updateServiceInFirestore(
+    String serviceId,
+    String newServiceName,
+    String newDescription,
+  ) async {
+    try {
+      // Update the service data in Firestore
+      await FirebaseFirestore.instance
+          .collection('services')
+          .doc(serviceId)
+          .update({
+        'serviceName': newServiceName,
+        'serviceDescription': newDescription,
+      });
+
+      // Show success message
+      print("Service updated successfully!");
+      // Optionally, show a toast or snackbar here if needed
+    } catch (e) {
+      // Show error message if update fails
+      print("Error updating service: $e");
+    }
+  }
 
 //////////////// add product ////////////
   Future<void> pickProductImage() async {
@@ -626,18 +696,32 @@ class ProfileController extends GetxController {
 
       print("Product created with productId: $productId");
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Product created successfully!')),
+      Fluttertoast.showToast(
+        msg: 'Product created successfully!',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+        fontSize: 16.0,
       );
 
+      // Clear form fields and reset image
       productNameController.clear();
       productPriceController.clear();
-
       productPic = null;
     } catch (e) {
       print("Error creating product: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to create product.')),
+
+      // Show failure toast message
+      Fluttertoast.showToast(
+        msg: 'Failed to create product.',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0,
       );
     }
   }
@@ -649,19 +733,25 @@ class ProfileController extends GetxController {
           .doc(productId)
           .delete();
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Product deleted successfully!'),
-          backgroundColor: Colors.green,
-        ),
+      Fluttertoast.showToast(
+        msg: 'Product deleted successfully!',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+        fontSize: 16.0,
       );
     } catch (e) {
-      // Show an error message if deletion fails
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Error deleting product: $e"),
-          backgroundColor: Colors.red,
-        ),
+      // Show error toast message if deletion fails
+      Fluttertoast.showToast(
+        msg: "Error deleting product: $e",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0,
       );
     }
   }
@@ -713,8 +803,14 @@ class ProfileController extends GetxController {
       print("Specialist created with specialistId: $specialistId");
 
       // Show success message
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Specialist created successfully!')),
+      Fluttertoast.showToast(
+        msg: 'Specialist created successfully!',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+        fontSize: 16.0,
       );
 
       // Clear the form
@@ -723,8 +819,16 @@ class ProfileController extends GetxController {
       specialistPic = null;
     } catch (e) {
       print("Error creating specialist: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to create specialist.')),
+
+      // Show error toast message
+      Fluttertoast.showToast(
+        msg: 'Failed to create specialist.',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0,
       );
     }
   }
@@ -735,9 +839,28 @@ class ProfileController extends GetxController {
           .collection('specialists')
           .doc(specialistId)
           .delete();
+
       print("Specialist deleted with ID: $specialistId");
+      Fluttertoast.showToast(
+        msg: 'Specialist deleted successfully!',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
     } catch (e) {
       print("Error deleting specialist: $e");
+      Fluttertoast.showToast(
+        msg: 'Failed to delete specialist.',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
     }
   }
 
@@ -787,8 +910,14 @@ class ProfileController extends GetxController {
       print("Recent work created with ID: $recentworkId");
 
       // Show success message
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Recent work uploaded successfully!')),
+      Fluttertoast.showToast(
+        msg: 'Recent work uploaded successfully!',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+        fontSize: 16.0,
       );
 
       // Clear the form fields and reset the image picker
@@ -797,8 +926,16 @@ class ProfileController extends GetxController {
       update();
     } catch (e) {
       print("Error creating recent work: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to create recent work.')),
+
+      // Show error toast message
+      Fluttertoast.showToast(
+        msg: 'Failed to create recent work.',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0,
       );
     }
   }
@@ -810,8 +947,26 @@ class ProfileController extends GetxController {
           .doc(recentworkId)
           .delete();
       print("Recent work deleted with ID: $recentworkId");
+      Fluttertoast.showToast(
+        msg: 'Recent work deleted successfully!',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
     } catch (e) {
       print("Error deleting recent work: $e");
+      Fluttertoast.showToast(
+        msg: 'Error deleting recent work.',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
     }
   }
 }

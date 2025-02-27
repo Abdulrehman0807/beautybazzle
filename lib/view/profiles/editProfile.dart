@@ -34,6 +34,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         ProfileController.to.usermodel!.TikTok;
     ProfileController.to.aboutMeController.text =
         ProfileController.to.usermodel!.AboutMe;
+    ProfileController.to.salonDescriptionController.text =
+        ProfileController.to.usermodel!.salonDescription;
     super.initState();
   }
 
@@ -93,7 +95,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                       ? NetworkImage(obj
                                                           .usermodel!
                                                           .ProfilePicture)
-                                                      : null, // Show profile picture if available, otherwise default background color
+                                                      : null,
                                                   backgroundColor:
                                                       Colors.blue[200],
                                                   child: obj.usermodel!
@@ -103,8 +105,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                           Icons.camera_alt,
                                                           size: 30,
                                                           color: Colors.white,
-                                                        ) // Show the camera icon if no profile picture is set
-                                                      : null, // No icon if profile picture exists
+                                                        )
+                                                      : null,
                                                 ),
                                                 if (obj.isLoadingProfile)
                                                   const SpinKitSpinningLines(
@@ -120,6 +122,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                             ),
                                           ],
                                         ),
+                                      ),
+                                      SizedBox(
+                                        width: width * 0.12,
                                       ),
                                       GestureDetector(
                                         onTap: () async {
@@ -138,10 +143,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                           ""
                                                       ? NetworkImage(StaticData
                                                           .userModel!
-                                                          .SalonPicture) // Show the salon picture if available
-                                                      : null, // If no salon picture, it will be null
-                                                  backgroundColor: Colors.pink[
-                                                      200], // Background color if no image
+                                                          .SalonPicture)
+                                                      : null,
+                                                  backgroundColor:
+                                                      Colors.pink[200],
                                                   child: obj.usermodel!
                                                               .SalonPicture ==
                                                           ""
@@ -149,8 +154,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                           Icons.camera_alt,
                                                           size: 30,
                                                           color: Colors.white,
-                                                        ) // Show camera icon if no salon picture is set
-                                                      : null, // No icon if salon picture exists
+                                                        )
+                                                      : null,
                                                 ),
                                                 if (obj.isLoadingSalon)
                                                   const SpinKitSpinningLines(
@@ -170,34 +175,52 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                     ],
                                   ),
                                   const SizedBox(height: 10),
-                                  TextFormField(
-                                    controller: obj.nameController,
-                                    decoration: const InputDecoration(
-                                      labelText: " Name",
-                                      hintText: "Enter your name",
+                                  Container(
+                                    height: height * 0.09,
+                                    width: width,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Container(
+                                          width: width * 0.35,
+                                          child: TextFormField(
+                                            controller: obj.nameController,
+                                            decoration: const InputDecoration(
+                                              labelText: " Name",
+                                              hintText: "Enter your name",
+                                            ),
+                                            validator: (value) {
+                                              if (value == null ||
+                                                  value.isEmpty) {
+                                                return " Name is required";
+                                              }
+                                              return null;
+                                            },
+                                          ),
+                                        ),
+                                        Container(
+                                          width: width * 0.41,
+                                          child: TextFormField(
+                                            controller: obj.salonNameController,
+                                            decoration: const InputDecoration(
+                                              labelText: "Salon Name",
+                                              hintText:
+                                                  "Enter your salon's name",
+                                            ),
+                                            validator: (value) {
+                                              if (value == null ||
+                                                  value.isEmpty) {
+                                                return "Salon Name is required";
+                                              }
+                                              return null;
+                                            },
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return " Name is required";
-                                      }
-                                      return null;
-                                    },
                                   ),
-                                  const SizedBox(height: 10),
-                                  TextFormField(
-                                    controller: obj.salonNameController,
-                                    decoration: const InputDecoration(
-                                      labelText: "Salon Name",
-                                      hintText: "Enter your salon's name",
-                                    ),
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return "Salon Name is required";
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                  const SizedBox(height: 10),
+                                  const SizedBox(height: 5),
                                   TextFormField(
                                     controller: obj.addressController,
                                     decoration: const InputDecoration(
@@ -211,7 +234,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                       return null;
                                     },
                                   ),
-                                  const SizedBox(height: 10),
+                                  const SizedBox(height: 5),
                                   TextFormField(
                                     controller: obj.youtubeController,
                                     decoration: InputDecoration(
@@ -286,7 +309,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                     },
                                     keyboardType: TextInputType.url,
                                   ),
-                                  const SizedBox(height: 10),
+                                  const SizedBox(height: 5),
                                   TextFormField(
                                     controller: obj.facebookController,
                                     decoration: InputDecoration(
@@ -361,7 +384,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                     },
                                     keyboardType: TextInputType.url,
                                   ),
-                                  const SizedBox(height: 10),
+                                  const SizedBox(height: 5),
                                   TextFormField(
                                     controller: obj.instagramController,
                                     decoration: InputDecoration(
@@ -438,7 +461,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                     },
                                     keyboardType: TextInputType.url,
                                   ),
-                                  const SizedBox(height: 10),
+                                  const SizedBox(height: 5),
                                   TextFormField(
                                     controller: obj.tiktokController,
                                     decoration: InputDecoration(
@@ -513,7 +536,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                     },
                                     keyboardType: TextInputType.url,
                                   ),
-                                  const SizedBox(height: 10),
+                                  const SizedBox(height: 5),
                                   TextFormField(
                                     controller: obj.aboutMeController,
                                     maxLines: 2,
@@ -528,7 +551,25 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                       return null;
                                     },
                                   ),
-                                  const SizedBox(height: 20),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  TextFormField(
+                                    controller: obj.salonDescriptionController,
+                                    maxLines: 2,
+                                    decoration: const InputDecoration(
+                                      labelText: "About Salon",
+                                      hintText:
+                                          "Tell us about your Salon Description",
+                                    ),
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return "Please enter something about your Salon Description.";
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  const SizedBox(height: 15),
                                   ElevatedButton(
                                     onPressed: () async {
                                       await obj.saveProfileData(context);
@@ -545,7 +586,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                       "Save",
                                       style: TextStyle(
                                         color: Colors.white,
-                                        fontSize: 16,
+                                        fontSize: 20,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),

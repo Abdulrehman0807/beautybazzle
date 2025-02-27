@@ -16,6 +16,7 @@ class UserModels {
   String Instagram;
   String TikTok;
   String AboutMe;
+  String salonDescription;
 
   UserModels({
     required this.name,
@@ -32,6 +33,7 @@ class UserModels {
     this.Instagram = "",
     this.TikTok = "",
     this.AboutMe = "",
+    this.salonDescription = "",
   });
 
   UserModels copyWith({
@@ -49,6 +51,7 @@ class UserModels {
     String? Instagram,
     String? TikTok,
     String? AboutMe,
+    String? salonDescription,
   }) {
     return UserModels(
       name: name ?? this.name,
@@ -65,6 +68,7 @@ class UserModels {
       Instagram: Instagram ?? this.Instagram,
       TikTok: TikTok ?? this.TikTok,
       AboutMe: AboutMe ?? this.AboutMe,
+      salonDescription: salonDescription ?? this.salonDescription,
     );
   }
 
@@ -84,6 +88,7 @@ class UserModels {
       'Instagram': Instagram,
       'TikTok': TikTok,
       'AboutMe': AboutMe,
+      'salonDescription': salonDescription,
     };
   }
 
@@ -103,6 +108,7 @@ class UserModels {
       Instagram: map['Instagram'] as String,
       TikTok: map['TikTok'] as String,
       AboutMe: map['AboutMe'] as String,
+      salonDescription: map['salonDescription'] as String,
     );
   }
 
@@ -113,7 +119,7 @@ class UserModels {
 
   @override
   String toString() {
-    return 'UserModels(name: $name, email: $email, password: $password, PhoneNumber: $PhoneNumber, UserId: $UserId, SalonName: $SalonName, Address: $Address, ProfilePicture: $ProfilePicture, SalonPicture: $SalonPicture, YouTube: $YouTube, Facebook: $Facebook, Instagram: $Instagram, TikTok: $TikTok, AboutMe: $AboutMe)';
+    return 'UserModels(name: $name, email: $email, password: $password, PhoneNumber: $PhoneNumber, UserId: $UserId, SalonName: $SalonName, Address: $Address, ProfilePicture: $ProfilePicture, SalonPicture: $SalonPicture, YouTube: $YouTube, Facebook: $Facebook, Instagram: $Instagram, TikTok: $TikTok, AboutMe: $AboutMe, salonDescription: $salonDescription)';
   }
 
   @override
@@ -133,7 +139,8 @@ class UserModels {
         other.Facebook == Facebook &&
         other.Instagram == Instagram &&
         other.TikTok == TikTok &&
-        other.AboutMe == AboutMe;
+        other.AboutMe == AboutMe &&
+        other.salonDescription == salonDescription;
   }
 
   @override
@@ -151,6 +158,7 @@ class UserModels {
         Facebook.hashCode ^
         Instagram.hashCode ^
         TikTok.hashCode ^
-        AboutMe.hashCode;
+        AboutMe.hashCode ^
+        salonDescription.hashCode;
   }
 }

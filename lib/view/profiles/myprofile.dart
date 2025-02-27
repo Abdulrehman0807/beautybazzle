@@ -11,6 +11,7 @@ import 'package:beautybazzle/model/servic_data.dart';
 import 'package:beautybazzle/utiils/static_data.dart';
 import 'package:beautybazzle/view/bottom_bar/bottom_Nav_bar.dart';
 import 'package:beautybazzle/view/categorie/beauty_product.dart';
+import 'package:beautybazzle/view/categorie/salon.dart';
 import 'package:beautybazzle/view/profiles/editProfile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
@@ -76,38 +77,38 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                       SizedBox(
                         height: height * 0.05,
                       ),
-                      Row(
-                        children: [
-                          InkWell(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => BottomNavBar(),
-                                  ));
-                            },
-                            child: CircleAvatar(
-                              radius: 18,
-                              backgroundColor: Colors.white,
-                              child: const Icon(Icons.arrow_back,
-                                  color: Colors.black),
-                            ),
-                          ),
-                          SizedBox(
-                            width: width * 0.25,
-                          ),
-                          obj.usermodel == null || obj.usermodel!.name == ""
-                              ? const SizedBox()
-                              : Text(
-                                  "${obj.usermodel!.name}",
-                                  style: TextStyle(
-                                    fontSize: width * 0.05,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                        ],
-                      ),
+                      // Row(
+                      //   children: [
+                      //     InkWell(
+                      //       onTap: () {
+                      //         Navigator.push(
+                      //             context,
+                      //             MaterialPageRoute(
+                      //               builder: (context) => BottomNavBar(),
+                      //             ));
+                      //       },
+                      //       child: CircleAvatar(
+                      //         radius: 18,
+                      //         backgroundColor: Colors.white,
+                      //         child: const Icon(Icons.arrow_back,
+                      //             color: Colors.black),
+                      //       ),
+                      //     ),
+                      //     SizedBox(
+                      //       width: width * 0.25,
+                      //     ),
+                      //     obj.usermodel == null || obj.usermodel!.name == ""
+                      //         ? const SizedBox()
+                      //         : Text(
+                      //             "${obj.usermodel!.name}",
+                      //             style: TextStyle(
+                      //               fontSize: width * 0.05,
+                      //               fontWeight: FontWeight.w600,
+                      //               color: Colors.black,
+                      //             ),
+                      //           ),
+                      //   ],
+                      // ),
                       Container(
                         height: height * 0.13,
                         child: Row(
@@ -120,15 +121,15 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                               backgroundImage: obj.usermodel!.ProfilePicture !=
                                       ""
                                   ? NetworkImage(obj.usermodel!.ProfilePicture)
-                                  : null, // Show profile picture if available, otherwise default background color
-                              backgroundColor: Colors.blue[200],
+                                  : null,
+                              backgroundColor: Colors.pink[200],
                               child: obj.usermodel!.ProfilePicture == ""
                                   ? const Icon(
                                       Icons.camera_alt,
                                       size: 30,
                                       color: Colors.white,
-                                    ) // Show the camera icon if no profile picture is set
-                                  : null, // No icon if profile picture exists
+                                    )
+                                  : null,
                             ),
                             if (obj.isLoadingProfile)
                               const SpinKitSpinningLines(
@@ -310,31 +311,76 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                             obj.usermodel == null ||
                                     obj.usermodel!.SalonName == ""
                                 ? const SizedBox()
-                                : Container(
-                                    height: height * 0.09,
-                                    width: width * 0.92,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: ListTile(
-                                      leading: CircleAvatar(
-                                        radius: 28,
-                                        backgroundImage: NetworkImage(
-                                            StaticData.userModel!.SalonPicture),
+                                : Card(
+                                    elevation: 1,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(15)),
+                                    child: Container(
+                                      height: height * 0.09,
+                                      width: width * 0.92,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(15),
                                       ),
-                                      title: Text(
-                                        "${obj.usermodel!.SalonName}",
-                                        style: TextStyle(
-                                          fontSize: width * 0.04,
-                                          fontWeight: FontWeight.w600,
+                                      child: ListTile(
+                                        leading: CircleAvatar(
+                                          radius: 35,
+                                          backgroundImage:
+                                              obj.usermodel!.SalonPicture != ""
+                                                  ? NetworkImage(StaticData
+                                                      .userModel!.SalonPicture)
+                                                  : null,
+                                          backgroundColor: Colors.pink[200],
+                                          child:
+                                              obj.usermodel!.SalonPicture == ""
+                                                  ? const Icon(
+                                                      Icons.camera_alt,
+                                                      size: 30,
+                                                      color: Colors.white,
+                                                    )
+                                                  : null,
                                         ),
-                                      ),
-                                      subtitle: Text(
-                                        "${obj.usermodel!.Address}",
-                                        style: TextStyle(
-                                            fontSize: width * 0.032,
-                                            fontWeight: FontWeight.w400,
-                                            overflow: TextOverflow.ellipsis),
+                                        title: Text(
+                                          "${obj.usermodel!.SalonName}",
+                                          style: TextStyle(
+                                            fontSize: width * 0.04,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        subtitle: Text(
+                                          "${obj.usermodel!.Address}",
+                                          style: TextStyle(
+                                              fontSize: width * 0.032,
+                                              fontWeight: FontWeight.w400,
+                                              overflow: TextOverflow.ellipsis),
+                                        ),
+                                        trailing: GestureDetector(
+                                          onTap: () {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      SalonScreen(),
+                                                ));
+                                          },
+                                          child: Container(
+                                            height: height * 0.04,
+                                            width: width * 0.2,
+                                            decoration: BoxDecoration(
+                                              color: Colors.pink[200],
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                            child: Center(
+                                              child: Text(
+                                                "View Profile",
+                                                style: TextStyle(
+                                                    fontSize: width * 0.03,
+                                                    color: Colors.white),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -371,7 +417,34 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                                             fontWeight: FontWeight.w500),
                                       )),
                                     ),
-                                  ),
+                                  )
+
+//                                  OpenContainer(
+//   transitionType: ContainerTransitionType.fadeThrough,
+//   transitionDuration: const Duration(seconds: 1),
+//   openBuilder: (context, _) => const EditProfileScreen(), // Replace with your target screen
+//   closedElevation: 0, // No elevation for the closed container
+//   closedBuilder: (context, _) => Container(
+//     height: height * 0.04,
+//     width: width * 0.8,
+//     decoration: BoxDecoration(
+//       border: Border.all(color: Colors.black),
+//       color: Colors.white,
+//       borderRadius: BorderRadius.circular(10),
+//     ),
+//     child: Center(
+//       child: Text(
+//         "Edit Profile",
+//         style: TextStyle(
+//           fontSize: width * 0.05,
+//           fontWeight: FontWeight.w500,
+//         ),
+//       ),
+//     ),
+//   ),
+// ),
+
+                                  ,
                                   const CircleAvatar(
                                     radius: 15,
                                     backgroundColor: Colors.white,
@@ -623,7 +696,9 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                                                         width: width * 0.3,
                                                         decoration:
                                                             BoxDecoration(
-                                                          border: Border.all(),
+                                                          border: Border.all(
+                                                              color: Colors
+                                                                  .black45),
                                                           image:
                                                               DecorationImage(
                                                             fit: BoxFit.cover,
@@ -986,11 +1061,10 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                                                       onSelected:
                                                           (String value) {
                                                         if (value == 'update') {
-                                                          // Open dialog to update the service
-                                                          // obj.showUpdateServiceDialog(context, model);
+                                                          obj.showUpdateServiceDialog(
+                                                              context, model);
                                                         } else if (value ==
                                                             'delete') {
-                                                          // Show confirmation dialog before deleting
                                                           showDialog(
                                                             context: context,
                                                             builder:
@@ -1007,7 +1081,7 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                                                                         () {
                                                                       Navigator.of(
                                                                               context)
-                                                                          .pop(); // Close the dialog
+                                                                          .pop();
                                                                     },
                                                                     child: const Text(
                                                                         "Cancel"),
@@ -1017,11 +1091,11 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                                                                         () {
                                                                       Navigator.of(
                                                                               context)
-                                                                          .pop(); // Close the dialog
+                                                                          .pop();
                                                                       obj.deleteService(
                                                                           context,
                                                                           model
-                                                                              .serviceId); // Delete the service
+                                                                              .serviceId);
                                                                     },
                                                                     child: const Text(
                                                                         "Delete",
@@ -1855,8 +1929,9 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                                                             width: width * 0.3,
                                                             decoration:
                                                                 BoxDecoration(
-                                                              border:
-                                                                  Border.all(),
+                                                              border: Border.all(
+                                                                  color: Colors
+                                                                      .black45),
                                                               image:
                                                                   DecorationImage(
                                                                 fit: BoxFit
@@ -2206,13 +2281,14 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                                                           width: width * 0.3,
                                                           decoration:
                                                               BoxDecoration(
-                                                            border:
-                                                                Border.all(),
+                                                            border: Border.all(
+                                                                color: Colors
+                                                                    .black45),
                                                             image:
                                                                 DecorationImage(
                                                               fit: BoxFit.cover,
                                                               image: NetworkImage(
-                                                                  recentWorkPic), // Handle null values properly
+                                                                  recentWorkPic),
                                                             ),
                                                             borderRadius:
                                                                 BorderRadius
