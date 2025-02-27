@@ -1,9 +1,15 @@
+import 'dart:io';
+
 import 'package:beautybazzle/controller/editprofilecontroller.dart';
 import 'package:beautybazzle/model/addoffer.dart';
+import 'package:beautybazzle/model/addproduct.dart';
+import 'package:beautybazzle/model/addspecialist.dart';
+import 'package:beautybazzle/model/addwork.dart';
 
 import 'package:beautybazzle/model/servic_data.dart';
 
 import 'package:beautybazzle/utiils/static_data.dart';
+import 'package:beautybazzle/view/bottom_bar/bottom_Nav_bar.dart';
 import 'package:beautybazzle/view/categorie/beauty_product.dart';
 import 'package:beautybazzle/view/profiles/editProfile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -15,6 +21,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
+
+import '../../model/addservices.dart';
 
 class MyProfileScreen extends StatefulWidget {
   const MyProfileScreen({super.key});
@@ -68,36 +76,38 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                       SizedBox(
                         height: height * 0.05,
                       ),
-                      // Row(
-                      //   children: [
-                      //     InkWell(
-                      //       onTap: () {
-                      //         Navigator.push(
-                      //             context,
-                      //             MaterialPageRoute(
-                      //               builder: (context) => BottomNavBar(),
-                      //             ));
-                      //       },
-                      //       child: CircleAvatar(
-                      //         radius: 18,
-                      //         backgroundColor: Colors.white,
-                      //         child: const Icon(Icons.arrow_back,
-                      //             color: Colors.black),
-                      //       ),
-                      //     ),
-                      //     SizedBox(
-                      //       width: width * 0.25,
-                      //     ),
-                      //     Text(
-                      //       "${StaticData.userModel!.name}",
-                      //       style: TextStyle(
-                      //         fontSize: width * 0.05,
-                      //         fontWeight: FontWeight.w600,
-                      //         color: Colors.black,
-                      //       ),
-                      //     ),
-                      //   ],
-                      // ),
+                      Row(
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => BottomNavBar(),
+                                  ));
+                            },
+                            child: CircleAvatar(
+                              radius: 18,
+                              backgroundColor: Colors.white,
+                              child: const Icon(Icons.arrow_back,
+                                  color: Colors.black),
+                            ),
+                          ),
+                          SizedBox(
+                            width: width * 0.25,
+                          ),
+                          obj.usermodel == null || obj.usermodel!.name == ""
+                              ? const SizedBox()
+                              : Text(
+                                  "${obj.usermodel!.name}",
+                                  style: TextStyle(
+                                    fontSize: width * 0.05,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                        ],
+                      ),
                       Container(
                         height: height * 0.13,
                         child: Row(
@@ -132,7 +142,7 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                         child: Column(
                           children: [
                             obj.usermodel == null || obj.usermodel!.name == ""
-                                ? SizedBox()
+                                ? const SizedBox()
                                 : Center(
                                     child: Container(
                                       height: height * 0.045,
@@ -147,13 +157,13 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                                   ),
                             obj.usermodel == null ||
                                     obj.usermodel!.Address == ""
-                                ? SizedBox()
+                                ? const SizedBox()
                                 : Container(
                                     height: height * 0.035,
                                     width: width * 0.95,
                                     child: Row(
                                       children: [
-                                        Icon(Icons.location_on),
+                                        const Icon(Icons.location_on),
                                         SizedBox(
                                           width: width * 0.02,
                                         ),
@@ -167,7 +177,7 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                                   ),
                             obj.usermodel == null ||
                                     obj.usermodel!.YouTube == ""
-                                ? SizedBox()
+                                ? const SizedBox()
                                 : Container(
                                     height: height * 0.038,
                                     width: width,
@@ -198,7 +208,7 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                                   ),
                             obj.usermodel == null ||
                                     obj.usermodel!.Facebook == ""
-                                ? SizedBox()
+                                ? const SizedBox()
                                 : Container(
                                     height: height * 0.035,
                                     width: width,
@@ -226,7 +236,7 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                                   ),
                             obj.usermodel == null ||
                                     obj.usermodel!.Instagram == ""
-                                ? SizedBox()
+                                ? const SizedBox()
                                 : Container(
                                     height: height * 0.035,
                                     width: width,
@@ -252,7 +262,7 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                                     ),
                                   ),
                             obj.usermodel == null || obj.usermodel!.TikTok == ""
-                                ? SizedBox()
+                                ? const SizedBox()
                                 : Container(
                                     height: height * 0.035,
                                     width: width,
@@ -278,10 +288,8 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                                   ),
                             obj.usermodel == null ||
                                     obj.usermodel!.AboutMe == ""
-                                ? SizedBox()
+                                ? const SizedBox()
                                 : Container(
-                                    height: height * 0.15,
-                                    width: width,
                                     child: ListTile(
                                       title: Text(
                                         "About Me",
@@ -301,7 +309,7 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                                   ),
                             obj.usermodel == null ||
                                     obj.usermodel!.SalonName == ""
-                                ? SizedBox()
+                                ? const SizedBox()
                                 : Container(
                                     height: height * 0.09,
                                     width: width * 0.92,
@@ -343,7 +351,7 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) =>
-                                                EditProfileScreen(),
+                                                const EditProfileScreen(),
                                           ));
                                     },
                                     child: Container(
@@ -364,7 +372,7 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                                       )),
                                     ),
                                   ),
-                                  CircleAvatar(
+                                  const CircleAvatar(
                                     radius: 15,
                                     backgroundColor: Colors.white,
                                     child: Icon(
@@ -425,7 +433,7 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                             ),
                             TweenAnimationBuilder(
                               tween: Tween<double>(begin: 0.0, end: 1.0),
-                              duration: Duration(milliseconds: 1000),
+                              duration: const Duration(milliseconds: 1000),
                               curve: Curves.easeOut,
                               builder: (context, double value, child) {
                                 return Opacity(
@@ -436,132 +444,273 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                                   ),
                                 );
                               },
-                              child: Row(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 8.0, top: 8.0, bottom: 8.0),
-                                    child: Container(
-                                      height: height * 0.13,
-                                      width: width * 0.28,
-                                      decoration: BoxDecoration(
-                                          border:
-                                              Border.all(color: Colors.black45),
-                                          borderRadius:
-                                              BorderRadius.circular(10)),
-                                      child: Center(
-                                          child: GestureDetector(
-                                        onTap: () =>
-                                            obj.showOfferDialog(context),
-                                        child: Icon(
-                                          Icons.camera_alt,
-                                          size: width * 0.1,
-                                          color: Colors.black45,
-                                        ),
-                                      )),
-                                    ),
-                                  ),
-                                  // Expanded(
-                                  //   child:
-
-                                  //  Container(
-                                  //   height: height * 0.15,
-                                  //   width: width,
-                                  //   child: ListView.builder(
-                                  //     itemCount: 5,
-                                  //     scrollDirection: Axis.horizontal,
-                                  //     itemBuilder: (context, index) {
-                                  //       return Padding(
-                                  //         padding: const EdgeInsets.all(8),
-                                  //         child: Container(
-                                  //           width: width * 0.3,
-                                  //           decoration: BoxDecoration(
-                                  //             image: DecorationImage(
-                                  //                 fit: BoxFit.cover,
-                                  //                 image: AssetImage(
-                                  //                     "images/offer.jpeg")),
-                                  //             borderRadius:
-                                  //                 BorderRadius.circular(10),
-                                  //           ),
-                                  //         ),
-                                  //       );
-                                  //     },
-                                  //   ),
-                                  // ),
-
-                                  Expanded(
-                                    child: StreamBuilder<List<OfferModel>>(
-                                      stream: obj.getOffers(),
-                                      builder: (context, snapshot) {
-                                        if (snapshot.connectionState ==
-                                            ConnectionState.waiting) {
-                                          return Center(
-                                              child:
-                                                  CircularProgressIndicator());
-                                        }
-                                        if (snapshot.hasError) {
-                                          return Center(
-                                              child: Text(
-                                                  'Error: ${snapshot.error}'));
-                                        }
-                                        if (!snapshot.hasData ||
-                                            snapshot.data!.isEmpty) {
-                                          return Center(
-                                              child:
-                                                  Text('No offers available'));
-                                        }
-
-                                        final offers = snapshot.data!;
-                                        final width =
-                                            MediaQuery.of(context).size.width;
-                                        return ListView.builder(
-                                          scrollDirection: Axis.horizontal,
-                                          itemCount: offers.length,
-                                          itemBuilder: (context, index) {
-                                            final offer = offers[index];
-                                            return Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: Stack(
-                                                children: [
-                                                  Container(
-                                                    width: width * 0.3,
-                                                    decoration: BoxDecoration(
-                                                      image: DecorationImage(
-                                                        fit: BoxFit.cover,
-                                                        image: NetworkImage(
-                                                            offer.offerPic),
+                              child: Container(
+                                height: height * 0.15,
+                                width: width,
+                                child: Row(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 8.0, top: 8.0, bottom: 8.0),
+                                      child: GestureDetector(
+                                        onTap: () => showDialog(
+                                          context: context,
+                                          builder: (BuildContext dc) {
+                                            return AlertDialog(
+                                              title: const Center(
+                                                  child: Text("Add a Offer")),
+                                              content: Form(
+                                                key: obj.formKey,
+                                                child: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    Container(
+                                                      width: 500,
+                                                      child: TextFormField(
+                                                        controller: obj
+                                                            .offerNameController,
+                                                        decoration:
+                                                            InputDecoration(
+                                                          labelText:
+                                                              'Offer Name',
+                                                        ),
+                                                        validator: (value) {
+                                                          if (value == null ||
+                                                              value.isEmpty) {
+                                                            return 'Please enter a Offer name';
+                                                          }
+                                                          return null;
+                                                        },
                                                       ),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10),
                                                     ),
-                                                  ),
-                                                  Positioned(
-                                                    top: 0,
-                                                    right: 0,
-                                                    child: IconButton(
-                                                      icon: Icon(Icons.delete,
-                                                          color: Colors.red),
-                                                      onPressed: () =>
-                                                          obj.deleteOffer(
-                                                              offer.offerId),
+
+                                                    SizedBox(height: 6),
+                                                    // Pick Image Button
+                                                    ElevatedButton(
+                                                      onPressed: obj.pickImage,
+                                                      child: const Text(
+                                                          'Pick Offer Picture'),
                                                     ),
-                                                  ),
-                                                ],
+                                                    SizedBox(height: 16),
+                                                    obj.offerPic != null
+                                                        ? Image.file(
+                                                            File(obj.offerPic!
+                                                                .path),
+                                                            height: 150)
+                                                        : Container(
+                                                            height: 150,
+                                                            color: Colors
+                                                                .grey[200],
+                                                            child: Center(
+                                                                child: Text(
+                                                                    'No image selected')),
+                                                          ),
+                                                  ],
+                                                ),
                                               ),
+                                              actions: [
+                                                Center(
+                                                  child: ElevatedButton(
+                                                    onPressed: () async {
+                                                      if (obj
+                                                          .formKey.currentState!
+                                                          .validate()) {
+                                                        obj.createOfferCollection(
+                                                            context);
+                                                        Navigator.of(dc).pop();
+                                                      }
+                                                    },
+                                                    style: ElevatedButton
+                                                        .styleFrom(
+                                                      backgroundColor:
+                                                          Colors.pink[200],
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10),
+                                                      ),
+                                                      padding: const EdgeInsets
+                                                              .symmetric(
+                                                          horizontal: 50,
+                                                          vertical: 10),
+                                                    ),
+                                                    child: const Text(
+                                                      "Save",
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(height: 5),
+                                              ],
                                             );
                                           },
-                                        );
-                                      },
+                                        ),
+                                        child: Container(
+                                            height: height * 0.13,
+                                            width: width * 0.28,
+                                            decoration: BoxDecoration(
+                                                border: Border.all(
+                                                    color: Colors.black45),
+                                                borderRadius:
+                                                    BorderRadius.circular(10)),
+                                            child: Center(
+                                              child: Icon(
+                                                Icons.camera_alt,
+                                                size: width * 0.1,
+                                                color: Colors.black45,
+                                              ),
+                                            )),
+                                      ),
                                     ),
-                                  )
+                                    Expanded(
+                                      child: StreamBuilder<QuerySnapshot>(
+                                        stream: FirebaseFirestore.instance
+                                            .collection('offers')
+                                            .where("userId",
+                                                isEqualTo: StaticData
+                                                    .userModel!.UserId)
+                                            .snapshots(),
+                                        builder: (BuildContext context,
+                                            AsyncSnapshot<QuerySnapshot>
+                                                snapshot) {
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.waiting) {
+                                            return const Center(
+                                                child:
+                                                    CircularProgressIndicator());
+                                          }
+                                          if (snapshot.hasError) {
+                                            return Center(
+                                                child: Text(
+                                                    'Error: ${snapshot.error}'));
+                                          }
+                                          if (!snapshot.hasData ||
+                                              snapshot.data!.docs.isEmpty) {
+                                            return const Center(
+                                                child: Text(
+                                                    'No offers available'));
+                                          }
 
-                                  // ),
-                                ],
+                                          final width =
+                                              MediaQuery.of(context).size.width;
+                                          return Container(
+                                            height: height,
+                                            width: width,
+                                            child: ListView.builder(
+                                              scrollDirection: Axis.horizontal,
+                                              itemCount:
+                                                  snapshot.data!.docs.length,
+                                              itemBuilder: (context, index) {
+                                                OfferModel model =
+                                                    OfferModel.fromMap(snapshot
+                                                            .data!.docs[index]
+                                                            .data()
+                                                        as Map<String,
+                                                            dynamic>);
+                                                return Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
+                                                  child: Stack(
+                                                    children: [
+                                                      Container(
+                                                        width: width * 0.3,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          border: Border.all(),
+                                                          image:
+                                                              DecorationImage(
+                                                            fit: BoxFit.cover,
+                                                            image: NetworkImage(
+                                                                model.offerPic),
+                                                          ),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(10),
+                                                        ),
+                                                      ),
+                                                      Positioned(
+                                                        top: 0,
+                                                        right: 0,
+                                                        child: Container(
+                                                          height: height * 0.05,
+                                                          width: width * 0.1,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                                  shape: BoxShape
+                                                                      .circle,
+                                                                  color: Colors
+                                                                      .pink),
+                                                          child: IconButton(
+                                                            icon: const Icon(
+                                                                Icons.delete,
+                                                                color: Colors
+                                                                    .white),
+                                                            onPressed: () {
+                                                              // Show a confirmation dialog
+                                                              showDialog(
+                                                                context:
+                                                                    context,
+                                                                builder:
+                                                                    (BuildContext
+                                                                        context) {
+                                                                  return AlertDialog(
+                                                                    title: const Text(
+                                                                        "Delete Offer"),
+                                                                    content:
+                                                                        const Text(
+                                                                            "Are you sure you want to delete this offer?"),
+                                                                    actions: [
+                                                                      TextButton(
+                                                                        onPressed:
+                                                                            () {
+                                                                          Navigator.of(context)
+                                                                              .pop(); // Close the dialog
+                                                                        },
+                                                                        child: const Text(
+                                                                            "Cancel"),
+                                                                      ),
+                                                                      TextButton(
+                                                                        onPressed:
+                                                                            () {
+                                                                          Navigator.of(context)
+                                                                              .pop(); // Close the dialog
+                                                                          obj.deleteOffer(
+                                                                              model.offerId); // Delete the offer
+                                                                        },
+                                                                        child: const Text(
+                                                                            "Delete",
+                                                                            style:
+                                                                                TextStyle(color: Colors.red)),
+                                                                      ),
+                                                                    ],
+                                                                  );
+                                                                },
+                                                              );
+                                                            },
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    )
+                                  ],
+                                ),
                               ),
                             ),
-                            Divider(
+                            const Divider(
                               thickness: 2,
                             ),
                           ],
@@ -570,7 +719,7 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                       Container(
                         height: height * 0.05,
                         width: width,
-                        child: TabBar(
+                        child: const TabBar(
                           labelColor: Colors.black,
                           unselectedLabelColor: Colors.black54,
                           isScrollable: false,
@@ -596,87 +745,119 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                                   padding:
                                       const EdgeInsets.symmetric(vertical: 4.0),
                                   child: GestureDetector(
-                                    onTap: () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return AlertDialog(
-                                            title: Center(
-                                                child: Text("Add a Service")),
-                                            content: Column(
+                                    onTap: () => showDialog(
+                                      context: context,
+                                      builder: (BuildContext dc) {
+                                        return AlertDialog(
+                                          title: const Center(
+                                              child: Text("Add a Service")),
+                                          content: Form(
+                                            key: obj.formKey,
+                                            child: Column(
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
-                                                CircleAvatar(
-                                                  radius: 35,
-                                                  backgroundColor: Colors.amber,
-                                                  child: Icon(Icons.camera_alt),
-                                                ),
-                                                SizedBox(
-                                                  height: height * 0.02,
-                                                ),
                                                 Container(
                                                   width: width,
                                                   child: TextFormField(
                                                     controller: obj
-                                                        .servicnameController,
-                                                    decoration: InputDecoration(
-                                                        hintText:
-                                                            "Service Name"),
+                                                        .serviceNameController,
+                                                    decoration:
+                                                        const InputDecoration(
+                                                      hintText: "Service Name",
+                                                    ),
+                                                    validator: (value) {
+                                                      if (value == null ||
+                                                          value.isEmpty) {
+                                                        return 'Please enter a service name';
+                                                      }
+                                                      return null;
+                                                    },
                                                   ),
                                                 ),
-                                                SizedBox(
-                                                  height: height * 0.03,
-                                                ),
+                                                SizedBox(height: height * 0.03),
                                                 Container(
                                                   width: width,
                                                   child: TextFormField(
                                                     controller: obj
-                                                        .servicdescriptionController,
-                                                    decoration: InputDecoration(
-                                                        hintText:
-                                                            "Description"),
+                                                        .serviceDescriptionController,
+                                                    decoration:
+                                                        const InputDecoration(
+                                                      hintText: "Description",
+                                                    ),
+                                                    validator: (value) {
+                                                      if (value == null ||
+                                                          value.isEmpty) {
+                                                        return 'Please enter a description for the service';
+                                                      }
+                                                      return null;
+                                                    },
                                                   ),
                                                 ),
+                                                SizedBox(height: height * 0.03),
+                                                ElevatedButton(
+                                                  onPressed:
+                                                      obj.pickServiceImage,
+                                                  child: Text(
+                                                      'Pick Service Picture'),
+                                                ),
+                                                SizedBox(height: height * 0.04),
+                                                obj.servicePic != null
+                                                    ? Image.file(
+                                                        File(
+                                                          obj.servicePic!.path,
+                                                        ),
+                                                        height: 150)
+                                                    : Container(
+                                                        height: 150,
+                                                        color: Colors.grey[200],
+                                                        child: Center(
+                                                            child: Text(
+                                                                'No image selected')),
+                                                      )
                                               ],
                                             ),
-                                            actions: [
-                                              Center(
-                                                child: ElevatedButton(
-                                                  onPressed: () async {},
-                                                  style:
-                                                      ElevatedButton.styleFrom(
-                                                    backgroundColor:
-                                                        Colors.pink[200],
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10),
-                                                    ),
-                                                    padding: const EdgeInsets
-                                                            .symmetric(
-                                                        horizontal: 50,
-                                                        vertical: 10),
+                                          ),
+                                          actions: [
+                                            Center(
+                                              child: ElevatedButton(
+                                                onPressed: () async {
+                                                  if (obj.formKey.currentState!
+                                                      .validate()) {
+                                                    await obj
+                                                        .createServiceCollection(
+                                                      context,
+                                                    );
+                                                    Navigator.of(context).pop();
+                                                  }
+                                                },
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor:
+                                                      Colors.pink[200],
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
                                                   ),
-                                                  child: const Text(
-                                                    "Save",
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
+                                                  padding: const EdgeInsets
+                                                          .symmetric(
+                                                      horizontal: 50,
+                                                      vertical: 10),
+                                                ),
+                                                child: const Text(
+                                                  "Save",
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
                                                   ),
                                                 ),
                                               ),
-                                              SizedBox(
-                                                height: height * 0.02,
-                                              )
-                                            ],
-                                          );
-                                        },
-                                      );
-                                    },
+                                            ),
+                                            SizedBox(height: height * 0.02),
+                                          ],
+                                        );
+                                      },
+                                    ),
                                     child: Container(
                                       height: height * 0.09,
                                       width: width,
@@ -694,70 +875,210 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                                     ),
                                   ),
                                 ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: UserModel1.mylist.map((item) {
-                                    return TweenAnimationBuilder(
-                                      tween:
-                                          Tween<double>(begin: 0.0, end: 1.0),
-                                      duration:
-                                          const Duration(milliseconds: 800),
-                                      curve: Curves.easeOut,
-                                      builder: (context, double value, child) {
-                                        return Opacity(
-                                          opacity: value,
-                                          child: Transform.translate(
-                                            offset: Offset(0, 50 * (1 - value)),
-                                            child: child,
-                                          ),
-                                        );
-                                      },
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 4.0),
-                                        child: Container(
-                                          height: height * 0.12,
-                                          width: width,
-                                          decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: Colors.black12,
-                                                  width: width * 0.002)),
-                                          child: Center(
-                                            child: ListTile(
-                                              leading: Container(
-                                                height: height * 0.07,
-                                                width: width * 0.15,
+                                StreamBuilder<QuerySnapshot>(
+                                  stream: FirebaseFirestore.instance
+                                      .collection(
+                                          'services') // Your 'services' collection
+                                      .where("userId",
+                                          isEqualTo:
+                                              StaticData.userModel!.UserId)
+                                      .snapshots(),
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot<QuerySnapshot> snapshot) {
+                                    // Handle connection states and errors
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return const Center(
+                                          child: CircularProgressIndicator());
+                                    }
+                                    if (snapshot.hasError) {
+                                      return Center(
+                                          child:
+                                              Text('Error: ${snapshot.error}'));
+                                    }
+                                    if (!snapshot.hasData ||
+                                        snapshot.data!.docs.isEmpty) {
+                                      return const Center(
+                                          child: Text('No services available'));
+                                    }
+
+                                    final width =
+                                        MediaQuery.of(context).size.width;
+
+                                    return Container(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children:
+                                            snapshot.data!.docs.map((doc) {
+                                          // Ensure that the Firestore document is parsed into the model correctly
+                                          ServiceModel model =
+                                              ServiceModel.fromMap(doc.data()
+                                                  as Map<String, dynamic>);
+
+                                          return TweenAnimationBuilder(
+                                            tween: Tween<double>(
+                                                begin: 0.0, end: 1.0),
+                                            duration: const Duration(
+                                                milliseconds: 800),
+                                            curve: Curves.easeOut,
+                                            builder:
+                                                (context, double value, child) {
+                                              return Opacity(
+                                                opacity: value,
+                                                child: Transform.translate(
+                                                  offset: Offset(
+                                                      0, 50 * (1 - value)),
+                                                  child: child,
+                                                ),
+                                              );
+                                            },
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 4.0),
+                                              child: Container(
+                                                height: height * 0.12,
+                                                width: width,
                                                 decoration: BoxDecoration(
-                                                    image: DecorationImage(
-                                                        fit: BoxFit.cover,
-                                                        image: AssetImage(
-                                                            item.image!)),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10)),
-                                              ),
-                                              title: Text(
-                                                item.name!,
-                                                style: TextStyle(
-                                                    fontSize: width * 0.04,
-                                                    fontWeight:
-                                                        FontWeight.w500),
-                                              ),
-                                              subtitle: Text(
-                                                item.Description!,
-                                                style: TextStyle(
-                                                    fontSize: width * 0.028,
-                                                    fontWeight: FontWeight.w400,
-                                                    overflow:
-                                                        TextOverflow.fade),
+                                                  border: Border.all(
+                                                      color: Colors.black12,
+                                                      width: width * 0.002),
+                                                ),
+                                                child: Center(
+                                                  child: ListTile(
+                                                    leading: Container(
+                                                      height: height * 0.07,
+                                                      width: width * 0.15,
+                                                      decoration: BoxDecoration(
+                                                        image: DecorationImage(
+                                                          fit: BoxFit.cover,
+                                                          image: NetworkImage(model
+                                                                  .servicePic ??
+                                                              ''), // Safe access
+                                                        ),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10),
+                                                      ),
+                                                    ),
+                                                    title: Text(
+                                                      model.serviceName ?? '',
+                                                      style: TextStyle(
+                                                        fontSize: width * 0.04,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                    ),
+                                                    subtitle: Text(
+                                                      model.serviceDescription ??
+                                                          '',
+                                                      style: TextStyle(
+                                                        fontSize: width * 0.028,
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        overflow:
+                                                            TextOverflow.fade,
+                                                      ),
+                                                    ),
+                                                    trailing:
+                                                        PopupMenuButton<String>(
+                                                      onSelected:
+                                                          (String value) {
+                                                        if (value == 'update') {
+                                                          // Open dialog to update the service
+                                                          // obj.showUpdateServiceDialog(context, model);
+                                                        } else if (value ==
+                                                            'delete') {
+                                                          // Show confirmation dialog before deleting
+                                                          showDialog(
+                                                            context: context,
+                                                            builder:
+                                                                (BuildContext
+                                                                    context) {
+                                                              return AlertDialog(
+                                                                title: const Text(
+                                                                    "Delete Service"),
+                                                                content: const Text(
+                                                                    "Are you sure you want to delete this service?"),
+                                                                actions: [
+                                                                  TextButton(
+                                                                    onPressed:
+                                                                        () {
+                                                                      Navigator.of(
+                                                                              context)
+                                                                          .pop(); // Close the dialog
+                                                                    },
+                                                                    child: const Text(
+                                                                        "Cancel"),
+                                                                  ),
+                                                                  TextButton(
+                                                                    onPressed:
+                                                                        () {
+                                                                      Navigator.of(
+                                                                              context)
+                                                                          .pop(); // Close the dialog
+                                                                      obj.deleteService(
+                                                                          context,
+                                                                          model
+                                                                              .serviceId); // Delete the service
+                                                                    },
+                                                                    child: const Text(
+                                                                        "Delete",
+                                                                        style: TextStyle(
+                                                                            color:
+                                                                                Colors.red)),
+                                                                  ),
+                                                                ],
+                                                              );
+                                                            },
+                                                          );
+                                                        }
+                                                      },
+                                                      itemBuilder: (BuildContext
+                                                          context) {
+                                                        return [
+                                                          PopupMenuItem<String>(
+                                                            value: 'update',
+                                                            child: Row(
+                                                              children: const [
+                                                                Icon(Icons.edit,
+                                                                    color: Colors
+                                                                        .blue),
+                                                                SizedBox(
+                                                                    width: 8),
+                                                                Text('Update'),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          PopupMenuItem<String>(
+                                                            value: 'delete',
+                                                            child: Row(
+                                                              children: const [
+                                                                Icon(
+                                                                    Icons
+                                                                        .delete,
+                                                                    color: Colors
+                                                                        .red),
+                                                                SizedBox(
+                                                                    width: 8),
+                                                                Text('Delete'),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ];
+                                                      },
+                                                    ),
+                                                  ),
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                        ),
+                                          );
+                                        }).toList(),
                                       ),
                                     );
-                                  }).toList(),
-                                ),
+                                  },
+                                )
                               ],
                             ),
                             Column(
@@ -771,12 +1092,13 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                                         context: context,
                                         builder: (BuildContext context) {
                                           return AlertDialog(
-                                            title: Center(
-                                                child: Text("Add a Service")),
+                                            title: const Center(
+                                                child:
+                                                    Text("Add a Specialist")),
                                             content: Column(
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
-                                                CircleAvatar(
+                                                const CircleAvatar(
                                                   radius: 35,
                                                   backgroundColor: Colors.amber,
                                                   child: Icon(Icons.camera_alt),
@@ -789,9 +1111,10 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                                                   child: TextFormField(
                                                     controller: obj
                                                         .servicnameController,
-                                                    decoration: InputDecoration(
-                                                        hintText:
-                                                            "Specialist Name"),
+                                                    decoration:
+                                                        const InputDecoration(
+                                                            hintText:
+                                                                "Specialist Name"),
                                                   ),
                                                 ),
                                                 SizedBox(
@@ -802,9 +1125,10 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                                                   child: TextFormField(
                                                     controller: obj
                                                         .servicdescriptionController,
-                                                    decoration: InputDecoration(
-                                                        hintText:
-                                                            "Add Service"),
+                                                    decoration:
+                                                        const InputDecoration(
+                                                            hintText:
+                                                                "Add Service"),
                                                   ),
                                                 ),
                                               ],
@@ -847,20 +1171,120 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                                         },
                                       );
                                     },
-                                    child: Container(
-                                      height: height * 0.09,
-                                      width: width,
-                                      decoration: BoxDecoration(
-                                          border: Border.all(
-                                              color: Colors.black12,
-                                              width: width * 0.002)),
-                                      child: Center(
-                                          child: Text(
-                                        "Add a Specialist ",
-                                        style: TextStyle(
-                                            fontSize: width * 0.05,
-                                            fontWeight: FontWeight.w500),
-                                      )),
+                                    child: GestureDetector(
+                                      onTap: () => showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: const Center(
+                                                child:
+                                                    Text("Add a Specialist")),
+                                            content: SingleChildScrollView(
+                                              child: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  SizedBox(height: 3),
+                                                  ElevatedButton(
+                                                    onPressed:
+                                                        obj.pickSpecialistImage,
+                                                    child: Text(
+                                                        'Pick Service Picture'),
+                                                  ),
+                                                  SizedBox(height: 16),
+                                                  obj.specialistPic != null
+                                                      ? Image.file(
+                                                          File(
+                                                            obj.specialistPic!
+                                                                .path,
+                                                          ),
+                                                          height: 150)
+                                                      : Container(
+                                                          height: 150,
+                                                          color:
+                                                              Colors.grey[200],
+                                                          child: Center(
+                                                              child: Text(
+                                                                  'No image selected')),
+                                                        ),
+                                                  SizedBox(height: 20),
+                                                  Container(
+                                                    width: 500,
+                                                    child: TextFormField(
+                                                      controller: obj
+                                                          .specialistNameController,
+                                                      decoration:
+                                                          const InputDecoration(
+                                                              hintText:
+                                                                  "Specialist Name"),
+                                                    ),
+                                                  ),
+                                                  SizedBox(height: 20),
+                                                  TextFormField(
+                                                    controller: obj
+                                                        .specialistServiceNameController,
+                                                    decoration:
+                                                        const InputDecoration(
+                                                            hintText:
+                                                                "Specialist Service Name"),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            actions: [
+                                              Center(
+                                                child: ElevatedButton(
+                                                  onPressed: () async {
+                                                    await obj
+                                                        .createSpecialistCollection(
+                                                            context);
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                    backgroundColor:
+                                                        Colors.pink[200],
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                    ),
+                                                    padding: const EdgeInsets
+                                                            .symmetric(
+                                                        horizontal: 50,
+                                                        vertical: 10),
+                                                  ),
+                                                  child: const Text(
+                                                    "Save",
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              SizedBox(height: 20),
+                                            ],
+                                          );
+                                        },
+                                      ),
+                                      child: Container(
+                                        height: height * 0.09,
+                                        width: width,
+                                        decoration: BoxDecoration(
+                                            border: Border.all(
+                                                color: Colors.black12,
+                                                width: width * 0.002)),
+                                        child: Center(
+                                            child: Text(
+                                          "Add a Specialist ",
+                                          style: TextStyle(
+                                              fontSize: width * 0.05,
+                                              fontWeight: FontWeight.w500),
+                                        )),
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -886,282 +1310,292 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                                             fontWeight: FontWeight.bold))
                                   ])),
                                 ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: UserModel2.mylist.map((item) {
-                                    return TweenAnimationBuilder(
-                                      tween:
-                                          Tween<double>(begin: 0.0, end: 1.0),
-                                      duration:
-                                          const Duration(milliseconds: 800),
-                                      curve: Curves.easeOut,
-                                      builder: (context, double value, child) {
-                                        return Opacity(
-                                          opacity: value,
-                                          child: Transform.translate(
-                                            offset: Offset(0, 50 * (1 - value)),
-                                            child: child,
-                                          ),
+                                Expanded(
+                                  child: StreamBuilder<QuerySnapshot>(
+                                    stream: FirebaseFirestore.instance
+                                        .collection('specialists')
+                                        .where("userId",
+                                            isEqualTo:
+                                                StaticData.userModel!.UserId)
+                                        .snapshots(),
+                                    builder: (BuildContext context,
+                                        AsyncSnapshot<QuerySnapshot> snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return const Center(
+                                            child: CircularProgressIndicator());
+                                      }
+
+                                      if (snapshot.hasError) {
+                                        return Center(
+                                            child: Text(
+                                                'Error: ${snapshot.error}'));
+                                      }
+
+                                      if (!snapshot.hasData ||
+                                          snapshot.data!.docs.isEmpty) {
+                                        return const Center(
+                                            child: Text(
+                                                'No Specialists available'));
+                                      }
+
+                                      final width =
+                                          MediaQuery.of(context).size.width;
+                                      final height =
+                                          MediaQuery.of(context).size.height;
+
+                                      // Convert Firestore docs to SpecialistModel list
+                                      List<SpecialistModel> specialists =
+                                          snapshot.data!.docs.map((doc) {
+                                        return SpecialistModel.fromMap(
+                                            doc.data() as Map<String, dynamic>);
+                                      }).toList();
+
+                                      // Group specialists into pairs for row-wise display
+                                      List<List<SpecialistModel>>
+                                          specialistPairs = [];
+                                      for (int i = 0;
+                                          i < specialists.length;
+                                          i += 2) {
+                                        specialistPairs.add(
+                                          specialists.sublist(
+                                              i,
+                                              i + 2 > specialists.length
+                                                  ? specialists.length
+                                                  : i + 2),
                                         );
-                                      },
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 10.0),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
-                                          children: [
-                                            Card(
-                                              elevation: 2,
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          10)),
-                                              child: Container(
-                                                height: height * 0.2,
-                                                width: width * 0.43,
-                                                decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10)),
-                                                child: Column(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceEvenly,
-                                                  children: [
-                                                    CircleAvatar(
-                                                      radius: 30,
-                                                      backgroundImage:
-                                                          AssetImage(
-                                                              item.image!),
-                                                    ),
-                                                    Container(
-                                                      height: height * 0.08,
-                                                      width: width,
-                                                      child: Column(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceEvenly,
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Container(
-                                                            child: Center(
-                                                              child: Text(
-                                                                "Alena Shahzad",
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontSize:
-                                                                      width *
-                                                                          0.032,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500,
-                                                                  overflow:
-                                                                      TextOverflow
-                                                                          .clip,
-                                                                ),
-                                                              ),
-                                                            ),
+                                      }
+
+                                      return ListView.builder(
+                                        itemCount: specialistPairs.length,
+                                        itemBuilder: (context, index) {
+                                          List<SpecialistModel> pair =
+                                              specialistPairs[index];
+                                          return Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 10.0),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceEvenly,
+                                              children: pair.map((specialist) {
+                                                return TweenAnimationBuilder(
+                                                  tween: Tween<double>(
+                                                      begin: 0.0, end: 1.0),
+                                                  duration: const Duration(
+                                                      milliseconds: 800),
+                                                  curve: Curves.easeOut,
+                                                  builder: (context,
+                                                      double value, child) {
+                                                    return Opacity(
+                                                      opacity: value,
+                                                      child:
+                                                          Transform.translate(
+                                                        offset: Offset(0,
+                                                            50 * (1 - value)),
+                                                        child: child,
+                                                      ),
+                                                    );
+                                                  },
+                                                  child: Stack(
+                                                    children: [
+                                                      Card(
+                                                        elevation: 2,
+                                                        shape:
+                                                            RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(10),
+                                                        ),
+                                                        child: Container(
+                                                          height: height * 0.2,
+                                                          width: width * 0.43,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10),
                                                           ),
-                                                          Center(
-                                                            child: Text(
-                                                              item.name!,
-                                                              style: TextStyle(
-                                                                fontSize:
-                                                                    width *
-                                                                        0.032,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w400,
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .fade,
+                                                          child: Column(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceEvenly,
+                                                            children: [
+                                                              CircleAvatar(
+                                                                radius: 30,
+                                                                backgroundImage:
+                                                                    NetworkImage(
+                                                                        specialist.specialistPic ??
+                                                                            ''),
                                                               ),
-                                                            ),
-                                                          ),
-                                                          Container(
-                                                              child: Row(
+                                                              Container(
+                                                                height: height *
+                                                                    0.08,
+                                                                width: width,
+                                                                child: Column(
                                                                   mainAxisAlignment:
                                                                       MainAxisAlignment
-                                                                          .center,
+                                                                          .spaceEvenly,
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
                                                                   children: [
-                                                                RatingStars(
-                                                                  value: rating,
-                                                                  onValueChanged:
-                                                                      (newRating) {},
-                                                                  starCount:
-                                                                      5, // Number of stars
-                                                                  starSize:
-                                                                      12, // Size of the stars
-                                                                  starColor: Color
-                                                                      .fromARGB(
-                                                                          255,
-                                                                          241,
-                                                                          134,
-                                                                          170),
-                                                                  valueLabelColor:
-                                                                      Color.fromRGBO(
-                                                                          240,
-                                                                          134,
-                                                                          169,
-                                                                          1),
-                                                                  starSpacing:
-                                                                      2, // Space between the stars
-                                                                  valueLabelVisibility:
-                                                                      false,
-                                                                ),
-                                                                SizedBox(
-                                                                  width: width *
-                                                                      0.03,
-                                                                ),
-                                                                Text(
-                                                                  '$rating',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontSize:
-                                                                        14,
-                                                                    color: Colors
-                                                                        .black, // Adjust color as needed
-                                                                  ),
-                                                                ),
-                                                              ]))
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                            Card(
-                                              elevation: 2,
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          10)),
-                                              child: Container(
-                                                height: height * 0.2,
-                                                width: width * 0.43,
-                                                decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10)),
-                                                child: Column(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceEvenly,
-                                                  children: [
-                                                    CircleAvatar(
-                                                      radius: 30,
-                                                      backgroundImage:
-                                                          AssetImage(
-                                                              StaticData.myDp),
-                                                    ),
-                                                    Container(
-                                                      height: height * 0.08,
-                                                      width: width * 0.3,
-                                                      child: Column(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceEvenly,
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Container(
-                                                            child: Center(
-                                                              child: Text(
-                                                                "Alena Shahzad",
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontSize:
-                                                                      width *
-                                                                          0.032,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500,
-                                                                  overflow:
-                                                                      TextOverflow
-                                                                          .clip,
+                                                                    Center(
+                                                                      child:
+                                                                          Text(
+                                                                        specialist.specialistName ??
+                                                                            'No Name',
+                                                                        style:
+                                                                            TextStyle(
+                                                                          fontSize:
+                                                                              width * 0.032,
+                                                                          fontWeight:
+                                                                              FontWeight.w500,
+                                                                          overflow:
+                                                                              TextOverflow.clip,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    Center(
+                                                                      child:
+                                                                          Text(
+                                                                        specialist.specialistServiceName ??
+                                                                            'No Service',
+                                                                        style:
+                                                                            TextStyle(
+                                                                          fontSize:
+                                                                              width * 0.032,
+                                                                          fontWeight:
+                                                                              FontWeight.w400,
+                                                                          overflow:
+                                                                              TextOverflow.fade,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    Container(
+                                                                      child:
+                                                                          Row(
+                                                                        mainAxisAlignment:
+                                                                            MainAxisAlignment.center,
+                                                                        children: [
+                                                                          RatingStars(
+                                                                            value:
+                                                                                rating,
+                                                                            onValueChanged:
+                                                                                (newRating) {},
+                                                                            starCount:
+                                                                                5,
+                                                                            starSize:
+                                                                                12,
+                                                                            starColor: const Color.fromARGB(
+                                                                                255,
+                                                                                241,
+                                                                                134,
+                                                                                170),
+                                                                            valueLabelColor: const Color.fromRGBO(
+                                                                                240,
+                                                                                134,
+                                                                                169,
+                                                                                1),
+                                                                            starSpacing:
+                                                                                2,
+                                                                            valueLabelVisibility:
+                                                                                false,
+                                                                          ),
+                                                                          SizedBox(
+                                                                              width: width * 0.03),
+                                                                          Text(
+                                                                            '$rating',
+                                                                            style:
+                                                                                const TextStyle(
+                                                                              fontSize: 14,
+                                                                              color: Colors.black,
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                  ],
                                                                 ),
                                                               ),
-                                                            ),
+                                                            ],
                                                           ),
-                                                          Center(
-                                                            child: Text(
-                                                              item.name!,
-                                                              style: TextStyle(
-                                                                fontSize:
-                                                                    width *
-                                                                        0.032,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w400,
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .fade,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          Container(
-                                                              child: Row(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .center,
-                                                                  children: [
-                                                                RatingStars(
-                                                                  value: rating,
-                                                                  onValueChanged:
-                                                                      (newRating) {},
-                                                                  starCount:
-                                                                      5, // Number of stars
-                                                                  starSize:
-                                                                      12, // Size of the stars
-                                                                  starColor: Color
-                                                                      .fromARGB(
-                                                                          255,
-                                                                          241,
-                                                                          134,
-                                                                          170),
-                                                                  valueLabelColor:
-                                                                      Color.fromRGBO(
-                                                                          240,
-                                                                          134,
-                                                                          169,
-                                                                          1),
-                                                                  starSpacing:
-                                                                      2, // Space between the stars
-                                                                  valueLabelVisibility:
-                                                                      false,
-                                                                ),
-                                                                SizedBox(
-                                                                  width: width *
-                                                                      0.03,
-                                                                ),
-                                                                Text(
-                                                                  '$rating',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontSize:
-                                                                        14,
-                                                                    color: Colors
-                                                                        .black, // Adjust color as needed
-                                                                  ),
-                                                                ),
-                                                              ]))
-                                                        ],
+                                                        ),
                                                       ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
+                                                      Positioned(
+                                                        top: 0,
+                                                        right: 0,
+                                                        child: Container(
+                                                          height: height * 0.05,
+                                                          width: width * 0.1,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            shape:
+                                                                BoxShape.circle,
+                                                            color: Colors.pink,
+                                                          ),
+                                                          child: IconButton(
+                                                            icon: const Icon(
+                                                                Icons.delete,
+                                                                color: Colors
+                                                                    .white),
+                                                            onPressed: () {
+                                                              // Show a confirmation dialog
+                                                              showDialog(
+                                                                context:
+                                                                    context,
+                                                                builder:
+                                                                    (BuildContext
+                                                                        context) {
+                                                                  return AlertDialog(
+                                                                    title: const Text(
+                                                                        "Delete Specialist"),
+                                                                    content:
+                                                                        const Text(
+                                                                            "Are you sure you want to delete this specialist?"),
+                                                                    actions: [
+                                                                      TextButton(
+                                                                        onPressed:
+                                                                            () {
+                                                                          Navigator.of(context)
+                                                                              .pop(); // Close the dialog
+                                                                        },
+                                                                        child: const Text(
+                                                                            "Cancel"),
+                                                                      ),
+                                                                      TextButton(
+                                                                        onPressed:
+                                                                            () {
+                                                                          Navigator.of(context)
+                                                                              .pop(); // Close the dialog
+                                                                          if (specialist.specialistId !=
+                                                                              null) {
+                                                                            obj.deleteSpecialist(specialist.specialistId!); // Call deleteSpecialist
+                                                                          }
+                                                                        },
+                                                                        child: const Text(
+                                                                            "Delete",
+                                                                            style:
+                                                                                TextStyle(color: Colors.red)),
+                                                                      ),
+                                                                    ],
+                                                                  );
+                                                                },
+                                                              );
+                                                            },
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                              }).toList(),
                                             ),
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  }).toList(),
+                                          );
+                                        },
+                                      );
+                                    },
+                                  ),
                                 ),
                               ],
                             ),
@@ -1185,7 +1619,7 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                                 ),
                                 TweenAnimationBuilder(
                                   tween: Tween<double>(begin: 0.0, end: 1.0),
-                                  duration: Duration(milliseconds: 1000),
+                                  duration: const Duration(milliseconds: 1000),
                                   curve: Curves.easeOut,
                                   builder: (context, double value, child) {
                                     return Opacity(
@@ -1201,66 +1635,345 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                                       Padding(
                                         padding: const EdgeInsets.only(
                                             left: 8.0, top: 8, bottom: 8),
-                                        child: Container(
-                                          width: width * 0.3,
-                                          height: height * 0.13,
-                                          decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: Colors.black45),
-                                              borderRadius:
-                                                  BorderRadius.circular(10)),
-                                          child: Icon(
-                                            Icons.camera_alt,
-                                            size: width * 0.1,
-                                            color: Colors.black45,
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            showDialog(
+                                              context: context,
+                                              builder: (BuildContext dc) {
+                                                return AlertDialog(
+                                                  title: const Center(
+                                                      child: Text(
+                                                          "Add a Product")),
+                                                  content: Form(
+                                                    key: obj.formKey,
+                                                    child: Column(
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      children: [
+                                                        Container(
+                                                          width: 500,
+                                                          child: TextFormField(
+                                                            controller: obj
+                                                                .productNameController,
+                                                            decoration:
+                                                                const InputDecoration(
+                                                              hintText:
+                                                                  "Product Name",
+                                                            ),
+                                                            validator: (value) {
+                                                              if (value ==
+                                                                      null ||
+                                                                  value
+                                                                      .isEmpty) {
+                                                                return 'Please enter a product name';
+                                                              }
+                                                              return null;
+                                                            },
+                                                          ),
+                                                        ),
+                                                        SizedBox(height: 16),
+                                                        TextFormField(
+                                                          controller: obj
+                                                              .productPriceController,
+                                                          decoration:
+                                                              InputDecoration(
+                                                            labelText:
+                                                                'Product Price',
+                                                          ),
+                                                          keyboardType:
+                                                              TextInputType
+                                                                  .number,
+                                                          validator: (value) {
+                                                            if (value == null ||
+                                                                value.isEmpty) {
+                                                              return 'Please enter a product price';
+                                                            }
+                                                            return null;
+                                                          },
+                                                        ),
+                                                        SizedBox(height: 6),
+                                                        ElevatedButton(
+                                                          onPressed: obj
+                                                              .pickProductImage,
+                                                          child: const Text(
+                                                              'Pick Product Picture'),
+                                                        ),
+                                                        SizedBox(height: 16),
+                                                        obj.productPic != null
+                                                            ? Image.file(
+                                                                File(obj
+                                                                    .productPic!
+                                                                    .path),
+                                                                height: 150)
+                                                            : Container(
+                                                                height: 150,
+                                                                color: Colors
+                                                                    .grey[200],
+                                                                child: const Center(
+                                                                    child: Text(
+                                                                        'No image selected')),
+                                                              ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  actions: [
+                                                    Center(
+                                                      child: ElevatedButton(
+                                                        onPressed: () async {
+                                                          if (obj.formKey
+                                                              .currentState!
+                                                              .validate()) {
+                                                            await obj
+                                                                .createProductCollection(
+                                                                    context);
+                                                            Navigator.of(dc)
+                                                                .pop();
+                                                          }
+                                                        },
+                                                        style: ElevatedButton
+                                                            .styleFrom(
+                                                          backgroundColor:
+                                                              Colors.pink[200],
+                                                          shape:
+                                                              RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10),
+                                                          ),
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .symmetric(
+                                                                  horizontal:
+                                                                      50,
+                                                                  vertical: 10),
+                                                        ),
+                                                        child: const Text(
+                                                          "Save",
+                                                          style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontSize: 16,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(height: 5),
+                                                  ],
+                                                );
+                                              },
+                                            );
+                                          },
+                                          child: Container(
+                                            width: width * 0.3,
+                                            height: height * 0.13,
+                                            decoration: BoxDecoration(
+                                                border: Border.all(
+                                                    color: Colors.black45),
+                                                borderRadius:
+                                                    BorderRadius.circular(10)),
+                                            child: Icon(
+                                              Icons.camera_alt,
+                                              size: width * 0.1,
+                                              color: Colors.black45,
+                                            ),
                                           ),
                                         ),
                                       ),
                                       Expanded(
-                                        child: Container(
-                                          height: height * 0.15,
-                                          width: width,
-                                          child: ListView.builder(
-                                            itemCount: 2,
-                                            scrollDirection: Axis.horizontal,
-                                            itemBuilder: (context, index) {
-                                              return GestureDetector(
-                                                onTap: () {
-                                                  Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            BeautyProductScreen(),
-                                                      ));
-                                                },
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(8),
-                                                  child: Container(
-                                                    width: width * 0.3,
-                                                    decoration: BoxDecoration(
-                                                      image: DecorationImage(
-                                                          fit: BoxFit.cover,
-                                                          image: AssetImage(
-                                                              "images/product.jpg")),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10),
+                                        child: StreamBuilder<QuerySnapshot>(
+                                          stream: FirebaseFirestore.instance
+                                              .collection(
+                                                  'products') // Change to 'products' collection
+                                              .where("userId",
+                                                  isEqualTo: StaticData
+                                                      .userModel!.UserId)
+                                              .snapshots(),
+                                          builder: (BuildContext context,
+                                              AsyncSnapshot<QuerySnapshot>
+                                                  snapshot) {
+                                            if (snapshot.connectionState ==
+                                                ConnectionState.waiting) {
+                                              return const Center(
+                                                  child:
+                                                      CircularProgressIndicator());
+                                            }
+                                            if (snapshot.hasError) {
+                                              return Center(
+                                                  child: Text(
+                                                      'Error: ${snapshot.error}'));
+                                            }
+                                            if (!snapshot.hasData ||
+                                                snapshot.data!.docs.isEmpty) {
+                                              return const Center(
+                                                  child: Text(
+                                                      'No products available'));
+                                            }
+
+                                            final width = MediaQuery.of(context)
+                                                .size
+                                                .width;
+                                            final height =
+                                                MediaQuery.of(context)
+                                                    .size
+                                                    .height;
+
+                                            return Container(
+                                              height: height * 0.15,
+                                              width: width,
+                                              child: ListView.builder(
+                                                scrollDirection:
+                                                    Axis.horizontal,
+                                                itemCount:
+                                                    snapshot.data!.docs.length,
+                                                itemBuilder: (context, index) {
+                                                  ProductModel model =
+                                                      ProductModel.fromMap(
+                                                          snapshot.data!
+                                                                  .docs[index]
+                                                                  .data()
+                                                              as Map<String,
+                                                                  dynamic>);
+                                                  return GestureDetector(
+                                                    onTap: () {
+                                                      Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              const BeautyProductScreen(),
+                                                        ),
+                                                      );
+                                                    },
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              8.0),
+                                                      child: Stack(
+                                                        children: [
+                                                          Container(
+                                                            width: width * 0.3,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              border:
+                                                                  Border.all(),
+                                                              image:
+                                                                  DecorationImage(
+                                                                fit: BoxFit
+                                                                    .cover,
+                                                                image: NetworkImage(
+                                                                    model.productPic ??
+                                                                        ''),
+                                                              ),
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          10),
+                                                            ),
+                                                          ),
+                                                          Positioned(
+                                                            top: 0,
+                                                            right: 0,
+                                                            child: Container(
+                                                              height:
+                                                                  height * 0.05,
+                                                              width:
+                                                                  width * 0.1,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                shape: BoxShape
+                                                                    .circle,
+                                                                color:
+                                                                    Colors.pink,
+                                                              ),
+                                                              child: IconButton(
+                                                                icon: const Icon(
+                                                                    Icons
+                                                                        .delete,
+                                                                    color: Colors
+                                                                        .white),
+                                                                onPressed: () {
+                                                                  showDialog(
+                                                                    context:
+                                                                        context,
+                                                                    builder:
+                                                                        (BuildContext
+                                                                            context) {
+                                                                      return AlertDialog(
+                                                                        title: const Text(
+                                                                            "Delete Product"),
+                                                                        content:
+                                                                            const Text("Are you sure you want to delete this Product?"),
+                                                                        actions: [
+                                                                          TextButton(
+                                                                            onPressed:
+                                                                                () {
+                                                                              Navigator.of(context).pop();
+                                                                            },
+                                                                            child:
+                                                                                const Text("Cancel"),
+                                                                          ),
+                                                                          TextButton(
+                                                                            onPressed:
+                                                                                () {
+                                                                              Navigator.of(context).pop();
+                                                                              obj.deleteProduct(context, model.productId!);
+                                                                            },
+                                                                            child:
+                                                                                const Text("Delete", style: TextStyle(color: Colors.red)),
+                                                                          ),
+                                                                        ],
+                                                                      );
+                                                                    },
+                                                                  );
+                                                                },
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          Positioned(
+                                                            bottom: 10,
+                                                            left: 0,
+                                                            child: Container(
+                                                              color: Colors
+                                                                  .black
+                                                                  .withOpacity(
+                                                                      0.5),
+                                                              width:
+                                                                  width * 0.3,
+                                                              child: Text(
+                                                                '\$${model.productPrice}',
+                                                                style:
+                                                                    TextStyle(
+                                                                  color: Colors
+                                                                      .white,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  fontSize: 16,
+                                                                ),
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .center,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
                                                     ),
-                                                  ),
-                                                ),
-                                              );
-                                            },
-                                          ),
+                                                  );
+                                                },
+                                              ),
+                                            );
+                                          },
                                         ),
-                                      ),
+                                      )
                                     ],
                                   ),
                                 ),
 
                                 TweenAnimationBuilder(
                                   tween: Tween<double>(begin: 0.0, end: 1.0),
-                                  duration: Duration(milliseconds: 800),
+                                  duration: const Duration(milliseconds: 800),
                                   curve: Curves.easeOut,
                                   builder: (context, double value, child) {
                                     return Opacity(
@@ -1286,7 +1999,7 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                                 ),
                                 TweenAnimationBuilder(
                                   tween: Tween<double>(begin: 0.0, end: 1.0),
-                                  duration: Duration(milliseconds: 1000),
+                                  duration: const Duration(milliseconds: 1000),
                                   curve: Curves.easeOut,
                                   builder: (context, double value, child) {
                                     return Opacity(
@@ -1302,51 +2015,283 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                                       Padding(
                                         padding: const EdgeInsets.only(
                                             left: 8.0, top: 8, bottom: 8),
-                                        child: Container(
-                                          width: width * 0.3,
-                                          height: height * 0.13,
-                                          decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: Colors.black45),
-                                              borderRadius:
-                                                  BorderRadius.circular(10)),
-                                          child: Icon(
-                                            Icons.camera_alt,
-                                            size: width * 0.1,
-                                            color: Colors.black45,
+                                        child: GestureDetector(
+                                          onTap: () => showDialog(
+                                            context: context,
+                                            builder: (BuildContext dc) {
+                                              return AlertDialog(
+                                                title: const Center(
+                                                    child: Text(
+                                                        "Add a Recent Work")),
+                                                content: Form(
+                                                  key: obj.formKey,
+                                                  child: Column(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: [
+                                                      Container(
+                                                        width: 500,
+                                                        child: TextFormField(
+                                                          controller: obj
+                                                              .workTypeController,
+                                                          decoration:
+                                                              InputDecoration(
+                                                            labelText:
+                                                                'Work Type',
+                                                          ),
+                                                          validator: (value) {
+                                                            if (value == null ||
+                                                                value.isEmpty) {
+                                                              return 'Please enter a work type';
+                                                            }
+                                                            return null;
+                                                          },
+                                                        ),
+                                                      ),
+                                                      SizedBox(height: 16),
+                                                      ElevatedButton(
+                                                        onPressed: obj
+                                                            .pickRecentworkImage,
+                                                        child: const Text(
+                                                            'Pick Recent Work Picture'),
+                                                      ),
+                                                      SizedBox(height: 16),
+                                                      obj.recentWorkPic != null
+                                                          ? Image.file(
+                                                              obj.recentWorkPic!,
+                                                              height: 150)
+                                                          : Container(
+                                                              height: 150,
+                                                              color: Colors
+                                                                  .grey[200],
+                                                              child: Center(
+                                                                  child: Text(
+                                                                      'No image selected')),
+                                                            )
+                                                    ],
+                                                  ),
+                                                ),
+                                                actions: [
+                                                  Center(
+                                                    child: ElevatedButton(
+                                                      onPressed: () async {
+                                                        if (obj.formKey
+                                                            .currentState!
+                                                            .validate()) {
+                                                          await obj
+                                                              .createRecentworkCollection(
+                                                                  context);
+                                                          Navigator.of(dc)
+                                                              .pop();
+                                                        }
+                                                      },
+                                                      style: ElevatedButton
+                                                          .styleFrom(
+                                                        backgroundColor:
+                                                            Colors.pink[200],
+                                                        shape:
+                                                            RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(10),
+                                                        ),
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .symmetric(
+                                                                horizontal: 50,
+                                                                vertical: 10),
+                                                      ),
+                                                      child: const Text(
+                                                        "Save",
+                                                        style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 16,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  SizedBox(height: 16),
+                                                ],
+                                              );
+                                            },
+                                          ),
+                                          child: Container(
+                                            width: width * 0.3,
+                                            height: height * 0.13,
+                                            decoration: BoxDecoration(
+                                                border: Border.all(
+                                                    color: Colors.black45),
+                                                borderRadius:
+                                                    BorderRadius.circular(10)),
+                                            child: Icon(
+                                              Icons.camera_alt,
+                                              size: width * 0.1,
+                                              color: Colors.black45,
+                                            ),
                                           ),
                                         ),
                                       ),
                                       Expanded(
-                                        child: Container(
-                                          height: height * 0.15,
-                                          width: width,
-                                          child: ListView.builder(
-                                            itemCount: 5,
-                                            scrollDirection: Axis.horizontal,
-                                            itemBuilder: (context, index) {
-                                              return Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8),
-                                                child: Container(
-                                                  height: height * 0.1,
-                                                  width: width * 0.3,
-                                                  decoration: BoxDecoration(
-                                                    image: DecorationImage(
-                                                      fit: BoxFit.cover,
-                                                      image: AssetImage(
-                                                          "images/work.jpg"),
+                                        child: StreamBuilder<QuerySnapshot>(
+                                          stream: FirebaseFirestore.instance
+                                              .collection('recentworks')
+                                              .where("userId",
+                                                  isEqualTo: StaticData
+                                                      .userModel!.UserId)
+                                              .snapshots(),
+                                          builder: (BuildContext context,
+                                              AsyncSnapshot<QuerySnapshot>
+                                                  snapshot) {
+                                            if (snapshot.connectionState ==
+                                                ConnectionState.waiting) {
+                                              return const Center(
+                                                  child:
+                                                      CircularProgressIndicator());
+                                            }
+
+                                            if (snapshot.hasError) {
+                                              return Center(
+                                                  child: Text(
+                                                      'Error: ${snapshot.error}'));
+                                            }
+
+                                            if (!snapshot.hasData ||
+                                                snapshot.data!.docs.isEmpty) {
+                                              return const Center(
+                                                  child: Text(
+                                                      'No Work available'));
+                                            }
+
+                                            final width = MediaQuery.of(context)
+                                                .size
+                                                .width;
+                                            final height =
+                                                MediaQuery.of(context)
+                                                    .size
+                                                    .height;
+
+                                            return Container(
+                                              height: height * 0.15,
+                                              width: width,
+                                              child: ListView.builder(
+                                                scrollDirection:
+                                                    Axis.horizontal,
+                                                itemCount:
+                                                    snapshot.data!.docs.length,
+                                                itemBuilder: (context, index) {
+                                                  Map<String, dynamic> docData =
+                                                      snapshot.data!.docs[index]
+                                                              .data()
+                                                          as Map<String,
+                                                              dynamic>;
+
+                                                  RecentWorkModel model =
+                                                      RecentWorkModel.fromMap(
+                                                          docData);
+
+                                                  String recentWorkPic =
+                                                      model.RecentworkPic ?? '';
+                                                  String recentWorkId =
+                                                      model.RecentworkId ?? '';
+
+                                                  return Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
+                                                    child: Stack(
+                                                      children: [
+                                                        Container(
+                                                          width: width * 0.3,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            border:
+                                                                Border.all(),
+                                                            image:
+                                                                DecorationImage(
+                                                              fit: BoxFit.cover,
+                                                              image: NetworkImage(
+                                                                  recentWorkPic), // Handle null values properly
+                                                            ),
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10),
+                                                          ),
+                                                        ),
+                                                        Positioned(
+                                                          top: 0,
+                                                          right: 0,
+                                                          child: Container(
+                                                            height:
+                                                                height * 0.05,
+                                                            width: width * 0.1,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              shape: BoxShape
+                                                                  .circle,
+                                                              color:
+                                                                  Colors.pink,
+                                                            ),
+                                                            child: IconButton(
+                                                              icon: const Icon(
+                                                                  Icons.delete,
+                                                                  color: Colors
+                                                                      .white),
+                                                              onPressed: () {
+                                                                // Show a confirmation dialog
+                                                                showDialog(
+                                                                  context:
+                                                                      context,
+                                                                  builder:
+                                                                      (BuildContext
+                                                                          context) {
+                                                                    return AlertDialog(
+                                                                      title: const Text(
+                                                                          "Delete Recent Work"),
+                                                                      content:
+                                                                          const Text(
+                                                                              "Are you sure you want to delete this recent work?"),
+                                                                      actions: [
+                                                                        TextButton(
+                                                                          onPressed:
+                                                                              () {
+                                                                            Navigator.of(context).pop(); // Close the dialog
+                                                                          },
+                                                                          child:
+                                                                              const Text("Cancel"),
+                                                                        ),
+                                                                        TextButton(
+                                                                          onPressed:
+                                                                              () {
+                                                                            Navigator.of(context).pop(); // Close the dialog
+                                                                            // Make sure you have a valid object for obj
+                                                                            if (recentWorkId.isNotEmpty) {
+                                                                              obj.deletework(recentWorkId); // Call deletework
+                                                                            }
+                                                                          },
+                                                                          child: const Text(
+                                                                              "Delete",
+                                                                              style: TextStyle(color: Colors.red)),
+                                                                        ),
+                                                                      ],
+                                                                    );
+                                                                  },
+                                                                );
+                                                              },
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
                                                     ),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                  ),
-                                                ),
-                                              );
-                                            },
-                                          ),
+                                                  );
+                                                },
+                                              ),
+                                            );
+                                          },
                                         ),
-                                      ),
+                                      )
                                     ],
                                   ),
                                 ),
@@ -1357,7 +2302,7 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                                 // Repeated animation structure for "Tips and Tricks"
                                 TweenAnimationBuilder(
                                   tween: Tween<double>(begin: 0.0, end: 1.0),
-                                  duration: Duration(milliseconds: 800),
+                                  duration: const Duration(milliseconds: 800),
                                   curve: Curves.easeOut,
                                   builder: (context, double value, child) {
                                     return Opacity(
@@ -1384,7 +2329,7 @@ class _MyProfileScreenState extends State<MyProfileScreen>
 
                                 TweenAnimationBuilder(
                                   tween: Tween<double>(begin: 0.0, end: 1.0),
-                                  duration: Duration(milliseconds: 1000),
+                                  duration: const Duration(milliseconds: 1000),
                                   curve: Curves.easeOut,
                                   builder: (context, double value, child) {
                                     return Opacity(
@@ -1429,7 +2374,8 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                                     child: TweenAnimationBuilder(
                                       tween:
                                           Tween<double>(begin: 0.0, end: 1.0),
-                                      duration: Duration(milliseconds: 800),
+                                      duration:
+                                          const Duration(milliseconds: 800),
                                       curve: Curves.easeOut,
                                       builder: (context, double value, child) {
                                         return Opacity(
@@ -1466,10 +2412,11 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                                                 starCount: 5, // Number of stars
                                                 starSize:
                                                     12, // Size of the stars
-                                                starColor: Color.fromARGB(
+                                                starColor: const Color.fromARGB(
                                                     255, 241, 134, 170),
-                                                valueLabelColor: Color.fromRGBO(
-                                                    240, 134, 169, 1),
+                                                valueLabelColor:
+                                                    const Color.fromRGBO(
+                                                        240, 134, 169, 1),
                                                 starSpacing:
                                                     2, // Space between the stars
                                                 valueLabelVisibility: true,

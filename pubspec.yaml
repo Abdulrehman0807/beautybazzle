@@ -54,6 +54,7 @@ dependencies:
   image_picker: 
   get: 
   flutter_spinkit:
+  flutter_open_container:
  
 
 
