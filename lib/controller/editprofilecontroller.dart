@@ -7,6 +7,7 @@ import 'package:beautybazzle/model/addwork.dart';
 import 'package:beautybazzle/model/signup_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -61,7 +62,11 @@ class ProfileController extends GetxController {
   bool isLoading = false;
   bool isLoadingSalon = false;
   bool isLoadingProfile = false;
-
+  bool isLoadingOffer = false;
+  bool isLoadingSpecialist = false;
+  bool isLoadingProduct = false;
+  bool isLoadingWork = false;
+  bool isLoadingService = false;
   bool isFavorite = false;
 
   void toggleFavorite() {
@@ -90,6 +95,31 @@ class ProfileController extends GetxController {
 
   changeLoadingSalon(bool v) {
     isLoadingSalon = v;
+    update();
+  }
+
+  changeLoadingOffer(bool v) {
+    isLoadingOffer = v;
+    update();
+  }
+
+  changeLoadingSpecialist(bool v) {
+    isLoadingSpecialist = v;
+    update();
+  }
+
+  changeLoadingProduct(bool v) {
+    isLoadingProduct = v;
+    update();
+  }
+
+  changeLoadingWork(bool v) {
+    isLoadingWork = v;
+    update();
+  }
+
+  changeLoadingService(bool v) {
+    isLoadingService = v;
     update();
   }
 
@@ -342,39 +372,275 @@ class ProfileController extends GetxController {
 
   ///////////////////////// offer add //////////////////////////
 
-  Future<void> pickImage() async {
+  // Future<void> pickImage() async {
+  //   final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+  //   if (pickedFile != null) {
+  //     offerPic = File(pickedFile.path);
+  //     update();
+  //   }
+  // }
+
+  // Future<void> createOfferCollection(BuildContext context) async {
+  //   try {
+  //     var uuid = const Uuid();
+  //     String offerId = uuid.v4();
+  //     String time = DateTime.now().toIso8601String();
+  //     String? offerPicUrl = '';
+  //     if (offerPic != null) {
+  //       // Upload the image to Firebase Storage
+  //       firebase_storage.Reference ref = firebase_storage
+  //           .FirebaseStorage.instance
+  //           .ref()
+  //           .child('offer_pics/$offerId'); // Unique file path using offerId
+  //       await ref.putFile(File(offerPic!.path));
+
+  //       // Get the download URL
+  //       offerPicUrl = await ref.getDownloadURL();
+  //     }
+  //     OfferModel model = OfferModel(
+  //       offerId: offerId,
+  //       offerName: offerNameController.text,
+  //       offerPic: offerPicUrl ?? '',
+  //       time: time,
+  //       userId: StaticData.userModel!.UserId,
+  //     );
+
+  //     await FirebaseFirestore.instance
+  //         .collection('offers')
+  //         .doc(offerId)
+  //         .set(model.toMap());
+
+  //     print("Offer created with offerId: $offerId");
+
+  //     Fluttertoast.showToast(
+  //       msg: "Offer created successfully!",
+  //       toastLength: Toast.LENGTH_SHORT, // Duration of the toast
+  //       gravity: ToastGravity.BOTTOM, // Position of the toast
+  //       backgroundColor: Colors.green, // Background color
+  //       textColor: Colors.white, // Text color
+  //       fontSize: 16.0, // Font size
+  //     );
+  //     // Clear the form fields and reset the image picker
+  //     offerNameController.clear();
+  //     offerPic = null;
+  //     update();
+  //   } catch (e) {
+  //     print("Error creating offer: $e");
+  //     Fluttertoast.showToast(
+  //       msg: "Failed to create offer.",
+  //       toastLength: Toast.LENGTH_SHORT,
+  //       gravity: ToastGravity.BOTTOM,
+  //       backgroundColor: Colors.red,
+  //       textColor: Colors.white,
+  //       fontSize: 16.0,
+  //     );
+  //   }
+  // }
+
+  // Future<void> deleteOffer(String offerId) async {
+  //   try {
+  //     // Attempt to delete the offer
+  //     await FirebaseFirestore.instance
+  //         .collection('offers')
+  //         .doc(offerId)
+  //         .delete();
+
+  //     print("Offer deleted with offerId: $offerId");
+
+  //     // Show a success toast message
+  //     Fluttertoast.showToast(
+  //       msg: 'Offer deleted successfully!',
+  //       toastLength: Toast.LENGTH_SHORT,
+  //       gravity: ToastGravity.BOTTOM,
+  //       timeInSecForIosWeb: 1,
+  //       backgroundColor: Colors.green,
+  //       textColor: Colors.white,
+  //       fontSize: 16.0,
+  //     );
+  //   } catch (e) {
+  //     // Show an error toast message
+  //     print("Error deleting offer: $e");
+
+  //     Fluttertoast.showToast(
+  //       msg: 'Failed to delete the offer.',
+  //       toastLength: Toast.LENGTH_SHORT,
+  //       gravity: ToastGravity.BOTTOM,
+  //       timeInSecForIosWeb: 1,
+  //       backgroundColor: Colors.red,
+  //       textColor: Colors.white,
+  //       fontSize: 16.0,
+  //     );
+  //   }
+  // }
+
+  // void showAddOfferDialog(BuildContext context) {
+  //   showDialog(
+  //     context: context,
+  //     builder: (BuildContext dc) {
+  //       return TweenAnimationBuilder(
+  //         tween: Tween<double>(begin: 0.8, end: 1.0),
+  //         duration: Duration(milliseconds: 500),
+  //         curve: Curves.easeInOut,
+  //         builder: (context, double scale, child) {
+  //           return Transform.scale(
+  //             scale: scale,
+  //             child: Stack(
+  //               children: [
+  //                 AlertDialog(
+  //                   title: const Center(child: Text("Add a Best Offers")),
+  //                   content: Form(
+  //                     key: formKey,
+  //                     child: Column(
+  //                       mainAxisSize: MainAxisSize.min,
+  //                       children: [
+  //                         Container(
+  //                           width: 500,
+  //                           child: TextFormField(
+  //                             controller: offerNameController,
+  //                             decoration: const InputDecoration(
+  //                               labelText: 'Offer Name',
+  //                             ),
+  //                             keyboardType: TextInputType.text,
+  //                             validator: (value) {
+  //                               if (value == null || value.isEmpty) {
+  //                                 return 'Please enter an Offer name';
+  //                               }
+  //                               return null;
+  //                             },
+  //                           ),
+  //                         ),
+  //                         const SizedBox(height: 22),
+  //                         InkWell(
+  //                           onTap: () => pickImage(),
+  //                           child: Stack(
+  //                             alignment: Alignment.center,
+  //                             children: [
+  //                               Container(
+  //                                 height: 150,
+  //                                 width: 300,
+  //                                 decoration: BoxDecoration(
+  //                                   color: Colors.grey[350],
+  //                                   borderRadius: BorderRadius.circular(10),
+  //                                 ),
+  //                                 child: offerPic != null
+  //                                     ? Image.file(
+  //                                         File(offerPic!.path),
+  //                                         height: 150,
+  //                                         width: 150,
+  //                                         fit: BoxFit.cover,
+  //                                       )
+  //                                     : Icon(
+  //                                         Icons.camera_alt,
+  //                                         size: 50,
+  //                                         color: Colors.black45,
+  //                                       ),
+  //                               ),
+  //                               if (isLoadingOffer)
+  //                                 const SpinKitSpinningLines(
+  //                                   color: Colors.white,
+  //                                 ),
+  //                             ],
+  //                           ),
+  //                         ),
+  //                       ],
+  //                     ),
+  //                   ),
+  //                   actions: [
+  //                     Center(
+  //                       child: ElevatedButton(
+  //                         onPressed: () async {
+  //                           if (formKey.currentState!.validate()) {
+  //                             await createOfferCollection(
+  //                                 context); // Ensure createOfferCollection method is defined
+  //                             Navigator.of(dc).pop();
+  //                           }
+  //                         },
+  //                         style: ElevatedButton.styleFrom(
+  //                           backgroundColor: Colors.pink[200],
+  //                           shape: RoundedRectangleBorder(
+  //                             borderRadius: BorderRadius.circular(10),
+  //                           ),
+  //                           padding: const EdgeInsets.symmetric(
+  //                             horizontal: 130,
+  //                             vertical: 10,
+  //                           ),
+  //                         ),
+  //                         child: const Text(
+  //                           "Save",
+  //                           style: TextStyle(
+  //                             color: Colors.white,
+  //                             fontSize: 20,
+  //                             fontWeight: FontWeight.bold,
+  //                           ),
+  //                         ),
+  //                       ),
+  //                     ),
+  //                     const SizedBox(height: 5),
+  //                   ],
+  //                 ),
+  //                 isLoading
+  //                     ? Container(
+  //                         height: 800,
+  //                         width: 500,
+  //                         color: Colors.pink.withOpacity(0.3),
+  //                         child: Center(
+  //                             child: SpinKitSpinningLines(color: Colors.pink)),
+  //                       )
+  //                     : SizedBox()
+  //               ],
+  //             ),
+  //           );
+  //         },
+  //       );
+  //     },
+  //   );
+  // }
+  // Function to pick an image from the gallery
+  Future<void> pickImage(BuildContext context) async {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       offerPic = File(pickedFile.path);
-      update();
+      update(); // Update UI
     }
   }
 
+// Function to create the offer collection in Firestore
   Future<void> createOfferCollection(BuildContext context) async {
     try {
       var uuid = const Uuid();
       String offerId = uuid.v4();
       String time = DateTime.now().toIso8601String();
       String? offerPicUrl = '';
+
+      // Upload the image to Firebase Storage if there's an image selected
       if (offerPic != null) {
-        // Upload the image to Firebase Storage
+        // Show loading indicator while uploading image
+        isLoadingOffer = true;
+        update(); // Update the UI to show loading
+
         firebase_storage.Reference ref = firebase_storage
             .FirebaseStorage.instance
             .ref()
             .child('offer_pics/$offerId'); // Unique file path using offerId
         await ref.putFile(File(offerPic!.path));
 
-        // Get the download URL
+        // Get the download URL of the uploaded image
         offerPicUrl = await ref.getDownloadURL();
+
+        isLoadingOffer = false; // Hide loading state after upload is complete
+        update(); // Update the UI again to hide the loading indicator
       }
+
+      // Create the OfferModel object
       OfferModel model = OfferModel(
         offerId: offerId,
         offerName: offerNameController.text,
-        offerPic: offerPicUrl ?? '',
+        offerPic: offerPicUrl ?? '', // If there's no image, pass empty string
         time: time,
         userId: StaticData.userModel!.UserId,
       );
 
+      // Save the offer in Firestore
       await FirebaseFirestore.instance
           .collection('offers')
           .doc(offerId)
@@ -384,16 +650,17 @@ class ProfileController extends GetxController {
 
       Fluttertoast.showToast(
         msg: "Offer created successfully!",
-        toastLength: Toast.LENGTH_SHORT, // Duration of the toast
-        gravity: ToastGravity.BOTTOM, // Position of the toast
-        backgroundColor: Colors.green, // Background color
-        textColor: Colors.white, // Text color
-        fontSize: 16.0, // Font size
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+        fontSize: 16.0,
       );
-      // Clear the form fields and reset the image picker
+
+      // Clear form fields and reset the image picker after creation
       offerNameController.clear();
       offerPic = null;
-      update();
+      update(); // Update the UI after clearing the form
     } catch (e) {
       print("Error creating offer: $e");
       Fluttertoast.showToast(
@@ -407,17 +674,15 @@ class ProfileController extends GetxController {
     }
   }
 
+// Function to delete an offer from Firestore
   Future<void> deleteOffer(String offerId) async {
     try {
-      // Attempt to delete the offer
       await FirebaseFirestore.instance
           .collection('offers')
           .doc(offerId)
           .delete();
-
       print("Offer deleted with offerId: $offerId");
 
-      // Show a success toast message
       Fluttertoast.showToast(
         msg: 'Offer deleted successfully!',
         toastLength: Toast.LENGTH_SHORT,
@@ -428,9 +693,7 @@ class ProfileController extends GetxController {
         fontSize: 16.0,
       );
     } catch (e) {
-      // Show an error toast message
       print("Error deleting offer: $e");
-
       Fluttertoast.showToast(
         msg: 'Failed to delete the offer.',
         toastLength: Toast.LENGTH_SHORT,
@@ -441,6 +704,129 @@ class ProfileController extends GetxController {
         fontSize: 16.0,
       );
     }
+  }
+
+// Function to show the dialog to add an offer
+  void showAddOfferDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dc) {
+        return TweenAnimationBuilder(
+          tween: Tween<double>(begin: 0.8, end: 1.0),
+          duration: Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+          builder: (context, double scale, child) {
+            return Transform.scale(
+              scale: scale,
+              child: Stack(
+                children: [
+                  AlertDialog(
+                    title: const Center(child: Text("Add a Best Offer")),
+                    content: Form(
+                      key: formKey,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            width: 500,
+                            child: TextFormField(
+                              controller: offerNameController,
+                              decoration: const InputDecoration(
+                                labelText: 'Offer Name',
+                              ),
+                              keyboardType: TextInputType.text,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter an Offer name';
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                          const SizedBox(height: 22),
+                          InkWell(
+                            onTap: () => pickImage(context),
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Container(
+                                  height: 150,
+                                  width: 300,
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[350],
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: offerPic != null
+                                      ? Image.file(
+                                          File(offerPic!.path),
+                                          height: 150,
+                                          width: 150,
+                                          fit: BoxFit.cover,
+                                        )
+                                      : Icon(
+                                          Icons.camera_alt,
+                                          size: 50,
+                                          color: Colors.black45,
+                                        ),
+                                ),
+                                if (isLoadingOffer)
+                                  const SpinKitSpinningLines(
+                                    color: Colors.white,
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    actions: [
+                      Center(
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            if (formKey.currentState!.validate()) {
+                              await createOfferCollection(context);
+                              Navigator.of(dc).pop();
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.pink[200],
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 130,
+                              vertical: 10,
+                            ),
+                          ),
+                          child: const Text(
+                            "Save",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                    ],
+                  ),
+                  if (isLoading) // Show the overlay spinner when isLoading is true
+                    Container(
+                      height: 800,
+                      width: 500,
+                      color: Colors.pink.withOpacity(0.3),
+                      child: Center(
+                        child: SpinKitSpinningLines(color: Colors.pink),
+                      ),
+                    ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 
   ////////////// add services //////////////////
@@ -566,6 +952,138 @@ class ProfileController extends GetxController {
     }
   }
 
+  void showAddServiceDialog(BuildContext context, double width, double height) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dc) {
+        return TweenAnimationBuilder(
+          tween: Tween<double>(begin: 0.8, end: 1.0),
+          duration: Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+          builder: (context, double scale, child) {
+            return Transform.scale(
+              scale: scale,
+              child: AlertDialog(
+                title: const Center(child: Text("Add a Best Service")),
+                content: Form(
+                  key: formKey, // Ensure you have formKey defined
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Service Name Field
+                      Container(
+                        width: width,
+                        child: TextFormField(
+                          controller:
+                              serviceNameController, // Ensure serviceNameController is defined
+                          decoration: const InputDecoration(
+                            hintText: "Service Name",
+                          ),
+                          keyboardType: TextInputType.text,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter a service name';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                      SizedBox(height: height * 0.03),
+
+                      // Service Description Field
+                      Container(
+                        width: width,
+                        child: TextFormField(
+                          controller:
+                              serviceDescriptionController, // Ensure serviceDescriptionController is defined
+                          decoration: const InputDecoration(
+                            hintText: "Description",
+                          ),
+                          keyboardType: TextInputType.text,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter a description for the service';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                      SizedBox(height: height * 0.03),
+
+                      InkWell(
+                        onTap: () => pickServiceImage(),
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Container(
+                              height: 150,
+                              width: 300,
+                              decoration: BoxDecoration(
+                                color: Colors.grey[350],
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: servicePic != null
+                                  ? Image.file(
+                                      File(servicePic!.path),
+                                      height: 150,
+                                      width: 150,
+                                      fit: BoxFit.cover,
+                                    )
+                                  : Icon(
+                                      Icons.camera_alt,
+                                      size: 50,
+                                      color: Colors.black45,
+                                    ),
+                            ),
+                            if (isLoadingService)
+                              const SpinKitSpinningLines(
+                                color: Colors.white,
+                              ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                actions: [
+                  Center(
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        if (formKey.currentState!.validate()) {
+                          await createServiceCollection(
+                              context); // Ensure createServiceCollection method is defined
+                          Navigator.of(dc).pop();
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.pink[200],
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 130,
+                          vertical: 10,
+                        ),
+                      ),
+                      child: const Text(
+                        "Save",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: height * 0.02),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
 ////////////////////// update service//////////////////
 
   void showUpdateServiceDialog(BuildContext context, ServiceModel model) {
@@ -574,55 +1092,68 @@ class ProfileController extends GetxController {
 
     showDialog(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Update Service'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 500,
-                child: TextField(
-                  controller: serviceNameController,
-                  decoration: const InputDecoration(hintText: 'Service Name'),
+      builder: (BuildContext dc) {
+        return TweenAnimationBuilder(
+          tween: Tween<double>(begin: 0.8, end: 1.0),
+          duration: Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+          builder: (context, double scale, child) {
+            return Transform.scale(
+              scale: scale,
+              child: AlertDialog(
+                title: const Text('Update Service'),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 500,
+                      child: TextField(
+                        controller: serviceNameController,
+                        decoration:
+                            const InputDecoration(hintText: 'Service Name'),
+                        keyboardType: TextInputType.text,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    TextField(
+                      controller: serviceDescriptionController,
+                      decoration: const InputDecoration(
+                          hintText: 'Service Description'),
+                    ),
+                  ],
                 ),
+                actions: [
+                  ElevatedButton(
+                    onPressed: () async {
+                      if (serviceNameController.text.isNotEmpty &&
+                          serviceDescriptionController.text.isNotEmpty) {
+                        // Update the service in Firestore
+                        await updateServiceInFirestore(
+                          model.serviceId,
+                          serviceNameController.text,
+                          serviceDescriptionController.text,
+                        );
+                        Navigator.of(dc).pop();
+                      } else {
+                        // Handle empty field case
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text('Please fill all fields')),
+                        );
+                      }
+                    },
+                    child: const Text('Save'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('Cancel'),
+                  ),
+                ],
               ),
-              const SizedBox(height: 10),
-              TextField(
-                controller: serviceDescriptionController,
-                decoration:
-                    const InputDecoration(hintText: 'Service Description'),
-              ),
-            ],
-          ),
-          actions: [
-            ElevatedButton(
-              onPressed: () async {
-                if (serviceNameController.text.isNotEmpty &&
-                    serviceDescriptionController.text.isNotEmpty) {
-                  // Update the service in Firestore
-                  await updateServiceInFirestore(
-                    model.serviceId!,
-                    serviceNameController.text,
-                    serviceDescriptionController.text,
-                  );
-                  Navigator.of(context).pop();
-                } else {
-                  // Handle empty field case
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Please fill all fields')),
-                  );
-                }
-              },
-              child: const Text('Save'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Cancel'),
-            ),
-          ],
+            );
+          },
         );
       },
     );
@@ -646,10 +1177,27 @@ class ProfileController extends GetxController {
 
       // Show success message
       print("Service updated successfully!");
-      // Optionally, show a toast or snackbar here if needed
+      Fluttertoast.showToast(
+        msg: 'Service updated successfully!',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
     } catch (e) {
       // Show error message if update fails
       print("Error updating service: $e");
+      Fluttertoast.showToast(
+        msg: 'Error updating service',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
     }
   }
 
@@ -754,6 +1302,134 @@ class ProfileController extends GetxController {
         fontSize: 16.0,
       );
     }
+  }
+
+  void showAddProductDialog(BuildContext context, double width, double height) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dc) {
+        return TweenAnimationBuilder(
+          tween: Tween<double>(begin: 0.8, end: 1.0),
+          duration: Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+          builder: (context, double scale, child) {
+            return Transform.scale(
+              scale: scale,
+              child: AlertDialog(
+                title: const Center(child: Text("Add a Best Product")),
+                content: Form(
+                  key: formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Product Name Field
+                      Container(
+                        width: width,
+                        child: TextFormField(
+                          controller: productNameController,
+                          decoration: const InputDecoration(
+                            hintText: "Product Name",
+                          ),
+                          keyboardType: TextInputType.text,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter a product name';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+
+                      SizedBox(
+                        width: width,
+                        child: TextFormField(
+                          controller: productPriceController,
+                          decoration: const InputDecoration(
+                            labelText: 'Product Price',
+                          ),
+                          keyboardType: TextInputType.number,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter a product price';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                      SizedBox(height: height * 0.03),
+
+                      InkWell(
+                        onTap: () => pickProductImage(),
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Container(
+                              height: 150,
+                              width: 300,
+                              decoration: BoxDecoration(
+                                color: Colors.grey[350],
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: productPic != null
+                                  ? Image.file(
+                                      File(productPic!.path),
+                                      height: 150,
+                                      width: 150,
+                                      fit: BoxFit.cover,
+                                    )
+                                  : Icon(
+                                      Icons.camera_alt,
+                                      size: 50,
+                                      color: Colors.black45,
+                                    ),
+                            ),
+                            if (isLoadingProduct)
+                              const SpinKitSpinningLines(
+                                color: Colors.white,
+                              ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                actions: [
+                  Center(
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        if (formKey.currentState!.validate()) {
+                          await createProductCollection(context);
+                          Navigator.of(dc).pop();
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.pink[200],
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 130,
+                          vertical: 10,
+                        ),
+                      ),
+                      child: const Text(
+                        "Save",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: height * 0.02),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 
   /////////////////add specialist ////////////
@@ -864,6 +1540,112 @@ class ProfileController extends GetxController {
     }
   }
 
+  void showAddSpecialistDialog(
+      BuildContext context, double width, double height) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dc) {
+        return TweenAnimationBuilder(
+          tween: Tween<double>(begin: 0.8, end: 1.0),
+          duration: Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+          builder: (context, double scale, child) {
+            return Transform.scale(
+              scale: scale,
+              child: AlertDialog(
+                title: const Center(child: Text("Add a Best Specialist")),
+                content: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: width,
+                        child: TextFormField(
+                          controller: specialistNameController,
+                          decoration: const InputDecoration(
+                              hintText: "Specialist Name"),
+                          keyboardType: TextInputType.text,
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      TextFormField(
+                        controller: specialistServiceNameController,
+                        decoration: const InputDecoration(
+                            hintText: "Specialist Service Name"),
+                        keyboardType: TextInputType.text,
+                      ),
+                      SizedBox(height: 20),
+                      InkWell(
+                        onTap: () => pickSpecialistImage(),
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Container(
+                              height: 150,
+                              width: 300,
+                              decoration: BoxDecoration(
+                                color: Colors.grey[350],
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: specialistPic != null
+                                  ? Image.file(
+                                      File(specialistPic!.path),
+                                      height: 150,
+                                      width: 150,
+                                      fit: BoxFit.cover,
+                                    )
+                                  : Icon(
+                                      Icons.camera_alt,
+                                      size: 50,
+                                      color: Colors.black45,
+                                    ),
+                            ),
+                            if (isLoadingSpecialist)
+                              const SpinKitSpinningLines(
+                                color: Colors.white,
+                              ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                actions: [
+                  Center(
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        await createSpecialistCollection(
+                            context); // Update this to your collection creation method
+                        Navigator.of(dc).pop();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.pink[200],
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 130, vertical: 10),
+                      ),
+                      child: const Text(
+                        "Save",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
 ////////////////////////// add recent work ////////////////
   Future<void> pickRecentworkImage() async {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
@@ -968,5 +1750,120 @@ class ProfileController extends GetxController {
         fontSize: 16.0,
       );
     }
+  }
+
+  void showAddRecentWorkDialog(
+    BuildContext context,
+    double width,
+    double height,
+  ) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dc) {
+        return TweenAnimationBuilder(
+          tween: Tween<double>(begin: 0.8, end: 1.0),
+          duration: Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+          builder: (context, double scale, child) {
+            return Transform.scale(
+              scale: scale,
+              child: AlertDialog(
+                title: const Center(child: Text("Add a Best Work")),
+                content: Form(
+                  key: formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Work Type Field
+                      Container(
+                        width: width,
+                        child: TextFormField(
+                          controller: workTypeController,
+                          decoration: const InputDecoration(
+                            labelText: 'Work Type',
+                          ),
+                          keyboardType: TextInputType.text,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter a work type';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                      SizedBox(height: height * 0.03),
+
+                      InkWell(
+                        onTap: () => pickRecentworkImage(),
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Container(
+                              height: 150,
+                              width: 300,
+                              decoration: BoxDecoration(
+                                color: Colors.grey[350],
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: recentWorkPic != null
+                                  ? Image.file(
+                                      File(recentWorkPic!.path),
+                                      height: 150,
+                                      width: 150,
+                                      fit: BoxFit.cover,
+                                    )
+                                  : Icon(
+                                      Icons.camera_alt,
+                                      size: 50,
+                                      color: Colors.black45,
+                                    ),
+                            ),
+                            if (isLoadingWork)
+                              const SpinKitSpinningLines(
+                                color: Colors.white,
+                              ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                actions: [
+                  Center(
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        if (formKey.currentState!.validate()) {
+                          await createRecentworkCollection(context);
+                          Navigator.of(dc).pop();
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.pink[200],
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 130,
+                          vertical: 10,
+                        ),
+                      ),
+                      child: const Text(
+                        "Save",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: height * 0.02),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 }

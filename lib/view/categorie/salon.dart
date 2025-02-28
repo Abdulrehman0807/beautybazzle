@@ -1,8 +1,13 @@
 import 'package:beautybazzle/controller/editprofilecontroller.dart';
+import 'package:beautybazzle/model/addoffer.dart';
+import 'package:beautybazzle/model/addservices.dart';
+import 'package:beautybazzle/model/addspecialist.dart';
+import 'package:beautybazzle/model/addwork.dart';
 import 'package:beautybazzle/model/servic_data.dart';
 import 'package:beautybazzle/utiils/static_data.dart';
 import 'package:beautybazzle/view/appoinment/appointment_book.dart';
 import 'package:beautybazzle/view/profiles/profile.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_stars/flutter_rating_stars.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -76,12 +81,38 @@ class _SalonScreenState extends State<SalonScreen>
                       background: Stack(
                         children: [
                           Center(
-                              child: Container(
-                            decoration: BoxDecoration(
-                                image: DecorationImage(
-                                    fit: BoxFit.cover,
-                                    image: AssetImage("images/salon.jpeg"))),
-                          )),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                image: obj.usermodel!.SalonPicture != ""
+                                    ? DecorationImage(
+                                        fit: BoxFit.cover,
+                                        image: NetworkImage(
+                                            StaticData.userModel!.SalonPicture),
+                                      )
+                                    : null,
+                              ),
+                              child: obj.usermodel!.SalonPicture == ""
+                                  ? CircleAvatar(
+                                      radius: 100,
+                                      backgroundColor: Colors.pink[200],
+                                      child: const Icon(
+                                        Icons.camera_alt,
+                                        size: 50,
+                                        color: Colors.white,
+                                      ),
+                                    )
+                                  : null,
+                            ),
+                          )
+
+                          // Center(
+                          //     child:
+                          //      Container(
+                          //   decoration: BoxDecoration(
+                          //       image: DecorationImage(
+                          //           fit: BoxFit.cover,
+                          //           image:  )),
+                          // )),
                           // Padding(
                           //   padding: const EdgeInsets.only(left: 350, top: 40),
                           //   child: GestureDetector(
@@ -89,7 +120,7 @@ class _SalonScreenState extends State<SalonScreen>
                           //     child: CircleAvatar(
                           //         backgroundColor: Colors.white,
                           //         radius: 18,
-                          //         child: Center(
+                          //         child: Center(AssetImage("images/salon.jpeg")
                           //           child: Icon(
                           //             isFavorite
                           //                 ? Icons.favorite
@@ -192,20 +223,26 @@ class _SalonScreenState extends State<SalonScreen>
                                   ),
                                   subtitle: Row(
                                     children: [
-                                      CircleAvatar(
-                                          backgroundColor: Colors.white,
-                                          radius: 15,
-                                          child: Icon(
-                                            Icons.location_on,
-                                            size: 19,
-                                            color: Colors.black,
-                                          )),
-                                      Text(
-                                        "${obj.usermodel!.Address}",
-                                        style: TextStyle(
-                                            fontSize: width * 0.04,
-                                            fontWeight: FontWeight.w400),
-                                      ),
+                                      obj.usermodel == null ||
+                                              obj.usermodel!.Address == ""
+                                          ? const SizedBox()
+                                          : Container(
+                                              height: height * 0.035,
+                                              width: width * 0.9,
+                                              child: Row(
+                                                children: [
+                                                  const Icon(Icons.location_on),
+                                                  SizedBox(
+                                                    width: width * 0.02,
+                                                  ),
+                                                  Text(
+                                                    "${obj.usermodel!.Address}",
+                                                    style: TextStyle(
+                                                        fontSize: width * 0.04),
+                                                  )
+                                                ],
+                                              ),
+                                            ),
                                     ],
                                   ),
                                 )),
@@ -431,7 +468,7 @@ class _SalonScreenState extends State<SalonScreen>
                                 tabs: [
                                   Tab(text: "Services"),
                                   Tab(text: "Specialist"),
-                                  Tab(text: "Packages"),
+                                  Tab(text: "Offers"),
                                   Tab(
                                     text: "Gallery",
                                   ),
@@ -446,458 +483,460 @@ class _SalonScreenState extends State<SalonScreen>
                               width: width,
                               child: TabBarView(
                                 children: [
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: UserModel1.mylist.map((item) {
-                                      return TweenAnimationBuilder(
-                                        tween:
-                                            Tween<double>(begin: 0.0, end: 1.0),
-                                        duration:
-                                            const Duration(milliseconds: 800),
-                                        curve: Curves.easeOut,
-                                        builder:
-                                            (context, double value, child) {
-                                          return Opacity(
-                                            opacity: value,
-                                            child: Transform.translate(
-                                              offset:
-                                                  Offset(0, 50 * (1 - value)),
-                                              child: child,
-                                            ),
-                                          );
-                                        },
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 4.0),
-                                          child: Container(
-                                            height: height * 0.12,
-                                            width: width,
-                                            decoration: BoxDecoration(
-                                                border: Border.all(
-                                                    color: Colors.black12,
-                                                    width: width * 0.002)),
-                                            child: Center(
-                                              child: ListTile(
-                                                leading: Container(
-                                                  height: height * 0.07,
-                                                  width: width * 0.15,
-                                                  decoration: BoxDecoration(
-                                                      image: DecorationImage(
-                                                          fit: BoxFit.cover,
-                                                          image: AssetImage(
-                                                              item.image!)),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10)),
+                                  Container(
+                                    // height: height * 0.15,
+                                    child: StreamBuilder<QuerySnapshot>(
+                                      stream: FirebaseFirestore.instance
+                                          .collection('services')
+                                          .where("userId",
+                                              isEqualTo:
+                                                  StaticData.userModel!.UserId)
+                                          .snapshots(),
+                                      builder: (BuildContext context,
+                                          AsyncSnapshot<QuerySnapshot>
+                                              snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.waiting) {
+                                          return const Center(
+                                              child:
+                                                  CircularProgressIndicator());
+                                        }
+                                        if (snapshot.hasError) {
+                                          return Center(
+                                              child: Text(
+                                                  'Error: ${snapshot.error}'));
+                                        }
+                                        if (!snapshot.hasData ||
+                                            snapshot.data!.docs.isEmpty) {
+                                          return const Center(
+                                              child: Text(
+                                                  'No services available'));
+                                        }
+
+                                        final width =
+                                            MediaQuery.of(context).size.width;
+
+                                        return Container(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children:
+                                                snapshot.data!.docs.map((doc) {
+                                              ServiceModel model =
+                                                  ServiceModel.fromMap(doc
+                                                          .data()
+                                                      as Map<String, dynamic>);
+
+                                              return TweenAnimationBuilder(
+                                                tween: Tween<double>(
+                                                    begin: 0.0, end: 1.0),
+                                                duration: const Duration(
+                                                    milliseconds: 800),
+                                                curve: Curves.easeOut,
+                                                builder: (context, double value,
+                                                    child) {
+                                                  return Opacity(
+                                                    opacity: value,
+                                                    child: Transform.translate(
+                                                      offset: Offset(
+                                                          0, 50 * (1 - value)),
+                                                      child: child,
+                                                    ),
+                                                  );
+                                                },
+                                                child: Padding(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(vertical: 4.0),
+                                                  child: Container(
+                                                    height: height * 0.1,
+                                                    width: width,
+                                                    decoration: BoxDecoration(
+                                                      border: Border.all(
+                                                          color: Colors.black12,
+                                                          width: width * 0.002),
+                                                    ),
+                                                    child: Center(
+                                                      child: ListTile(
+                                                        leading: Container(
+                                                          height: height * 0.07,
+                                                          width: width * 0.15,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            image:
+                                                                DecorationImage(
+                                                              fit: BoxFit.cover,
+                                                              image: NetworkImage(
+                                                                  model.servicePic ??
+                                                                      ''), // Safe access
+                                                            ),
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10),
+                                                          ),
+                                                        ),
+                                                        title: Text(
+                                                          model.serviceName ??
+                                                              '',
+                                                          style: TextStyle(
+                                                            fontSize:
+                                                                width * 0.04,
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                          ),
+                                                        ),
+                                                        subtitle: Text(
+                                                          model.serviceDescription ??
+                                                              '',
+                                                          style: TextStyle(
+                                                            fontSize:
+                                                                width * 0.028,
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .fade,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
                                                 ),
-                                                title: Text(
-                                                  item.name!,
-                                                  style: TextStyle(
-                                                      fontSize: width * 0.04,
-                                                      fontWeight:
-                                                          FontWeight.w500),
-                                                ),
-                                                subtitle: Text(
-                                                  item.Description!,
-                                                  style: TextStyle(
-                                                      fontSize: width * 0.028,
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                      overflow:
-                                                          TextOverflow.fade),
-                                                ),
-                                              ),
-                                            ),
+                                              );
+                                            }).toList(),
                                           ),
-                                        ),
-                                      );
-                                    }).toList(),
+                                        );
+                                      },
+                                    ),
                                   ),
                                   Column(
                                     children: [
                                       SizedBox(
-                                        height: height * 0.02,
+                                        height: height * 0.01,
                                       ),
-                                      Container(
-                                        height: height * 0.035,
-                                        width: width * 0.9,
-                                        child: RichText(
-                                            text: TextSpan(children: [
-                                          TextSpan(
-                                              text: "Specialist  ",
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: width * 0.04,
-                                                  fontWeight: FontWeight.w600)),
-                                          TextSpan(
-                                              text: "(18)",
-                                              style: TextStyle(
-                                                  color: Colors.pink[200],
-                                                  fontSize: width * 0.04,
-                                                  fontWeight: FontWeight.bold))
-                                        ])),
-                                      ),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: UserModel2.mylist.map((item) {
-                                          return TweenAnimationBuilder(
-                                            tween: Tween<double>(
-                                                begin: 0.0, end: 1.0),
-                                            duration: const Duration(
-                                                milliseconds: 800),
-                                            curve: Curves.easeOut,
-                                            builder:
-                                                (context, double value, child) {
-                                              return Opacity(
-                                                opacity: value,
-                                                child: Transform.translate(
-                                                  offset: Offset(
-                                                      0, 50 * (1 - value)),
-                                                  child: child,
-                                                ),
-                                              );
-                                            },
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 10.0),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceEvenly,
-                                                children: [
-                                                  Card(
-                                                    elevation: 2,
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        10)),
-                                                    child: Container(
-                                                      height: height * 0.2,
-                                                      width: width * 0.43,
-                                                      decoration: BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      10)),
-                                                      child: Column(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceEvenly,
-                                                        children: [
-                                                          CircleAvatar(
-                                                            radius: 30,
-                                                            backgroundImage:
-                                                                AssetImage(item
-                                                                    .image!),
-                                                          ),
-                                                          Container(
-                                                            height:
-                                                                height * 0.08,
-                                                            width: width * 0.3,
-                                                            child: Column(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .spaceEvenly,
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                              children: [
-                                                                Container(
-                                                                  child: Center(
-                                                                    child: Text(
-                                                                      "Alena Shahzad",
-                                                                      style:
-                                                                          TextStyle(
-                                                                        fontSize:
-                                                                            width *
-                                                                                0.032,
-                                                                        fontWeight:
-                                                                            FontWeight.w500,
-                                                                        overflow:
-                                                                            TextOverflow.clip,
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                                Center(
-                                                                  child: Text(
-                                                                    item.name!,
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontSize:
-                                                                          width *
-                                                                              0.032,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w400,
-                                                                      overflow:
-                                                                          TextOverflow
-                                                                              .fade,
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                                Container(
-                                                                    child: Row(
-                                                                        mainAxisAlignment:
-                                                                            MainAxisAlignment.center,
-                                                                        children: [
-                                                                      RatingStars(
-                                                                        value:
-                                                                            rating,
-                                                                        onValueChanged:
-                                                                            (newRating) {},
-                                                                        starCount:
-                                                                            5, // Number of stars
-                                                                        starSize:
-                                                                            12, // Size of the stars
-                                                                        starColor: Color.fromARGB(
-                                                                            255,
-                                                                            241,
-                                                                            134,
-                                                                            170),
-                                                                        valueLabelColor: Color.fromRGBO(
-                                                                            240,
-                                                                            134,
-                                                                            169,
-                                                                            1),
-                                                                        starSpacing:
-                                                                            2, // Space between the stars
-                                                                        valueLabelVisibility:
-                                                                            false,
-                                                                      ),
-                                                                      SizedBox(
-                                                                        width: width *
-                                                                            0.03,
-                                                                      ),
-                                                                      Text(
-                                                                        '$rating',
-                                                                        style:
-                                                                            TextStyle(
-                                                                          fontSize:
-                                                                              14,
-                                                                          color:
-                                                                              Colors.black, // Adjust color as needed
-                                                                        ),
-                                                                      ),
-                                                                    ]))
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ],
+                                      Expanded(
+                                        child: StreamBuilder<QuerySnapshot>(
+                                          stream: FirebaseFirestore.instance
+                                              .collection('specialists')
+                                              .where("userId",
+                                                  isEqualTo: StaticData
+                                                      .userModel!.UserId)
+                                              .snapshots(),
+                                          builder: (BuildContext context,
+                                              AsyncSnapshot<QuerySnapshot>
+                                                  snapshot) {
+                                            if (snapshot.connectionState ==
+                                                ConnectionState.waiting) {
+                                              return const Center(
+                                                  child:
+                                                      CircularProgressIndicator());
+                                            }
+
+                                            if (snapshot.hasError) {
+                                              return Center(
+                                                  child: Text(
+                                                      'Error: ${snapshot.error}'));
+                                            }
+
+                                            if (!snapshot.hasData ||
+                                                snapshot.data!.docs.isEmpty) {
+                                              return const Center(
+                                                  child: Text(
+                                                      'No Specialists available'));
+                                            }
+
+                                            final width = MediaQuery.of(context)
+                                                .size
+                                                .width;
+                                            final height =
+                                                MediaQuery.of(context)
+                                                    .size
+                                                    .height;
+
+                                            // Convert Firestore docs to SpecialistModel list
+                                            List<SpecialistModel> specialists =
+                                                snapshot.data!.docs.map((doc) {
+                                              return SpecialistModel.fromMap(
+                                                  doc.data()
+                                                      as Map<String, dynamic>);
+                                            }).toList();
+
+                                            return GridView.builder(
+                                              physics:
+                                                  NeverScrollableScrollPhysics(),
+                                              gridDelegate:
+                                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                                crossAxisCount:
+                                                    2, // number of items in each row
+                                                mainAxisSpacing:
+                                                    8.0, // spacing between rows
+                                                crossAxisSpacing:
+                                                    8.0, // spacing between columns
+                                              ),
+                                              padding: const EdgeInsets.all(
+                                                  8.0), // padding around the grid
+                                              itemCount: specialists
+                                                  .length, // total number of items
+                                              itemBuilder: (context, index) {
+                                                SpecialistModel pair =
+                                                    specialists[index];
+                                                return TweenAnimationBuilder(
+                                                  tween: Tween<double>(
+                                                      begin: 0.0, end: 1.0),
+                                                  duration: const Duration(
+                                                      milliseconds: 800),
+                                                  curve: Curves.easeOut,
+                                                  builder: (context,
+                                                      double value, child) {
+                                                    return Opacity(
+                                                      opacity: value,
+                                                      child:
+                                                          Transform.translate(
+                                                        offset: Offset(0,
+                                                            50 * (1 - value)),
+                                                        child: child,
                                                       ),
-                                                    ),
-                                                  ),
-                                                  Card(
-                                                    elevation: 2,
-                                                    shape:
-                                                        RoundedRectangleBorder(
+                                                    );
+                                                  },
+                                                  child: Stack(
+                                                    children: [
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(8.0),
+                                                        child: Card(
+                                                          elevation: 2,
+                                                          shape:
+                                                              RoundedRectangleBorder(
                                                             borderRadius:
                                                                 BorderRadius
                                                                     .circular(
-                                                                        10)),
-                                                    child: Container(
-                                                      height: height * 0.2,
-                                                      width: width * 0.43,
-                                                      decoration: BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      10)),
-                                                      child: Column(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceEvenly,
-                                                        children: [
-                                                          CircleAvatar(
-                                                            radius: 30,
-                                                            backgroundImage:
-                                                                AssetImage(
-                                                                    StaticData
-                                                                        .myDp),
+                                                                        10),
                                                           ),
-                                                          Container(
+                                                          child: Container(
                                                             height:
-                                                                height * 0.08,
-                                                            width: width * 0.3,
+                                                                height * 0.23,
+                                                            width: width * 0.43,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          10),
+                                                            ),
                                                             child: Column(
                                                               mainAxisAlignment:
                                                                   MainAxisAlignment
                                                                       .spaceEvenly,
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
                                                               children: [
-                                                                Container(
-                                                                  child: Center(
-                                                                    child: Text(
-                                                                      "Alena Shahzad",
-                                                                      style:
-                                                                          TextStyle(
-                                                                        fontSize:
-                                                                            width *
-                                                                                0.032,
-                                                                        fontWeight:
-                                                                            FontWeight.w500,
-                                                                        overflow:
-                                                                            TextOverflow.clip,
-                                                                      ),
-                                                                    ),
-                                                                  ),
+                                                                SizedBox(
+                                                                  height:
+                                                                      height *
+                                                                          0.01,
                                                                 ),
-                                                                Center(
-                                                                  child: Text(
-                                                                    item.name!,
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontSize:
-                                                                          width *
-                                                                              0.032,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w400,
-                                                                      overflow:
-                                                                          TextOverflow
-                                                                              .fade,
-                                                                    ),
-                                                                  ),
+                                                                CircleAvatar(
+                                                                  radius: 30,
+                                                                  backgroundImage:
+                                                                      NetworkImage(
+                                                                          pair.specialistPic ??
+                                                                              ''),
                                                                 ),
                                                                 Container(
-                                                                    child: Row(
-                                                                        mainAxisAlignment:
-                                                                            MainAxisAlignment.center,
-                                                                        children: [
-                                                                      RatingStars(
-                                                                        value:
-                                                                            rating,
-                                                                        onValueChanged:
-                                                                            (newRating) {},
-                                                                        starCount:
-                                                                            5, // Number of stars
-                                                                        starSize:
-                                                                            12, // Size of the stars
-                                                                        starColor: Color.fromARGB(
-                                                                            255,
-                                                                            241,
-                                                                            134,
-                                                                            170),
-                                                                        valueLabelColor: Color.fromRGBO(
-                                                                            240,
-                                                                            134,
-                                                                            169,
-                                                                            1),
-                                                                        starSpacing:
-                                                                            2, // Space between the stars
-                                                                        valueLabelVisibility:
-                                                                            false,
-                                                                      ),
-                                                                      SizedBox(
-                                                                        width: width *
-                                                                            0.03,
-                                                                      ),
-                                                                      Text(
-                                                                        '$rating',
-                                                                        style:
-                                                                            TextStyle(
-                                                                          fontSize:
-                                                                              14,
-                                                                          color:
-                                                                              Colors.black, // Adjust color as needed
+                                                                  height:
+                                                                      height *
+                                                                          0.08,
+                                                                  width: width,
+                                                                  child: Column(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .spaceEvenly,
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .start,
+                                                                    children: [
+                                                                      Center(
+                                                                        child:
+                                                                            Text(
+                                                                          pair.specialistName ??
+                                                                              '',
+                                                                          style:
+                                                                              TextStyle(
+                                                                            fontSize:
+                                                                                width * 0.032,
+                                                                            fontWeight:
+                                                                                FontWeight.w500,
+                                                                            overflow:
+                                                                                TextOverflow.clip,
+                                                                          ),
                                                                         ),
                                                                       ),
-                                                                    ]))
+                                                                      Center(
+                                                                        child:
+                                                                            Text(
+                                                                          pair.specialistServiceName ??
+                                                                              '',
+                                                                          style:
+                                                                              TextStyle(
+                                                                            fontSize:
+                                                                                width * 0.032,
+                                                                            fontWeight:
+                                                                                FontWeight.w400,
+                                                                            overflow:
+                                                                                TextOverflow.fade,
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                      Container(
+                                                                        child:
+                                                                            Row(
+                                                                          mainAxisAlignment:
+                                                                              MainAxisAlignment.center,
+                                                                          children: [
+                                                                            RatingStars(
+                                                                              value: rating,
+                                                                              onValueChanged: (newRating) {},
+                                                                              starCount: 5,
+                                                                              starSize: 12,
+                                                                              starColor: const Color.fromARGB(255, 241, 134, 170),
+                                                                              valueLabelColor: const Color.fromRGBO(240, 134, 169, 1),
+                                                                              starSpacing: 2,
+                                                                              valueLabelVisibility: false,
+                                                                            ),
+                                                                            SizedBox(width: width * 0.03),
+                                                                            Text(
+                                                                              '$rating',
+                                                                              style: const TextStyle(
+                                                                                fontSize: 14,
+                                                                                color: Colors.black,
+                                                                              ),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
                                                               ],
                                                             ),
                                                           ),
-                                                        ],
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                              },
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Expanded(
+                                    child: StreamBuilder<QuerySnapshot>(
+                                      stream: FirebaseFirestore.instance
+                                          .collection('offers')
+                                          .where("userId",
+                                              isEqualTo: StaticData
+                                                      .userModel?.UserId ??
+                                                  '')
+                                          .snapshots(),
+                                      builder: (BuildContext context,
+                                          AsyncSnapshot<QuerySnapshot>
+                                              snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.waiting) {
+                                          return const Center(
+                                              child:
+                                                  CircularProgressIndicator());
+                                        }
+                                        if (snapshot.hasError) {
+                                          return Center(
+                                              child: Text(
+                                                  'Error: ${snapshot.error}'));
+                                        }
+                                        if (!snapshot.hasData ||
+                                            snapshot.data!.docs.isEmpty) {
+                                          return const Center(
+                                              child:
+                                                  Text('No offers available'));
+                                        }
+
+                                        final width =
+                                            MediaQuery.of(context).size.width;
+                                        final height =
+                                            MediaQuery.of(context).size.height;
+
+                                        // Convert Firestore docs to OfferModel list
+                                        List<OfferModel> offers =
+                                            snapshot.data!.docs.map((doc) {
+                                          return OfferModel.fromMap(doc.data()
+                                              as Map<String, dynamic>);
+                                        }).toList();
+
+                                        return GridView.builder(
+                                          physics:
+                                              const NeverScrollableScrollPhysics(),
+                                          gridDelegate:
+                                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                            crossAxisCount:
+                                                2, // number of items in each row
+                                            mainAxisSpacing:
+                                                8.0, // spacing between rows
+                                            crossAxisSpacing:
+                                                8.0, // spacing between columns
+                                          ),
+                                          padding: const EdgeInsets.all(
+                                              8.0), // padding around the grid
+                                          itemCount: offers
+                                              .length, // total number of items
+                                          itemBuilder: (context, index) {
+                                            OfferModel pair = offers[index];
+                                            return TweenAnimationBuilder(
+                                              tween: Tween<double>(
+                                                  begin: 0.0, end: 1.0),
+                                              duration: const Duration(
+                                                  milliseconds: 800),
+                                              curve: Curves.easeOut,
+                                              builder: (context, double value,
+                                                  child) {
+                                                return Opacity(
+                                                  opacity: value,
+                                                  child: Transform.translate(
+                                                    offset: Offset(
+                                                        0, 50 * (1 - value)),
+                                                    child: child,
+                                                  ),
+                                                );
+                                              },
+                                              child: Stack(
+                                                children: [
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
+                                                    child: Container(
+                                                      width: width * 0.45,
+                                                      decoration: BoxDecoration(
+                                                        border: Border.all(
+                                                            color:
+                                                                Colors.black45),
+                                                        image: DecorationImage(
+                                                          fit: BoxFit.cover,
+                                                          image: NetworkImage(
+                                                              pair.offerPic),
+                                                        ),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10),
                                                       ),
                                                     ),
                                                   ),
                                                 ],
                                               ),
-                                            ),
-                                          );
-                                        }).toList(),
-                                      ),
-                                    ],
-                                  ),
-                                  SingleChildScrollView(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: UserModel3.mylist.map((item) {
-                                        return TweenAnimationBuilder(
-                                          duration: Duration(milliseconds: 500),
-                                          tween: Tween(
-                                              begin: 0.8,
-                                              end: 1.0), // Fade-in and scale
-                                          curve: Curves.easeOut,
-                                          builder:
-                                              (context, double value, child) {
-                                            return Opacity(
-                                              opacity: value, // Adjust opacity
-                                              child: Transform.scale(
-                                                scale: value, // Adjust scale
-                                                child: child,
-                                              ),
                                             );
                                           },
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 10.0),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceEvenly,
-                                              children: [
-                                                GestureDetector(
-                                                  onTap: () {},
-                                                  child: Card(
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10),
-                                                    ),
-                                                    child: Container(
-                                                      height: height * 0.2,
-                                                      width: width * 0.37,
-                                                      decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(10),
-                                                        image: DecorationImage(
-                                                            fit: BoxFit.cover,
-                                                            image: AssetImage(
-                                                                item.image!)),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                                GestureDetector(
-                                                  onTap: () {},
-                                                  child: Container(
-                                                    height: height * 0.2,
-                                                    width: width * 0.37,
-                                                    decoration: BoxDecoration(
-                                                      image: DecorationImage(
-                                                          fit: BoxFit.cover,
-                                                          image: AssetImage(
-                                                              item.image!)),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
                                         );
-                                      }).toList(),
+                                      },
                                     ),
                                   ),
                                   SingleChildScrollView(
@@ -905,7 +944,6 @@ class _SalonScreenState extends State<SalonScreen>
                                       children: [
                                         SizedBox(height: height * 0.02),
 
-                                        // Animated Highlights Section
                                         TweenAnimationBuilder(
                                           tween: Tween<double>(
                                               begin: 0.0, end: 1.0),
@@ -1004,30 +1042,113 @@ class _SalonScreenState extends State<SalonScreen>
                                               ),
                                               Container(
                                                 height: height * 0.15,
-                                                width: width,
-                                                child: ListView.builder(
-                                                  itemCount: 5,
-                                                  scrollDirection:
-                                                      Axis.horizontal,
-                                                  itemBuilder:
-                                                      (context, index) {
-                                                    return Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              8),
-                                                      child: Container(
-                                                        height: height * 0.0,
-                                                        width: width * 0.3,
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          image: DecorationImage(
-                                                              fit: BoxFit.cover,
-                                                              image: AssetImage(
-                                                                  "images/work.jpg")),
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(10),
-                                                        ),
+                                                child: StreamBuilder<
+                                                    QuerySnapshot>(
+                                                  stream: FirebaseFirestore
+                                                      .instance
+                                                      .collection('recentworks')
+                                                      .where("userId",
+                                                          isEqualTo: StaticData
+                                                              .userModel!
+                                                              .UserId)
+                                                      .snapshots(),
+                                                  builder:
+                                                      (BuildContext context,
+                                                          AsyncSnapshot<
+                                                                  QuerySnapshot>
+                                                              snapshot) {
+                                                    if (snapshot
+                                                            .connectionState ==
+                                                        ConnectionState
+                                                            .waiting) {
+                                                      return const Center(
+                                                          child:
+                                                              CircularProgressIndicator());
+                                                    }
+
+                                                    if (snapshot.hasError) {
+                                                      return Center(
+                                                          child: Text(
+                                                              'Error: ${snapshot.error}'));
+                                                    }
+
+                                                    if (!snapshot.hasData ||
+                                                        snapshot.data!.docs
+                                                            .isEmpty) {
+                                                      return const Center(
+                                                          child: Text(
+                                                              'No Work available'));
+                                                    }
+
+                                                    final width =
+                                                        MediaQuery.of(context)
+                                                            .size
+                                                            .width;
+                                                    final height =
+                                                        MediaQuery.of(context)
+                                                            .size
+                                                            .height;
+
+                                                    return Container(
+                                                      height: height * 0.15,
+                                                      width: width,
+                                                      child: ListView.builder(
+                                                        scrollDirection:
+                                                            Axis.horizontal,
+                                                        itemCount: snapshot
+                                                            .data!.docs.length,
+                                                        itemBuilder:
+                                                            (context, index) {
+                                                          Map<String, dynamic>
+                                                              docData = snapshot
+                                                                      .data!
+                                                                      .docs[index]
+                                                                      .data()
+                                                                  as Map<String,
+                                                                      dynamic>;
+
+                                                          RecentWorkModel
+                                                              model =
+                                                              RecentWorkModel
+                                                                  .fromMap(
+                                                                      docData);
+
+                                                          String recentWorkPic =
+                                                              model.RecentworkPic ??
+                                                                  '';
+                                                          String recentWorkId =
+                                                              model.RecentworkId ??
+                                                                  '';
+
+                                                          return Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(8.0),
+                                                            child: Stack(
+                                                              children: [
+                                                                Container(
+                                                                  width: width *
+                                                                      0.3,
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    border: Border
+                                                                        .all(),
+                                                                    image:
+                                                                        DecorationImage(
+                                                                      fit: BoxFit
+                                                                          .cover,
+                                                                      image: NetworkImage(
+                                                                          recentWorkPic),
+                                                                    ),
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            10),
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          );
+                                                        },
                                                       ),
                                                     );
                                                   },

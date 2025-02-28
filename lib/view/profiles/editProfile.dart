@@ -123,9 +123,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                           ],
                                         ),
                                       ),
-                                      SizedBox(
-                                        width: width * 0.12,
-                                      ),
                                       GestureDetector(
                                         onTap: () async {
                                           await obj.pickSalonPicture(context);
@@ -580,7 +577,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                         borderRadius: BorderRadius.circular(10),
                                       ),
                                       padding: const EdgeInsets.symmetric(
-                                          horizontal: 50, vertical: 15),
+                                          horizontal: 80, vertical: 10),
                                     ),
                                     child: const Text(
                                       "Save",

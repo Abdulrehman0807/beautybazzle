@@ -2,6 +2,7 @@ import 'package:beautybazzle/controller/editprofilecontroller.dart';
 import 'package:beautybazzle/model/addoffer.dart';
 import 'package:beautybazzle/model/addproduct.dart';
 import 'package:beautybazzle/model/addservices.dart';
+import 'package:beautybazzle/model/addspecialist.dart';
 import 'package:beautybazzle/model/addwork.dart';
 import 'package:beautybazzle/model/servic_data.dart';
 import 'package:beautybazzle/utiils/static_data.dart';
@@ -527,7 +528,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                 );
                               },
                               child: Container(
-                                height: height * 0.13,
+                                height: height * 0.15,
                                 child: StreamBuilder<QuerySnapshot>(
                                   stream: FirebaseFirestore.instance
                                       .collection('offers')
@@ -557,7 +558,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                         MediaQuery.of(context).size.width;
                                     return Container(
                                       width: width,
-                                      height: height * 0.13,
+                                      height: height * 0.15,
                                       child: ListView.builder(
                                         scrollDirection: Axis.horizontal,
                                         itemCount: snapshot.data!.docs.length,
@@ -626,7 +627,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                             Column(
                               children: [
                                 Container(
-                                  height: height * 0.15,
+                                  // height: height * 0.15,
                                   child: StreamBuilder<QuerySnapshot>(
                                     stream: FirebaseFirestore.instance
                                         .collection('services')
@@ -688,7 +689,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                                     const EdgeInsets.symmetric(
                                                         vertical: 4.0),
                                                 child: Container(
-                                                  height: height * 0.15,
+                                                  height: height * 0.1,
                                                   width: width,
                                                   decoration: BoxDecoration(
                                                     border: Border.all(
@@ -772,280 +773,220 @@ class _ProfileScreenState extends State<ProfileScreen>
                                             fontWeight: FontWeight.bold))
                                   ])),
                                 ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: UserModel2.mylist.map((item) {
-                                    return TweenAnimationBuilder(
-                                      tween:
-                                          Tween<double>(begin: 0.0, end: 1.0),
-                                      duration:
-                                          const Duration(milliseconds: 800),
-                                      curve: Curves.easeOut,
-                                      builder: (context, double value, child) {
-                                        return Opacity(
-                                          opacity: value,
-                                          child: Transform.translate(
-                                            offset: Offset(0, 50 * (1 - value)),
-                                            child: child,
-                                          ),
-                                        );
-                                      },
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 10.0),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
-                                          children: [
-                                            Card(
-                                              elevation: 2,
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          10)),
-                                              child: Container(
-                                                height: height * 0.2,
-                                                width: width * 0.43,
-                                                decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10)),
-                                                child: Column(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceEvenly,
-                                                  children: [
-                                                    CircleAvatar(
-                                                      radius: 30,
-                                                      backgroundImage:
-                                                          AssetImage(
-                                                              item.image!),
-                                                    ),
-                                                    Container(
-                                                      height: height * 0.08,
-                                                      width: width,
-                                                      child: Column(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceEvenly,
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Container(
-                                                            child: Center(
-                                                              child: Text(
-                                                                "Alena Shahzad",
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontSize:
-                                                                      width *
-                                                                          0.032,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500,
-                                                                  overflow:
-                                                                      TextOverflow
-                                                                          .clip,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          Center(
-                                                            child: Text(
-                                                              item.name!,
-                                                              style: TextStyle(
-                                                                fontSize:
-                                                                    width *
-                                                                        0.032,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w400,
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .fade,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          Container(
-                                                              child: Row(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .center,
-                                                                  children: [
-                                                                RatingStars(
-                                                                  value: rating,
-                                                                  onValueChanged:
-                                                                      (newRating) {},
-                                                                  starCount:
-                                                                      5, // Number of stars
-                                                                  starSize:
-                                                                      12, // Size of the stars
-                                                                  starColor: Color
-                                                                      .fromARGB(
-                                                                          255,
-                                                                          241,
-                                                                          134,
-                                                                          170),
-                                                                  valueLabelColor:
-                                                                      Color.fromRGBO(
-                                                                          240,
-                                                                          134,
-                                                                          169,
-                                                                          1),
-                                                                  starSpacing:
-                                                                      2, // Space between the stars
-                                                                  valueLabelVisibility:
-                                                                      false,
-                                                                ),
-                                                                SizedBox(
-                                                                  width: width *
-                                                                      0.03,
-                                                                ),
-                                                                Text(
-                                                                  '$rating',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontSize:
-                                                                        14,
-                                                                    color: Colors
-                                                                        .black, // Adjust color as needed
-                                                                  ),
-                                                                ),
-                                                              ]))
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                            Card(
-                                              elevation: 2,
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          10)),
-                                              child: Container(
-                                                height: height * 0.2,
-                                                width: width * 0.43,
-                                                decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10)),
-                                                child: Column(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceEvenly,
-                                                  children: [
-                                                    CircleAvatar(
-                                                      radius: 30,
-                                                      backgroundImage:
-                                                          AssetImage(
-                                                              StaticData.myDp),
-                                                    ),
-                                                    Container(
-                                                      height: height * 0.08,
-                                                      width: width * 0.3,
-                                                      child: Column(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceEvenly,
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Container(
-                                                            child: Center(
-                                                              child: Text(
-                                                                "Alena Shahzad",
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontSize:
-                                                                      width *
-                                                                          0.032,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500,
-                                                                  overflow:
-                                                                      TextOverflow
-                                                                          .clip,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          Center(
-                                                            child: Text(
-                                                              item.name!,
-                                                              style: TextStyle(
-                                                                fontSize:
-                                                                    width *
-                                                                        0.032,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w400,
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .fade,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          Container(
-                                                              child: Row(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .center,
-                                                                  children: [
-                                                                RatingStars(
-                                                                  value: rating,
-                                                                  onValueChanged:
-                                                                      (newRating) {},
-                                                                  starCount: 5,
-                                                                  starSize: 12,
-                                                                  starColor: Color
-                                                                      .fromARGB(
-                                                                          255,
-                                                                          241,
-                                                                          134,
-                                                                          170),
-                                                                  valueLabelColor:
-                                                                      Color.fromRGBO(
-                                                                          240,
-                                                                          134,
-                                                                          169,
-                                                                          1),
-                                                                  starSpacing:
-                                                                      2, // Space between the stars
-                                                                  valueLabelVisibility:
-                                                                      false,
-                                                                ),
-                                                                SizedBox(
-                                                                  width: width *
-                                                                      0.03,
-                                                                ),
-                                                                Text(
-                                                                  '$rating',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontSize:
-                                                                        14,
-                                                                    color: Colors
-                                                                        .black, // Adjust color as needed
-                                                                  ),
-                                                                ),
-                                                              ]))
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          ],
+                                Expanded(
+                                  child: StreamBuilder<QuerySnapshot>(
+                                    stream: FirebaseFirestore.instance
+                                        .collection('specialists')
+                                        .where("userId",
+                                            isEqualTo:
+                                                StaticData.userModel!.UserId)
+                                        .snapshots(),
+                                    builder: (BuildContext context,
+                                        AsyncSnapshot<QuerySnapshot> snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return const Center(
+                                            child: CircularProgressIndicator());
+                                      }
+
+                                      if (snapshot.hasError) {
+                                        return Center(
+                                            child: Text(
+                                                'Error: ${snapshot.error}'));
+                                      }
+
+                                      if (!snapshot.hasData ||
+                                          snapshot.data!.docs.isEmpty) {
+                                        return const Center(
+                                            child: Text(
+                                                'No Specialists available'));
+                                      }
+
+                                      final width =
+                                          MediaQuery.of(context).size.width;
+                                      final height =
+                                          MediaQuery.of(context).size.height;
+
+                                      // Convert Firestore docs to SpecialistModel list
+                                      List<SpecialistModel> specialists =
+                                          snapshot.data!.docs.map((doc) {
+                                        return SpecialistModel.fromMap(
+                                            doc.data() as Map<String, dynamic>);
+                                      }).toList();
+
+                                      return GridView.builder(
+                                        physics: NeverScrollableScrollPhysics(),
+                                        gridDelegate:
+                                            const SliverGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount:
+                                              2, // number of items in each row
+                                          mainAxisSpacing:
+                                              8.0, // spacing between rows
+                                          crossAxisSpacing:
+                                              8.0, // spacing between columns
                                         ),
-                                      ),
-                                    );
-                                  }).toList(),
+                                        padding: const EdgeInsets.all(
+                                            8.0), // padding around the grid
+                                        itemCount: specialists
+                                            .length, // total number of items
+                                        itemBuilder: (context, index) {
+                                          SpecialistModel pair =
+                                              specialists[index];
+                                          return TweenAnimationBuilder(
+                                            tween: Tween<double>(
+                                                begin: 0.0, end: 1.0),
+                                            duration: const Duration(
+                                                milliseconds: 800),
+                                            curve: Curves.easeOut,
+                                            builder:
+                                                (context, double value, child) {
+                                              return Opacity(
+                                                opacity: value,
+                                                child: Transform.translate(
+                                                  offset: Offset(
+                                                      0, 50 * (1 - value)),
+                                                  child: child,
+                                                ),
+                                              );
+                                            },
+                                            child: Stack(
+                                              children: [
+                                                Card(
+                                                  elevation: 2,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                  ),
+                                                  child: Container(
+                                                    height: height * 0.22,
+                                                    width: width * 0.43,
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                    ),
+                                                    child: Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceEvenly,
+                                                      children: [
+                                                        CircleAvatar(
+                                                          radius: 30,
+                                                          backgroundImage:
+                                                              NetworkImage(
+                                                                  pair.specialistPic ??
+                                                                      ''),
+                                                        ),
+                                                        Container(
+                                                          height: height * 0.08,
+                                                          width: width,
+                                                          child: Column(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceEvenly,
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              Center(
+                                                                child: Text(
+                                                                  pair.specialistName ??
+                                                                      '',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontSize:
+                                                                        width *
+                                                                            0.032,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500,
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .clip,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              Center(
+                                                                child: Text(
+                                                                  pair.specialistServiceName ??
+                                                                      '',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontSize:
+                                                                        width *
+                                                                            0.032,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w400,
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .fade,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              Container(
+                                                                child: Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .center,
+                                                                  children: [
+                                                                    RatingStars(
+                                                                      value:
+                                                                          rating,
+                                                                      onValueChanged:
+                                                                          (newRating) {},
+                                                                      starCount:
+                                                                          5,
+                                                                      starSize:
+                                                                          12,
+                                                                      starColor: const Color
+                                                                              .fromARGB(
+                                                                          255,
+                                                                          241,
+                                                                          134,
+                                                                          170),
+                                                                      valueLabelColor: const Color
+                                                                              .fromRGBO(
+                                                                          240,
+                                                                          134,
+                                                                          169,
+                                                                          1),
+                                                                      starSpacing:
+                                                                          2,
+                                                                      valueLabelVisibility:
+                                                                          false,
+                                                                    ),
+                                                                    SizedBox(
+                                                                        width: width *
+                                                                            0.03),
+                                                                    Text(
+                                                                      '$rating',
+                                                                      style:
+                                                                          const TextStyle(
+                                                                        fontSize:
+                                                                            14,
+                                                                        color: Colors
+                                                                            .black,
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    },
+                                  ),
                                 ),
                               ],
                             ),
