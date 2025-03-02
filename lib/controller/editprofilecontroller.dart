@@ -67,6 +67,7 @@ class ProfileController extends GetxController {
   bool isLoadingProduct = false;
   bool isLoadingWork = false;
   bool isLoadingService = false;
+  bool isloadingvideo = false;
   bool isFavorite = false;
 
   void toggleFavorite() {
@@ -372,231 +373,10 @@ class ProfileController extends GetxController {
 
   ///////////////////////// offer add //////////////////////////
 
-  // Future<void> pickImage() async {
-  //   final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-  //   if (pickedFile != null) {
-  //     offerPic = File(pickedFile.path);
-  //     update();
-  //   }
-  // }
-
-  // Future<void> createOfferCollection(BuildContext context) async {
-  //   try {
-  //     var uuid = const Uuid();
-  //     String offerId = uuid.v4();
-  //     String time = DateTime.now().toIso8601String();
-  //     String? offerPicUrl = '';
-  //     if (offerPic != null) {
-  //       // Upload the image to Firebase Storage
-  //       firebase_storage.Reference ref = firebase_storage
-  //           .FirebaseStorage.instance
-  //           .ref()
-  //           .child('offer_pics/$offerId'); // Unique file path using offerId
-  //       await ref.putFile(File(offerPic!.path));
-
-  //       // Get the download URL
-  //       offerPicUrl = await ref.getDownloadURL();
-  //     }
-  //     OfferModel model = OfferModel(
-  //       offerId: offerId,
-  //       offerName: offerNameController.text,
-  //       offerPic: offerPicUrl ?? '',
-  //       time: time,
-  //       userId: StaticData.userModel!.UserId,
-  //     );
-
-  //     await FirebaseFirestore.instance
-  //         .collection('offers')
-  //         .doc(offerId)
-  //         .set(model.toMap());
-
-  //     print("Offer created with offerId: $offerId");
-
-  //     Fluttertoast.showToast(
-  //       msg: "Offer created successfully!",
-  //       toastLength: Toast.LENGTH_SHORT, // Duration of the toast
-  //       gravity: ToastGravity.BOTTOM, // Position of the toast
-  //       backgroundColor: Colors.green, // Background color
-  //       textColor: Colors.white, // Text color
-  //       fontSize: 16.0, // Font size
-  //     );
-  //     // Clear the form fields and reset the image picker
-  //     offerNameController.clear();
-  //     offerPic = null;
-  //     update();
-  //   } catch (e) {
-  //     print("Error creating offer: $e");
-  //     Fluttertoast.showToast(
-  //       msg: "Failed to create offer.",
-  //       toastLength: Toast.LENGTH_SHORT,
-  //       gravity: ToastGravity.BOTTOM,
-  //       backgroundColor: Colors.red,
-  //       textColor: Colors.white,
-  //       fontSize: 16.0,
-  //     );
-  //   }
-  // }
-
-  // Future<void> deleteOffer(String offerId) async {
-  //   try {
-  //     // Attempt to delete the offer
-  //     await FirebaseFirestore.instance
-  //         .collection('offers')
-  //         .doc(offerId)
-  //         .delete();
-
-  //     print("Offer deleted with offerId: $offerId");
-
-  //     // Show a success toast message
-  //     Fluttertoast.showToast(
-  //       msg: 'Offer deleted successfully!',
-  //       toastLength: Toast.LENGTH_SHORT,
-  //       gravity: ToastGravity.BOTTOM,
-  //       timeInSecForIosWeb: 1,
-  //       backgroundColor: Colors.green,
-  //       textColor: Colors.white,
-  //       fontSize: 16.0,
-  //     );
-  //   } catch (e) {
-  //     // Show an error toast message
-  //     print("Error deleting offer: $e");
-
-  //     Fluttertoast.showToast(
-  //       msg: 'Failed to delete the offer.',
-  //       toastLength: Toast.LENGTH_SHORT,
-  //       gravity: ToastGravity.BOTTOM,
-  //       timeInSecForIosWeb: 1,
-  //       backgroundColor: Colors.red,
-  //       textColor: Colors.white,
-  //       fontSize: 16.0,
-  //     );
-  //   }
-  // }
-
-  // void showAddOfferDialog(BuildContext context) {
-  //   showDialog(
-  //     context: context,
-  //     builder: (BuildContext dc) {
-  //       return TweenAnimationBuilder(
-  //         tween: Tween<double>(begin: 0.8, end: 1.0),
-  //         duration: Duration(milliseconds: 500),
-  //         curve: Curves.easeInOut,
-  //         builder: (context, double scale, child) {
-  //           return Transform.scale(
-  //             scale: scale,
-  //             child: Stack(
-  //               children: [
-  //                 AlertDialog(
-  //                   title: const Center(child: Text("Add a Best Offers")),
-  //                   content: Form(
-  //                     key: formKey,
-  //                     child: Column(
-  //                       mainAxisSize: MainAxisSize.min,
-  //                       children: [
-  //                         Container(
-  //                           width: 500,
-  //                           child: TextFormField(
-  //                             controller: offerNameController,
-  //                             decoration: const InputDecoration(
-  //                               labelText: 'Offer Name',
-  //                             ),
-  //                             keyboardType: TextInputType.text,
-  //                             validator: (value) {
-  //                               if (value == null || value.isEmpty) {
-  //                                 return 'Please enter an Offer name';
-  //                               }
-  //                               return null;
-  //                             },
-  //                           ),
-  //                         ),
-  //                         const SizedBox(height: 22),
-  //                         InkWell(
-  //                           onTap: () => pickImage(),
-  //                           child: Stack(
-  //                             alignment: Alignment.center,
-  //                             children: [
-  //                               Container(
-  //                                 height: 150,
-  //                                 width: 300,
-  //                                 decoration: BoxDecoration(
-  //                                   color: Colors.grey[350],
-  //                                   borderRadius: BorderRadius.circular(10),
-  //                                 ),
-  //                                 child: offerPic != null
-  //                                     ? Image.file(
-  //                                         File(offerPic!.path),
-  //                                         height: 150,
-  //                                         width: 150,
-  //                                         fit: BoxFit.cover,
-  //                                       )
-  //                                     : Icon(
-  //                                         Icons.camera_alt,
-  //                                         size: 50,
-  //                                         color: Colors.black45,
-  //                                       ),
-  //                               ),
-  //                               if (isLoadingOffer)
-  //                                 const SpinKitSpinningLines(
-  //                                   color: Colors.white,
-  //                                 ),
-  //                             ],
-  //                           ),
-  //                         ),
-  //                       ],
-  //                     ),
-  //                   ),
-  //                   actions: [
-  //                     Center(
-  //                       child: ElevatedButton(
-  //                         onPressed: () async {
-  //                           if (formKey.currentState!.validate()) {
-  //                             await createOfferCollection(
-  //                                 context); // Ensure createOfferCollection method is defined
-  //                             Navigator.of(dc).pop();
-  //                           }
-  //                         },
-  //                         style: ElevatedButton.styleFrom(
-  //                           backgroundColor: Colors.pink[200],
-  //                           shape: RoundedRectangleBorder(
-  //                             borderRadius: BorderRadius.circular(10),
-  //                           ),
-  //                           padding: const EdgeInsets.symmetric(
-  //                             horizontal: 130,
-  //                             vertical: 10,
-  //                           ),
-  //                         ),
-  //                         child: const Text(
-  //                           "Save",
-  //                           style: TextStyle(
-  //                             color: Colors.white,
-  //                             fontSize: 20,
-  //                             fontWeight: FontWeight.bold,
-  //                           ),
-  //                         ),
-  //                       ),
-  //                     ),
-  //                     const SizedBox(height: 5),
-  //                   ],
-  //                 ),
-  //                 isLoading
-  //                     ? Container(
-  //                         height: 800,
-  //                         width: 500,
-  //                         color: Colors.pink.withOpacity(0.3),
-  //                         child: Center(
-  //                             child: SpinKitSpinningLines(color: Colors.pink)),
-  //                       )
-  //                     : SizedBox()
-  //               ],
-  //             ),
-  //           );
-  //         },
-  //       );
-  //     },
-  //   );
-  // }
   // Function to pick an image from the gallery
-  Future<void> pickImage(BuildContext context) async {
+  Future<void> pickImage(
+    BuildContext context,
+  ) async {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       offerPic = File(pickedFile.path);
@@ -754,6 +534,7 @@ class ProfileController extends GetxController {
                                   width: 300,
                                   decoration: BoxDecoration(
                                     color: Colors.grey[350],
+                                    border: Border.all(color: Colors.black45),
                                     borderRadius: BorderRadius.circular(10),
                                   ),
                                   child: offerPic != null
@@ -769,10 +550,6 @@ class ProfileController extends GetxController {
                                           color: Colors.black45,
                                         ),
                                 ),
-                                if (isLoadingOffer)
-                                  const SpinKitSpinningLines(
-                                    color: Colors.white,
-                                  ),
                               ],
                             ),
                           ),
@@ -784,7 +561,10 @@ class ProfileController extends GetxController {
                         child: ElevatedButton(
                           onPressed: () async {
                             if (formKey.currentState!.validate()) {
+                              isLoading = true;
                               await createOfferCollection(context);
+
+                              isLoading = false;
                               Navigator.of(dc).pop();
                             }
                           },
@@ -831,127 +611,121 @@ class ProfileController extends GetxController {
 
   ////////////// add services //////////////////
 
-  Future<void> pickServiceImage() async {
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      servicePic = File(pickedFile.path);
-      update();
+  Future<void> pickServiceImage(BuildContext context) async {
+    try {
+      final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+      if (pickedFile != null) {
+        servicePic = File(pickedFile.path);
+        update(); // Update the UI
+      }
+    } catch (e) {
+      print("Error picking image: $e");
+      Fluttertoast.showToast(
+        msg: "Failed to pick image. Error: $e",
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
     }
   }
 
   Future<void> createServiceCollection(BuildContext context) async {
+    if (isLoadingService) return; // Prevent multiple submissions
+
     try {
+      isLoadingService = true;
+      update(); // Show loading state
+
       var uuid = const Uuid();
       String serviceId = uuid.v4();
       String time = DateTime.now().toIso8601String();
-      String? servicePicUrl = '';
+      String? servicePicUrl;
 
+      // Upload image to Firebase Storage if an image is selected
       if (servicePic != null) {
-        firebase_storage.Reference ref = firebase_storage
-            .FirebaseStorage.instance
-            .ref()
-            .child('service_pics/$serviceId');
-
-        // Upload the file
+        firebase_storage.Reference ref =
+            firebase_storage.FirebaseStorage.instance.ref().child(
+                'service_pics/$serviceId'); // Unique file path using serviceId
         await ref.putFile(File(servicePic!.path));
-
-        // Get the download URL
         servicePicUrl = await ref.getDownloadURL();
 
-        // Show success toast after the image is uploaded
         Fluttertoast.showToast(
           msg: "Image uploaded successfully!",
-          toastLength: Toast.LENGTH_SHORT, // Duration of the toast
-          gravity: ToastGravity.BOTTOM, // Position of the toast
-          backgroundColor: Colors.green, // Background color
-          textColor: Colors.white, // Text color
-          fontSize: 16.0, // Font size
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
         );
       } else {
-        // Show error toast message
         Fluttertoast.showToast(
           msg: "No image selected!",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
           backgroundColor: Colors.red,
           textColor: Colors.white,
-          fontSize: 16.0,
         );
-
         return;
       }
 
+      // Create ServiceModel
       ServiceModel model = ServiceModel(
         serviceId: serviceId,
         serviceName: serviceNameController.text,
         serviceDescription: serviceDescriptionController.text,
-        servicePic: servicePicUrl ?? '',
+        servicePic: servicePicUrl ?? '', // Handle null gracefully
         time: time,
         userId: StaticData.userModel!.UserId,
       );
 
-      // Save the service to Firestore
+      // Save service to Firestore
       await FirebaseFirestore.instance
           .collection('services')
           .doc(serviceId)
           .set(model.toMap());
+
       Fluttertoast.showToast(
         msg: "Service created successfully!",
-        toastLength: Toast.LENGTH_SHORT, // Duration of the toast
-        gravity: ToastGravity.BOTTOM, // Position of the toast
-        backgroundColor: Colors.green, // Background color
-        textColor: Colors.white, // Text color
-        fontSize: 16.0, // Font size
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
       );
 
-      // Clear the form fields and reset the image picker
+      // Clear form fields and reset image picker
       serviceNameController.clear();
       serviceDescriptionController.clear();
       servicePic = null;
-      update();
+      update(); // Update the UI
     } catch (e) {
       print("Error creating service: $e");
       Fluttertoast.showToast(
         msg: "Failed to create service. Try again!",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
         backgroundColor: Colors.red,
         textColor: Colors.white,
-        fontSize: 16.0,
       );
+    } finally {
+      isLoadingService = false;
+      update(); // Hide loading state
     }
   }
 
-  void deleteService(BuildContext context, String serviceId) async {
+// Delete service from Firestore
+  Future<void> deleteService(BuildContext context, String serviceId) async {
     try {
-      // Deleting the service from Firestore
       await FirebaseFirestore.instance
           .collection('services')
           .doc(serviceId)
           .delete();
 
-      // Show a success message
       Fluttertoast.showToast(
         msg: "Service deleted successfully!",
-        toastLength: Toast.LENGTH_SHORT, // Duration of the toast
-        gravity: ToastGravity.BOTTOM, // Position of the toast
-        backgroundColor: Colors.green, // Background color
-        textColor: Colors.white, // Text color
-        fontSize: 16.0, // Font size
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
       );
     } catch (e) {
-      // Show error toast message
+      print("Error deleting service: $e");
       Fluttertoast.showToast(
         msg: "Error deleting service: $e",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
         backgroundColor: Colors.red,
         textColor: Colors.white,
-        fontSize: 16.0,
       );
     }
   }
 
+// Show dialog to add a service
   void showAddServiceDialog(BuildContext context, double width, double height) {
     showDialog(
       context: context,
@@ -966,52 +740,43 @@ class ProfileController extends GetxController {
               child: AlertDialog(
                 title: const Center(child: Text("Add a Best Service")),
                 content: Form(
-                  key: formKey, // Ensure you have formKey defined
+                  key: formKey,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       // Service Name Field
-                      Container(
-                        width: width,
-                        child: TextFormField(
-                          controller:
-                              serviceNameController, // Ensure serviceNameController is defined
-                          decoration: const InputDecoration(
-                            hintText: "Service Name",
-                          ),
-                          keyboardType: TextInputType.text,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter a service name';
-                            }
-                            return null;
-                          },
+                      TextFormField(
+                        controller: serviceNameController,
+                        decoration: const InputDecoration(
+                          hintText: "Service Name",
                         ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter a service name';
+                          }
+                          return null;
+                        },
                       ),
                       SizedBox(height: height * 0.03),
 
                       // Service Description Field
-                      Container(
-                        width: width,
-                        child: TextFormField(
-                          controller:
-                              serviceDescriptionController, // Ensure serviceDescriptionController is defined
-                          decoration: const InputDecoration(
-                            hintText: "Description",
-                          ),
-                          keyboardType: TextInputType.text,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter a description for the service';
-                            }
-                            return null;
-                          },
+                      TextFormField(
+                        controller: serviceDescriptionController,
+                        decoration: const InputDecoration(
+                          hintText: "Description",
                         ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter a description for the service';
+                          }
+                          return null;
+                        },
                       ),
                       SizedBox(height: height * 0.03),
 
+                      // Image Picker
                       InkWell(
-                        onTap: () => pickServiceImage(),
+                        onTap: () => pickServiceImage(context),
                         child: Stack(
                           alignment: Alignment.center,
                           children: [
@@ -1020,13 +785,12 @@ class ProfileController extends GetxController {
                               width: 300,
                               decoration: BoxDecoration(
                                 color: Colors.grey[350],
+                                border: Border.all(color: Colors.black45),
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: servicePic != null
                                   ? Image.file(
                                       File(servicePic!.path),
-                                      height: 150,
-                                      width: 150,
                                       fit: BoxFit.cover,
                                     )
                                   : Icon(
@@ -1036,7 +800,7 @@ class ProfileController extends GetxController {
                                     ),
                             ),
                             if (isLoadingService)
-                              const SpinKitSpinningLines(
+                              const CircularProgressIndicator(
                                 color: Colors.white,
                               ),
                           ],
@@ -1050,8 +814,7 @@ class ProfileController extends GetxController {
                     child: ElevatedButton(
                       onPressed: () async {
                         if (formKey.currentState!.validate()) {
-                          await createServiceCollection(
-                              context); // Ensure createServiceCollection method is defined
+                          await createServiceCollection(context);
                           Navigator.of(dc).pop();
                         }
                       },
@@ -1123,32 +886,47 @@ class ProfileController extends GetxController {
                   ],
                 ),
                 actions: [
-                  ElevatedButton(
-                    onPressed: () async {
-                      if (serviceNameController.text.isNotEmpty &&
-                          serviceDescriptionController.text.isNotEmpty) {
-                        // Update the service in Firestore
-                        await updateServiceInFirestore(
-                          model.serviceId,
-                          serviceNameController.text,
-                          serviceDescriptionController.text,
-                        );
-                        Navigator.of(dc).pop();
-                      } else {
-                        // Handle empty field case
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text('Please fill all fields')),
-                        );
-                      }
-                    },
-                    child: const Text('Save'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text('Cancel'),
+                  Center(
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        if (serviceNameController.text.isNotEmpty &&
+                            serviceDescriptionController.text.isNotEmpty) {
+                          // Update the service in Firestore
+                          await updateServiceInFirestore(
+                            model.serviceId,
+                            serviceNameController.text,
+                            serviceDescriptionController.text,
+                          );
+                          Navigator.of(dc).pop();
+                        } else {
+                          // Handle empty field case
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Please fill all fields')),
+                          );
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            Colors.pink[200], // Button background color
+                        shape: RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadius.circular(10), // Rounded corners
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 130, // Horizontal padding
+                          vertical: 10, // Vertical padding
+                        ),
+                      ),
+                      child: const Text(
+                        'Save',
+                        style: TextStyle(
+                          color: Colors.white, // Text color
+                          fontSize: 20, // Font size
+                          fontWeight: FontWeight.bold, // Bold text
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -1202,31 +980,47 @@ class ProfileController extends GetxController {
   }
 
 //////////////// add product ////////////
-  Future<void> pickProductImage() async {
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      productPic = File(pickedFile.path);
+
+  Future<void> pickProductImage(BuildContext context) async {
+    try {
+      final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+      if (pickedFile != null) {
+        productPic = File(pickedFile.path);
+        update(); // Update the UI
+      }
+    } catch (e) {
+      print("Error picking image: $e");
+      Fluttertoast.showToast(
+        msg: "Failed to pick image. Please try again.",
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
     }
   }
 
+// Create product collection in Firestore
   Future<void> createProductCollection(BuildContext context) async {
+    if (isLoadingProduct) return; // Prevent multiple submissions
+
     try {
+      isLoadingProduct = true;
+      update(); // Show loading state
+
       var uuid = const Uuid();
       String productId = uuid.v4();
       String time = DateTime.now().toIso8601String();
       String? productPicUrl = '';
 
+      // Upload image to Firebase Storage if an image is selected
       if (productPic != null) {
-        // Upload the image to Firebase Storage
         firebase_storage.Reference ref =
             firebase_storage.FirebaseStorage.instance.ref().child(
                 'product_pics/$productId'); // Unique file path using productId
         await ref.putFile(File(productPic!.path));
-
-        // Get the download URL
         productPicUrl = await ref.getDownloadURL();
       }
 
+      // Create ProductModel
       ProductModel model = ProductModel(
         productId: productId,
         productName: productNameController.text,
@@ -1245,35 +1039,30 @@ class ProfileController extends GetxController {
       print("Product created with productId: $productId");
 
       Fluttertoast.showToast(
-        msg: 'Product created successfully!',
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
+        msg: "Product created successfully!",
         backgroundColor: Colors.green,
         textColor: Colors.white,
-        fontSize: 16.0,
       );
 
-      // Clear form fields and reset image
+      // Clear form fields and reset image picker
       productNameController.clear();
       productPriceController.clear();
       productPic = null;
+      update(); // Update the UI
     } catch (e) {
       print("Error creating product: $e");
-
-      // Show failure toast message
       Fluttertoast.showToast(
-        msg: 'Failed to create product.',
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
+        msg: "Failed to create product. Try again!",
         backgroundColor: Colors.red,
         textColor: Colors.white,
-        fontSize: 16.0,
       );
+    } finally {
+      isLoadingProduct = false;
+      update(); // Hide loading state
     }
   }
 
+// Delete product from Firestore
   Future<void> deleteProduct(BuildContext context, String productId) async {
     try {
       await FirebaseFirestore.instance
@@ -1282,28 +1071,21 @@ class ProfileController extends GetxController {
           .delete();
 
       Fluttertoast.showToast(
-        msg: 'Product deleted successfully!',
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
+        msg: "Product deleted successfully!",
         backgroundColor: Colors.green,
         textColor: Colors.white,
-        fontSize: 16.0,
       );
     } catch (e) {
-      // Show error toast message if deletion fails
+      print("Error deleting product: $e");
       Fluttertoast.showToast(
         msg: "Error deleting product: $e",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
         backgroundColor: Colors.red,
         textColor: Colors.white,
-        fontSize: 16.0,
       );
     }
   }
 
+// Show dialog to add a product
   void showAddProductDialog(BuildContext context, double width, double height) {
     showDialog(
       context: context,
@@ -1323,43 +1105,39 @@ class ProfileController extends GetxController {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       // Product Name Field
-                      Container(
-                        width: width,
-                        child: TextFormField(
-                          controller: productNameController,
-                          decoration: const InputDecoration(
-                            hintText: "Product Name",
-                          ),
-                          keyboardType: TextInputType.text,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter a product name';
-                            }
-                            return null;
-                          },
+                      TextFormField(
+                        controller: productNameController,
+                        decoration: const InputDecoration(
+                          hintText: "Product Name",
                         ),
-                      ),
-
-                      SizedBox(
-                        width: width,
-                        child: TextFormField(
-                          controller: productPriceController,
-                          decoration: const InputDecoration(
-                            labelText: 'Product Price',
-                          ),
-                          keyboardType: TextInputType.number,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter a product price';
-                            }
-                            return null;
-                          },
-                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter a product name';
+                          }
+                          return null;
+                        },
                       ),
                       SizedBox(height: height * 0.03),
 
+                      // Product Price Field
+                      TextFormField(
+                        controller: productPriceController,
+                        decoration: const InputDecoration(
+                          hintText: "Product Price",
+                        ),
+                        keyboardType: TextInputType.number,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter a product price';
+                          }
+                          return null;
+                        },
+                      ),
+                      SizedBox(height: height * 0.03),
+
+                      // Image Picker
                       InkWell(
-                        onTap: () => pickProductImage(),
+                        onTap: () => pickProductImage(context),
                         child: Stack(
                           alignment: Alignment.center,
                           children: [
@@ -1368,13 +1146,12 @@ class ProfileController extends GetxController {
                               width: 300,
                               decoration: BoxDecoration(
                                 color: Colors.grey[350],
+                                border: Border.all(color: Colors.black45),
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: productPic != null
                                   ? Image.file(
                                       File(productPic!.path),
-                                      height: 150,
-                                      width: 150,
                                       fit: BoxFit.cover,
                                     )
                                   : Icon(
@@ -1384,7 +1161,7 @@ class ProfileController extends GetxController {
                                     ),
                             ),
                             if (isLoadingProduct)
-                              const SpinKitSpinningLines(
+                              const CircularProgressIndicator(
                                 color: Colors.white,
                               ),
                           ],
@@ -1433,44 +1210,58 @@ class ProfileController extends GetxController {
   }
 
   /////////////////add specialist ////////////
-  Future<void> pickSpecialistImage() async {
-    final XFile? pickedFile =
-        await picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      specialistPic = File(pickedFile.path);
+
+  Future<void> pickSpecialistImage(BuildContext context) async {
+    try {
+      final XFile? pickedFile =
+          await picker.pickImage(source: ImageSource.gallery);
+      if (pickedFile != null) {
+        specialistPic = File(pickedFile.path);
+        update(); // Update the UI
+      }
+    } catch (e) {
+      print("Error picking image: $e");
+      Fluttertoast.showToast(
+        msg: "Failed to pick image. Please try again.",
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
     }
   }
 
+// Create specialist collection in Firestore
   Future<void> createSpecialistCollection(BuildContext context) async {
+    if (isLoadingSpecialist) return; // Prevent multiple submissions
+
     try {
+      isLoadingSpecialist = true;
+      update(); // Show loading state
+
       var uuid = const Uuid();
       String specialistId = uuid.v4();
       String time = DateTime.now().toIso8601String();
       String? specialistPicUrl = '';
 
+      // Upload image to Firebase Storage if an image is selected
       if (specialistPic != null) {
-        // Upload the image to Firebase Storage
-        firebase_storage.Reference ref = firebase_storage
-            .FirebaseStorage.instance
-            .ref()
-            .child('Specialist_pics/$specialistId');
+        firebase_storage.Reference ref =
+            firebase_storage.FirebaseStorage.instance.ref().child(
+                'Specialist_pics/$specialistId'); // Unique file path using specialistId
         await ref.putFile(File(specialistPic!.path));
-
-        // Get the download URL
         specialistPicUrl = await ref.getDownloadURL();
       }
 
-      // Create the SpecialistModel
+      // Create SpecialistModel
       SpecialistModel model = SpecialistModel(
         specialistId: specialistId,
         specialistName: specialistNameController.text,
         specialistServiceName: specialistServiceNameController.text,
-        specialistPic: specialistPicUrl,
+        specialistPic: specialistPicUrl ?? '',
         time: time,
-        userId: StaticData.userModel!.UserId, // Replace with actual user ID
+        userId: StaticData.userModel!.UserId,
       );
 
-      // Save the specialist to Firestore
+      // Save specialist to Firestore
       await FirebaseFirestore.instance
           .collection('specialists')
           .doc(specialistId)
@@ -1478,68 +1269,55 @@ class ProfileController extends GetxController {
 
       print("Specialist created with specialistId: $specialistId");
 
-      // Show success message
       Fluttertoast.showToast(
-        msg: 'Specialist created successfully!',
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
+        msg: "Specialist created successfully!",
         backgroundColor: Colors.green,
         textColor: Colors.white,
-        fontSize: 16.0,
       );
 
-      // Clear the form
+      // Clear form fields and reset image picker
       specialistNameController.clear();
       specialistServiceNameController.clear();
       specialistPic = null;
+      update(); // Update the UI
     } catch (e) {
       print("Error creating specialist: $e");
-
-      // Show error toast message
       Fluttertoast.showToast(
-        msg: 'Failed to create specialist.',
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
+        msg: "Failed to create specialist. Try again!",
         backgroundColor: Colors.red,
         textColor: Colors.white,
-        fontSize: 16.0,
       );
+    } finally {
+      isLoadingSpecialist = false;
+      update(); // Hide loading state
     }
   }
 
-  Future<void> deleteSpecialist(String specialistId) async {
+// Delete specialist from Firestore
+  Future<void> deleteSpecialist(
+      BuildContext context, String specialistId) async {
     try {
       await FirebaseFirestore.instance
           .collection('specialists')
           .doc(specialistId)
           .delete();
 
-      print("Specialist deleted with ID: $specialistId");
       Fluttertoast.showToast(
-        msg: 'Specialist deleted successfully!',
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
+        msg: "Specialist deleted successfully!",
         backgroundColor: Colors.green,
         textColor: Colors.white,
-        fontSize: 16.0,
       );
     } catch (e) {
       print("Error deleting specialist: $e");
       Fluttertoast.showToast(
-        msg: 'Failed to delete specialist.',
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
+        msg: "Error deleting specialist: $e",
         backgroundColor: Colors.red,
         textColor: Colors.white,
-        fontSize: 16.0,
       );
     }
   }
 
+// Show dialog to add a specialist
   void showAddSpecialistDialog(
       BuildContext context, double width, double height) {
     showDialog(
@@ -1558,25 +1336,39 @@ class ProfileController extends GetxController {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Container(
-                        width: width,
-                        child: TextFormField(
-                          controller: specialistNameController,
-                          decoration: const InputDecoration(
-                              hintText: "Specialist Name"),
-                          keyboardType: TextInputType.text,
+                      // Specialist Name Field
+                      TextFormField(
+                        controller: specialistNameController,
+                        decoration: const InputDecoration(
+                          hintText: "Specialist Name",
                         ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter a specialist name';
+                          }
+                          return null;
+                        },
                       ),
-                      SizedBox(height: 10),
+                      SizedBox(height: height * 0.03),
+
+                      // Specialist Service Name Field
                       TextFormField(
                         controller: specialistServiceNameController,
                         decoration: const InputDecoration(
-                            hintText: "Specialist Service Name"),
-                        keyboardType: TextInputType.text,
+                          hintText: "Specialist Service Name",
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter a service name';
+                          }
+                          return null;
+                        },
                       ),
-                      SizedBox(height: 20),
+                      SizedBox(height: height * 0.03),
+
+                      // Image Picker
                       InkWell(
-                        onTap: () => pickSpecialistImage(),
+                        onTap: () => pickSpecialistImage(context),
                         child: Stack(
                           alignment: Alignment.center,
                           children: [
@@ -1585,13 +1377,12 @@ class ProfileController extends GetxController {
                               width: 300,
                               decoration: BoxDecoration(
                                 color: Colors.grey[350],
+                                border: Border.all(color: Colors.black45),
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: specialistPic != null
                                   ? Image.file(
                                       File(specialistPic!.path),
-                                      height: 150,
-                                      width: 150,
                                       fit: BoxFit.cover,
                                     )
                                   : Icon(
@@ -1601,7 +1392,7 @@ class ProfileController extends GetxController {
                                     ),
                             ),
                             if (isLoadingSpecialist)
-                              const SpinKitSpinningLines(
+                              const CircularProgressIndicator(
                                 color: Colors.white,
                               ),
                           ],
@@ -1614,9 +1405,17 @@ class ProfileController extends GetxController {
                   Center(
                     child: ElevatedButton(
                       onPressed: () async {
-                        await createSpecialistCollection(
-                            context); // Update this to your collection creation method
-                        Navigator.of(dc).pop();
+                        if (specialistNameController.text.isNotEmpty &&
+                            specialistServiceNameController.text.isNotEmpty) {
+                          await createSpecialistCollection(context);
+                          Navigator.of(dc).pop();
+                        } else {
+                          Fluttertoast.showToast(
+                            msg: "Please fill all fields",
+                            backgroundColor: Colors.red,
+                            textColor: Colors.white,
+                          );
+                        }
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.pink[200],
@@ -1624,7 +1423,9 @@ class ProfileController extends GetxController {
                           borderRadius: BorderRadius.circular(10),
                         ),
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 130, vertical: 10),
+                          horizontal: 130, // Horizontal padding
+                          vertical: 10, // Vertical padding
+                        ),
                       ),
                       child: const Text(
                         "Save",
@@ -1636,7 +1437,7 @@ class ProfileController extends GetxController {
                       ),
                     ),
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: height * 0.02),
                 ],
               ),
             );
@@ -1647,116 +1448,111 @@ class ProfileController extends GetxController {
   }
 
 ////////////////////////// add recent work ////////////////
-  Future<void> pickRecentworkImage() async {
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      recentWorkPic = File(pickedFile.path);
-      update();
+
+  Future<void> pickRecentworkImage(BuildContext context) async {
+    try {
+      final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+      if (pickedFile != null) {
+        recentWorkPic = File(pickedFile.path);
+        update(); // Update the UI after picking the image
+      } else {
+        Fluttertoast.showToast(
+          msg: 'No image selected.',
+          backgroundColor: Colors.orange,
+          textColor: Colors.white,
+        );
+      }
+    } catch (e) {
+      print("Error picking recent work image: $e");
+      Fluttertoast.showToast(
+        msg: 'Failed to pick image. Try again.',
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
     }
   }
 
   Future<void> createRecentworkCollection(BuildContext context) async {
+    if (isLoadingWork) return; // Prevent multiple submissions
+
     try {
-      var uuid = const Uuid();
-      String recentworkId = uuid.v4();
-      String time = DateTime.now().toIso8601String();
-      String? recentworkPicUrl = ''; // Initialize it
+      isLoadingWork = true;
+      update(); // Show loading state
 
-      // Ensure the image is selected before uploading
+      final uuid = const Uuid();
+      final recentworkId = uuid.v4();
+      final time = DateTime.now().toIso8601String();
+      String? recentworkPicUrl;
+
+      // Upload image to Firebase Storage if an image is selected
       if (recentWorkPic != null) {
-        // Upload the image to Firebase Storage
-        firebase_storage.Reference ref = firebase_storage
-            .FirebaseStorage.instance
-            .ref('recentwork_pics/$recentworkId');
-
-        // Upload the selected image file
+        final ref = firebase_storage.FirebaseStorage.instance.ref(
+            'recentwork_pics/$recentworkId'); // Unique file path using recentworkId
         await ref.putFile(recentWorkPic!);
-
-        // Get the download URL for the uploaded image
         recentworkPicUrl = await ref.getDownloadURL();
       }
 
-      RecentWorkModel model = RecentWorkModel(
+      // Create RecentWorkModel
+      final model = RecentWorkModel(
         RecentworkId: recentworkId,
         RecentworkPic: recentworkPicUrl ?? '',
         time: time,
         userId: StaticData.userModel!.UserId,
       );
 
-      // Save the model to Firestore
+      // Save recent work to Firestore
       await FirebaseFirestore.instance
           .collection('recentworks')
           .doc(recentworkId)
           .set(model.toMap());
 
-      print("Recent work created with ID: $recentworkId");
-
-      // Show success message
       Fluttertoast.showToast(
         msg: 'Recent work uploaded successfully!',
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
         backgroundColor: Colors.green,
         textColor: Colors.white,
-        fontSize: 16.0,
       );
 
-      // Clear the form fields and reset the image picker
+      // Clear form fields and reset image picker
       workTypeController.clear();
       recentWorkPic = null;
-      update();
+      update(); // Update the UI
     } catch (e) {
       print("Error creating recent work: $e");
-
-      // Show error toast message
       Fluttertoast.showToast(
-        msg: 'Failed to create recent work.',
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
+        msg: 'Failed to create recent work. Please try again.',
         backgroundColor: Colors.red,
         textColor: Colors.white,
-        fontSize: 16.0,
       );
+    } finally {
+      isLoadingWork = false;
+      update(); // Hide loading state
     }
   }
 
-  Future<void> deletework(String recentworkId) async {
+  Future<void> deleteWork(BuildContext context, String recentworkId) async {
     try {
       await FirebaseFirestore.instance
           .collection('recentworks')
           .doc(recentworkId)
           .delete();
-      print("Recent work deleted with ID: $recentworkId");
+
       Fluttertoast.showToast(
         msg: 'Recent work deleted successfully!',
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
         backgroundColor: Colors.green,
         textColor: Colors.white,
-        fontSize: 16.0,
       );
     } catch (e) {
       print("Error deleting recent work: $e");
       Fluttertoast.showToast(
-        msg: 'Error deleting recent work.',
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
+        msg: 'Error deleting recent work. Please try again.',
         backgroundColor: Colors.red,
         textColor: Colors.white,
-        fontSize: 16.0,
       );
     }
   }
 
   void showAddRecentWorkDialog(
-    BuildContext context,
-    double width,
-    double height,
-  ) {
+      BuildContext context, double width, double height) {
     showDialog(
       context: context,
       builder: (BuildContext dc) {
@@ -1768,7 +1564,7 @@ class ProfileController extends GetxController {
             return Transform.scale(
               scale: scale,
               child: AlertDialog(
-                title: const Center(child: Text("Add a Best Work")),
+                title: const Center(child: Text("Add Best Work")),
                 content: Form(
                   key: formKey,
                   child: Column(
@@ -1777,12 +1573,12 @@ class ProfileController extends GetxController {
                       // Work Type Field
                       Container(
                         width: width,
+                        padding: EdgeInsets.symmetric(horizontal: 16),
                         child: TextFormField(
                           controller: workTypeController,
                           decoration: const InputDecoration(
                             labelText: 'Work Type',
                           ),
-                          keyboardType: TextInputType.text,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Please enter a work type';
@@ -1793,8 +1589,9 @@ class ProfileController extends GetxController {
                       ),
                       SizedBox(height: height * 0.03),
 
+                      // Image Picker
                       InkWell(
-                        onTap: () => pickRecentworkImage(),
+                        onTap: () => pickRecentworkImage(context),
                         child: Stack(
                           alignment: Alignment.center,
                           children: [
@@ -1803,13 +1600,12 @@ class ProfileController extends GetxController {
                               width: 300,
                               decoration: BoxDecoration(
                                 color: Colors.grey[350],
+                                border: Border.all(color: Colors.black45),
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: recentWorkPic != null
                                   ? Image.file(
                                       File(recentWorkPic!.path),
-                                      height: 150,
-                                      width: 150,
                                       fit: BoxFit.cover,
                                     )
                                   : Icon(
@@ -1819,7 +1615,7 @@ class ProfileController extends GetxController {
                                     ),
                             ),
                             if (isLoadingWork)
-                              const SpinKitSpinningLines(
+                              const CircularProgressIndicator(
                                 color: Colors.white,
                               ),
                           ],
@@ -1834,7 +1630,7 @@ class ProfileController extends GetxController {
                       onPressed: () async {
                         if (formKey.currentState!.validate()) {
                           await createRecentworkCollection(context);
-                          Navigator.of(dc).pop();
+                          Navigator.of(dc).pop(); // Close dialog
                         }
                       },
                       style: ElevatedButton.styleFrom(
@@ -1865,5 +1661,44 @@ class ProfileController extends GetxController {
         );
       },
     );
+  }
+
+  //////////////////////////video upload ////////////////////////
+  File? videoFile;
+  Future<void> pickVideo() async {
+    final pickedFile = await picker.pickVideo(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      videoFile = File(pickedFile.path);
+      update();
+    }
+  }
+
+  Future<void> uploadVideo(BuildContext context) async {
+    if (videoFile == null) return;
+
+    isloadingvideo = true;
+    update();
+
+    try {
+      final ref = firebase_storage.FirebaseStorage.instance
+          .ref()
+          .child('videos/${DateTime.now().toIso8601String()}');
+      await ref.putFile(videoFile!);
+      final downloadUrl = await ref.getDownloadURL();
+
+      print('Video uploaded: $downloadUrl');
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Video uploaded successfully!')),
+      );
+    } catch (e) {
+      print('Error uploading video: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to upload video. Try again.')),
+      );
+    } finally {
+      isloadingvideo = false;
+      update();
+    }
   }
 }

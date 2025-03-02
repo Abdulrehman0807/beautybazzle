@@ -419,41 +419,91 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                                       ),
                                     ),
                                     Container(
-                                        height: height * 0.12,
-                                        child: ListView.builder(
-                                          scrollDirection: Axis.horizontal,
-                                          itemCount: 3,
-                                          itemBuilder: (context, index) {
-                                            return Padding(
-                                              padding: const EdgeInsets.only(
-                                                left: 15,
-                                                right: 5,
-                                              ),
-                                              child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceEvenly,
-                                                children: [
-                                                  CircleAvatar(
+                                      height: height * 0.12,
+                                      child: Row(
+                                        children: [
+                                          SizedBox(
+                                            width: width * 0.03,
+                                          ),
+                                          Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceEvenly,
+                                            children: [
+                                              Container(
+                                                decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  border: Border.all(
+                                                    color: Colors.black45,
+                                                  ),
+                                                ),
+                                                child: CircleAvatar(
                                                     radius: 27,
-                                                    backgroundImage: AssetImage(
-                                                        StaticData.myDp),
-                                                  ),
-                                                  Text(
-                                                    "Hightlights",
-                                                    style: TextStyle(
-                                                      fontSize: width * 0.025,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      overflow:
-                                                          TextOverflow.fade,
-                                                    ),
-                                                  ),
-                                                ],
+                                                    backgroundColor:
+                                                        Colors.white,
+                                                    child: Icon(
+                                                      Icons.camera_alt,
+                                                      color: Colors.black45,
+                                                    )),
                                               ),
-                                            );
-                                          },
-                                        )),
+                                              Text(
+                                                "Hightlights",
+                                                style: TextStyle(
+                                                  fontSize: width * 0.025,
+                                                  fontWeight: FontWeight.w500,
+                                                  overflow: TextOverflow.fade,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          Expanded(
+                                            child: Container(
+                                                height: height * 0.12,
+                                                child: ListView.builder(
+                                                  scrollDirection:
+                                                      Axis.horizontal,
+                                                  itemCount: 3,
+                                                  itemBuilder:
+                                                      (context, index) {
+                                                    return Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                        left: 15,
+                                                        right: 5,
+                                                      ),
+                                                      child: Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceEvenly,
+                                                        children: [
+                                                          CircleAvatar(
+                                                            radius: 27,
+                                                            backgroundImage:
+                                                                AssetImage(
+                                                                    StaticData
+                                                                        .myDp),
+                                                          ),
+                                                          Text(
+                                                            "Hightlights",
+                                                            style: TextStyle(
+                                                              fontSize:
+                                                                  width * 0.025,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .fade,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    );
+                                                  },
+                                                )),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
                                     SizedBox(
                                       height: height * 0.01,
                                     ),
@@ -1261,7 +1311,7 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                                                                                 onPressed: () {
                                                                                   Navigator.of(context).pop(); // Close the dialog
                                                                                   if (pair.specialistId != null) {
-                                                                                    obj.deleteSpecialist(pair.specialistId!); // Call deleteSpecialist
+                                                                                    obj.deleteSpecialist(context, pair.specialistId!); // Call deleteSpecialist
                                                                                   }
                                                                                 },
                                                                                 child: const Text("Delete", style: TextStyle(color: Colors.red)),
@@ -1800,7 +1850,7 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                                                                                           Navigator.of(context).pop(); // Close the dialog
                                                                                           // Make sure you have a valid object for obj
                                                                                           if (recentWorkId.isNotEmpty) {
-                                                                                            obj.deletework(recentWorkId); // Call deletework
+                                                                                            obj.deleteWork(context, recentWorkId); // Call deletework
                                                                                           }
                                                                                         },
                                                                                         child: const Text("Delete", style: TextStyle(color: Colors.red)),
