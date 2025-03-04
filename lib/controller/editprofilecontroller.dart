@@ -3,9 +3,13 @@ import 'package:beautybazzle/model/addoffer.dart';
 import 'package:beautybazzle/model/addproduct.dart';
 import 'package:beautybazzle/model/addservices.dart';
 import 'package:beautybazzle/model/addspecialist.dart';
+import 'package:beautybazzle/model/addvideo.dart';
 import 'package:beautybazzle/model/addwork.dart';
 import 'package:beautybazzle/model/signup_model.dart';
+import 'package:beautybazzle/view/setting/insta.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -13,6 +17,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:uuid/uuid.dart';
+import 'package:video_player/video_player.dart';
 import '../utiils/static_data.dart';
 
 class ProfileController extends GetxController {
@@ -38,6 +43,8 @@ class ProfileController extends GetxController {
       TextEditingController();
   final TextEditingController productNameController = TextEditingController();
   final TextEditingController productPriceController = TextEditingController();
+  final TextEditingController productDescriptionController =
+      TextEditingController();
   final TextEditingController specialistNameController =
       TextEditingController();
   final TextEditingController specialistServiceNameController =
@@ -737,199 +744,128 @@ class ProfileController extends GetxController {
           builder: (context, double scale, child) {
             return Transform.scale(
               scale: scale,
-              child: AlertDialog(
-                title: const Center(child: Text("Add a Best Service")),
-                content: Form(
-                  key: formKey,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Service Name Field
-                      TextFormField(
-                        controller: serviceNameController,
-                        decoration: const InputDecoration(
-                          hintText: "Service Name",
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter a service name';
-                          }
-                          return null;
-                        },
-                      ),
-                      SizedBox(height: height * 0.03),
-
-                      // Service Description Field
-                      TextFormField(
-                        controller: serviceDescriptionController,
-                        decoration: const InputDecoration(
-                          hintText: "Description",
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter a description for the service';
-                          }
-                          return null;
-                        },
-                      ),
-                      SizedBox(height: height * 0.03),
-
-                      // Image Picker
-                      InkWell(
-                        onTap: () => pickServiceImage(context),
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Container(
-                              height: 150,
-                              width: 300,
-                              decoration: BoxDecoration(
-                                color: Colors.grey[350],
-                                border: Border.all(color: Colors.black45),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: servicePic != null
-                                  ? Image.file(
-                                      File(servicePic!.path),
-                                      fit: BoxFit.cover,
-                                    )
-                                  : Icon(
-                                      Icons.camera_alt,
-                                      size: 50,
-                                      color: Colors.black45,
+              child: GetBuilder<ProfileController>(builder: (obj) {
+                return AlertDialog(
+                  title: const Center(child: Text("Add a Best Service")),
+                  content: Form(
+                    key: formKey,
+                    child: Container(
+                      height: height * 0.38,
+                      width: width,
+                      child: Stack(
+                        children: [
+                          Container(
+                            height: height,
+                            width: width,
+                            child: SingleChildScrollView(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  // Service Name Field
+                                  TextFormField(
+                                    controller: serviceNameController,
+                                    decoration: const InputDecoration(
+                                      hintText: "Service Name",
                                     ),
-                            ),
-                            if (isLoadingService)
-                              const CircularProgressIndicator(
-                                color: Colors.white,
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please enter a service name';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  SizedBox(height: height * 0.03),
+
+                                  // Service Description Field
+                                  TextFormField(
+                                    controller: serviceDescriptionController,
+                                    decoration: const InputDecoration(
+                                      hintText: "Description",
+                                    ),
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please enter a description for the service';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  SizedBox(height: height * 0.03),
+
+                                  // Image Picker
+                                  InkWell(
+                                    onTap: () => pickServiceImage(context),
+                                    child: Stack(
+                                      alignment: Alignment.center,
+                                      children: [
+                                        Container(
+                                          height: 150,
+                                          width: 300,
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey[350],
+                                            border: Border.all(
+                                                color: Colors.black45),
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                          ),
+                                          child: obj.servicePic != null
+                                              ? Image.file(
+                                                  File(obj.servicePic!.path),
+                                                  fit: BoxFit.cover,
+                                                )
+                                              : Icon(
+                                                  Icons.camera_alt,
+                                                  size: 50,
+                                                  color: Colors.black45,
+                                                ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                actions: [
-                  Center(
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        if (formKey.currentState!.validate()) {
-                          await createServiceCollection(context);
-                          Navigator.of(dc).pop();
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.pink[200],
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 130,
-                          vertical: 10,
-                        ),
-                      ),
-                      child: const Text(
-                        "Save",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
+                            ),
+                          ),
+                          if (obj.isLoadingService)
+                            SpinKitSpinningLines(
+                              color: Colors.pink,
+                            ),
+                        ],
                       ),
                     ),
                   ),
-                  SizedBox(height: height * 0.02),
-                ],
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
-////////////////////// update service//////////////////
-
-  void showUpdateServiceDialog(BuildContext context, ServiceModel model) {
-    serviceNameController.text = model.serviceName ?? '';
-    serviceDescriptionController.text = model.serviceDescription ?? '';
-
-    showDialog(
-      context: context,
-      builder: (BuildContext dc) {
-        return TweenAnimationBuilder(
-          tween: Tween<double>(begin: 0.8, end: 1.0),
-          duration: Duration(milliseconds: 500),
-          curve: Curves.easeInOut,
-          builder: (context, double scale, child) {
-            return Transform.scale(
-              scale: scale,
-              child: AlertDialog(
-                title: const Text('Update Service'),
-                content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      width: 500,
-                      child: TextField(
-                        controller: serviceNameController,
-                        decoration:
-                            const InputDecoration(hintText: 'Service Name'),
-                        keyboardType: TextInputType.text,
+                  actions: [
+                    Center(
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          if (formKey.currentState!.validate()) {
+                            await createServiceCollection(context);
+                            Navigator.of(dc).pop();
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.pink[200],
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 130,
+                            vertical: 10,
+                          ),
+                        ),
+                        child: const Text(
+                          "Save",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                     ),
-                    const SizedBox(height: 10),
-                    TextField(
-                      controller: serviceDescriptionController,
-                      decoration: const InputDecoration(
-                          hintText: 'Service Description'),
-                    ),
+                    SizedBox(height: height * 0.02),
                   ],
-                ),
-                actions: [
-                  Center(
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        if (serviceNameController.text.isNotEmpty &&
-                            serviceDescriptionController.text.isNotEmpty) {
-                          // Update the service in Firestore
-                          await updateServiceInFirestore(
-                            model.serviceId,
-                            serviceNameController.text,
-                            serviceDescriptionController.text,
-                          );
-                          Navigator.of(dc).pop();
-                        } else {
-                          // Handle empty field case
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('Please fill all fields')),
-                          );
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            Colors.pink[200], // Button background color
-                        shape: RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.circular(10), // Rounded corners
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 130, // Horizontal padding
-                          vertical: 10, // Vertical padding
-                        ),
-                      ),
-                      child: const Text(
-                        'Save',
-                        style: TextStyle(
-                          color: Colors.white, // Text color
-                          fontSize: 20, // Font size
-                          fontWeight: FontWeight.bold, // Bold text
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                );
+              }),
             );
           },
         );
@@ -937,48 +873,9 @@ class ProfileController extends GetxController {
     );
   }
 
-  // Function to update the service details in Firestore
-  Future<void> updateServiceInFirestore(
-    String serviceId,
-    String newServiceName,
-    String newDescription,
-  ) async {
-    try {
-      // Update the service data in Firestore
-      await FirebaseFirestore.instance
-          .collection('services')
-          .doc(serviceId)
-          .update({
-        'serviceName': newServiceName,
-        'serviceDescription': newDescription,
-      });
 
-      // Show success message
-      print("Service updated successfully!");
-      Fluttertoast.showToast(
-        msg: 'Service updated successfully!',
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.green,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
-    } catch (e) {
-      // Show error message if update fails
-      print("Error updating service: $e");
-      Fluttertoast.showToast(
-        msg: 'Error updating service',
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
-    }
-  }
 
+  
 //////////////// add product ////////////
 
   Future<void> pickProductImage(BuildContext context) async {
@@ -1025,6 +922,7 @@ class ProfileController extends GetxController {
         productId: productId,
         productName: productNameController.text,
         productPrice: productPriceController.text,
+        productDescription: productDescriptionController.text,
         productPic: productPicUrl ?? '',
         time: time,
         userId: StaticData.userModel!.UserId,
@@ -1047,6 +945,7 @@ class ProfileController extends GetxController {
       // Clear form fields and reset image picker
       productNameController.clear();
       productPriceController.clear();
+      productDescriptionController.clear();
       productPic = null;
       update(); // Update the UI
     } catch (e) {
@@ -1097,111 +996,147 @@ class ProfileController extends GetxController {
           builder: (context, double scale, child) {
             return Transform.scale(
               scale: scale,
-              child: AlertDialog(
-                title: const Center(child: Text("Add a Best Product")),
-                content: Form(
-                  key: formKey,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Product Name Field
-                      TextFormField(
-                        controller: productNameController,
-                        decoration: const InputDecoration(
-                          hintText: "Product Name",
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter a product name';
-                          }
-                          return null;
-                        },
-                      ),
-                      SizedBox(height: height * 0.03),
-
-                      // Product Price Field
-                      TextFormField(
-                        controller: productPriceController,
-                        decoration: const InputDecoration(
-                          hintText: "Product Price",
-                        ),
-                        keyboardType: TextInputType.number,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter a product price';
-                          }
-                          return null;
-                        },
-                      ),
-                      SizedBox(height: height * 0.03),
-
-                      // Image Picker
-                      InkWell(
-                        onTap: () => pickProductImage(context),
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Container(
-                              height: 150,
-                              width: 300,
-                              decoration: BoxDecoration(
-                                color: Colors.grey[350],
-                                border: Border.all(color: Colors.black45),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: productPic != null
-                                  ? Image.file(
-                                      File(productPic!.path),
-                                      fit: BoxFit.cover,
-                                    )
-                                  : Icon(
-                                      Icons.camera_alt,
-                                      size: 50,
-                                      color: Colors.black45,
+              child: GetBuilder<ProfileController>(builder: (obj) {
+                return AlertDialog(
+                  title: const Center(child: Text("Add a Best Product")),
+                  content: Form(
+                    key: formKey,
+                    child: Container(
+                      height: height * 0.48,
+                      width: width,
+                      child: Stack(
+                        children: [
+                          Container(
+                            height: height,
+                            width: width,
+                            child: SingleChildScrollView(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  // Product Name Field
+                                  TextFormField(
+                                    controller: productNameController,
+                                    decoration: const InputDecoration(
+                                      hintText: "Product Name",
                                     ),
-                            ),
-                            if (isLoadingProduct)
-                              const CircularProgressIndicator(
-                                color: Colors.white,
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please enter a product name';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  SizedBox(height: height * 0.03),
+
+                                  // Product Price Field
+                                  TextFormField(
+                                    controller: productPriceController,
+                                    decoration: const InputDecoration(
+                                      hintText: "Product Price",
+                                    ),
+                                    keyboardType: TextInputType.number,
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please enter a product price';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  SizedBox(
+                                    height: height * 0.01,
+                                  ),
+                                  TextFormField(
+                                    controller:
+                                        obj.productDescriptionController,
+                                    maxLines: 2,
+                                    decoration: const InputDecoration(
+                                      hintText:
+                                          "Tell us about your Product Description",
+                                    ),
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return "Please enter something about your Product Description.";
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  SizedBox(height: height * 0.03),
+
+                                  // Image Picker
+                                  InkWell(
+                                    onTap: () => pickProductImage(context),
+                                    child: Stack(
+                                      alignment: Alignment.center,
+                                      children: [
+                                        Container(
+                                          height: 150,
+                                          width: 400,
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey[350],
+                                            border: Border.all(
+                                                color: Colors.black45),
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                          ),
+                                          child: obj.productPic != null
+                                              ? Image.file(
+                                                  File(obj.productPic!.path),
+                                                  fit: BoxFit.cover,
+                                                )
+                                              : Icon(
+                                                  Icons.camera_alt,
+                                                  size: 50,
+                                                  color: Colors.black45,
+                                                ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                actions: [
-                  Center(
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        if (formKey.currentState!.validate()) {
-                          await createProductCollection(context);
-                          Navigator.of(dc).pop();
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.pink[200],
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 130,
-                          vertical: 10,
-                        ),
-                      ),
-                      child: const Text(
-                        "Save",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
+                            ),
+                          ),
+                          if (obj.isLoadingProduct)
+                            SpinKitSpinningLines(
+                              color: Colors.pink,
+                            ),
+                        ],
                       ),
                     ),
                   ),
-                  SizedBox(height: height * 0.02),
-                ],
-              ),
+                  actions: [
+                    Center(
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          if (formKey.currentState!.validate()) {
+                            await createProductCollection(context);
+                            Navigator.of(dc).pop();
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.pink[200],
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 130,
+                            vertical: 10,
+                          ),
+                        ),
+                        child: const Text(
+                          "Save",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: height * 0.02),
+                  ],
+                );
+              }),
             );
           },
         );
@@ -1217,6 +1152,7 @@ class ProfileController extends GetxController {
           await picker.pickImage(source: ImageSource.gallery);
       if (pickedFile != null) {
         specialistPic = File(pickedFile.path);
+
         update(); // Update the UI
       }
     } catch (e) {
@@ -1330,116 +1266,127 @@ class ProfileController extends GetxController {
           builder: (context, double scale, child) {
             return Transform.scale(
               scale: scale,
-              child: AlertDialog(
-                title: const Center(child: Text("Add a Best Specialist")),
-                content: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Specialist Name Field
-                      TextFormField(
-                        controller: specialistNameController,
-                        decoration: const InputDecoration(
-                          hintText: "Specialist Name",
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter a specialist name';
-                          }
-                          return null;
-                        },
-                      ),
-                      SizedBox(height: height * 0.03),
+              child: GetBuilder<ProfileController>(builder: (obj) {
+                return AlertDialog(
+                  title: const Center(child: Text("Add a Best Specialist")),
+                  content: Container(
+                    height: height * 0.38,
+                    width: width,
+                    child: Stack(
+                      children: [
+                        Container(
+                          height: height,
+                          width: width,
+                          child: SingleChildScrollView(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                // Specialist Name Field
+                                TextFormField(
+                                  controller: specialistNameController,
+                                  decoration: const InputDecoration(
+                                    hintText: "Specialist Name",
+                                  ),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please enter a specialist name';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                                SizedBox(height: height * 0.03),
 
-                      // Specialist Service Name Field
-                      TextFormField(
-                        controller: specialistServiceNameController,
-                        decoration: const InputDecoration(
-                          hintText: "Specialist Service Name",
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter a service name';
-                          }
-                          return null;
-                        },
-                      ),
-                      SizedBox(height: height * 0.03),
+                                // Specialist Service Name Field
+                                TextFormField(
+                                  controller: specialistServiceNameController,
+                                  decoration: const InputDecoration(
+                                    hintText: "Specialist Service Name",
+                                  ),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please enter a service name';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                                SizedBox(height: height * 0.03),
 
-                      // Image Picker
-                      InkWell(
-                        onTap: () => pickSpecialistImage(context),
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Container(
-                              height: 150,
-                              width: 300,
-                              decoration: BoxDecoration(
-                                color: Colors.grey[350],
-                                border: Border.all(color: Colors.black45),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: specialistPic != null
-                                  ? Image.file(
-                                      File(specialistPic!.path),
-                                      fit: BoxFit.cover,
-                                    )
-                                  : Icon(
-                                      Icons.camera_alt,
-                                      size: 50,
-                                      color: Colors.black45,
+                                // Image Picker
+                                InkWell(
+                                  onTap: () => pickSpecialistImage(context),
+                                  child: Container(
+                                    height: 150,
+                                    width: 300,
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[350],
+                                      border: Border.all(color: Colors.black45),
+                                      borderRadius: BorderRadius.circular(10),
                                     ),
+                                    child: obj.specialistPic != null
+                                        ? Image.file(
+                                            File(obj.specialistPic!.path),
+                                            fit: BoxFit.cover,
+                                          )
+                                        : Icon(
+                                            Icons.camera_alt,
+                                            size: 50,
+                                            color: Colors.black45,
+                                          ),
+                                  ),
+                                ),
+                              ],
                             ),
-                            if (isLoadingSpecialist)
-                              const CircularProgressIndicator(
-                                color: Colors.white,
-                              ),
-                          ],
+                          ),
                         ),
-                      ),
-                    ],
+                        if (obj.isLoadingSpecialist)
+                          Center(
+                            child: SpinKitSpinningLines(
+                              color: Colors.pink,
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
-                ),
-                actions: [
-                  Center(
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        if (specialistNameController.text.isNotEmpty &&
-                            specialistServiceNameController.text.isNotEmpty) {
-                          await createSpecialistCollection(context);
-                          Navigator.of(dc).pop();
-                        } else {
-                          Fluttertoast.showToast(
-                            msg: "Please fill all fields",
-                            backgroundColor: Colors.red,
-                            textColor: Colors.white,
-                          );
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.pink[200],
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                  actions: [
+                    Center(
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          if (specialistNameController.text.isNotEmpty &&
+                              specialistServiceNameController.text.isNotEmpty) {
+                            await createSpecialistCollection(context);
+                            Navigator.of(dc).pop();
+                          } else {
+                            Fluttertoast.showToast(
+                              msg: "Please fill all fields",
+                              backgroundColor: Colors.red,
+                              textColor: Colors.white,
+                            );
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.pink[200],
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 130, // Horizontal padding
+                            vertical: 10, // Vertical padding
+                          ),
                         ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 130, // Horizontal padding
-                          vertical: 10, // Vertical padding
-                        ),
-                      ),
-                      child: const Text(
-                        "Save",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                        child: const Text(
+                          "Save",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  SizedBox(height: height * 0.02),
-                ],
-              ),
+                    SizedBox(height: height * 0.02),
+                  ],
+                );
+              }),
             );
           },
         );
@@ -1563,99 +1510,118 @@ class ProfileController extends GetxController {
           builder: (context, double scale, child) {
             return Transform.scale(
               scale: scale,
-              child: AlertDialog(
-                title: const Center(child: Text("Add Best Work")),
-                content: Form(
-                  key: formKey,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Work Type Field
-                      Container(
-                        width: width,
-                        padding: EdgeInsets.symmetric(horizontal: 16),
-                        child: TextFormField(
-                          controller: workTypeController,
-                          decoration: const InputDecoration(
-                            labelText: 'Work Type',
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter a work type';
-                            }
-                            return null;
-                          },
-                        ),
-                      ),
-                      SizedBox(height: height * 0.03),
-
-                      // Image Picker
-                      InkWell(
-                        onTap: () => pickRecentworkImage(context),
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Container(
-                              height: 150,
-                              width: 300,
-                              decoration: BoxDecoration(
-                                color: Colors.grey[350],
-                                border: Border.all(color: Colors.black45),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: recentWorkPic != null
-                                  ? Image.file(
-                                      File(recentWorkPic!.path),
-                                      fit: BoxFit.cover,
-                                    )
-                                  : Icon(
-                                      Icons.camera_alt,
-                                      size: 50,
-                                      color: Colors.black45,
+              child: GetBuilder<ProfileController>(builder: (obj) {
+                return AlertDialog(
+                  title: const Center(child: Text("Add Best Work")),
+                  content: Form(
+                    key: formKey,
+                    child: Container(
+                      height: height * 0.3,
+                      width: width,
+                      child: Stack(
+                        children: [
+                          Container(
+                            height: height,
+                            width: width,
+                            child: SingleChildScrollView(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  // Work Type Field
+                                  Container(
+                                    width: width,
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 16),
+                                    child: TextFormField(
+                                      controller: workTypeController,
+                                      decoration: const InputDecoration(
+                                        labelText: 'Work Type',
+                                      ),
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Please enter a work type';
+                                        }
+                                        return null;
+                                      },
                                     ),
-                            ),
-                            if (isLoadingWork)
-                              const CircularProgressIndicator(
-                                color: Colors.white,
+                                  ),
+                                  SizedBox(height: height * 0.03),
+
+                                  // Image Picker
+                                  InkWell(
+                                    onTap: () => pickRecentworkImage(context),
+                                    child: Stack(
+                                      alignment: Alignment.center,
+                                      children: [
+                                        Container(
+                                          height: 150,
+                                          width: 300,
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey[350],
+                                            border: Border.all(
+                                                color: Colors.black45),
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                          ),
+                                          child: obj.recentWorkPic != null
+                                              ? Image.file(
+                                                  File(obj.recentWorkPic!.path),
+                                                  fit: BoxFit.cover,
+                                                )
+                                              : Icon(
+                                                  Icons.camera_alt,
+                                                  size: 50,
+                                                  color: Colors.black45,
+                                                ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                actions: [
-                  Center(
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        if (formKey.currentState!.validate()) {
-                          await createRecentworkCollection(context);
-                          Navigator.of(dc).pop(); // Close dialog
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.pink[200],
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 130,
-                          vertical: 10,
-                        ),
-                      ),
-                      child: const Text(
-                        "Save",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
+                            ),
+                          ),
+                          if (obj.isLoadingWork)
+                            const SpinKitSpinningLines(
+                              color: Colors.pink,
+                            ),
+                        ],
                       ),
                     ),
                   ),
-                  SizedBox(height: height * 0.02),
-                ],
-              ),
+                  actions: [
+                    Center(
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          if (formKey.currentState!.validate()) {
+                            await createRecentworkCollection(context);
+                            Navigator.of(dc).pop(); // Close dialog
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.pink[200],
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 130,
+                            vertical: 10,
+                          ),
+                        ),
+                        child: const Text(
+                          "Save",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: height * 0.02),
+                  ],
+                );
+              }),
             );
           },
         );
@@ -1665,40 +1631,342 @@ class ProfileController extends GetxController {
 
   //////////////////////////video upload ////////////////////////
   File? videoFile;
-  Future<void> pickVideo() async {
-    final pickedFile = await picker.pickVideo(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      videoFile = File(pickedFile.path);
-      update();
+  Future<void> pickVideo(BuildContext context) async {
+    try {
+      // Pick a video from the gallery
+      final pickedFile = await picker.pickVideo(source: ImageSource.gallery);
+      if (pickedFile != null) {
+        videoFile = File(pickedFile.path);
+        print('Video selected: ${videoFile!.path}');
+      }
+    } catch (e) {
+      print("Error picking video: $e");
+      // Uncomment to show error message
+      // ScaffoldMessenger.of(GlobalContext.context).showSnackBar(
+      //   SnackBar(
+      //     content: Text("Failed to pick video. Please try again."),
+      //     backgroundColor: Colors.red,
+      //   ),
+      // );
     }
   }
 
   Future<void> uploadVideo(BuildContext context) async {
-    if (videoFile == null) return;
-
-    isloadingvideo = true;
-    update();
+    if (isLoading || videoFile == null) return; // Prevent multiple submissions
 
     try {
-      final ref = firebase_storage.FirebaseStorage.instance
-          .ref()
-          .child('videos/${DateTime.now().toIso8601String()}');
-      await ref.putFile(videoFile!);
-      final downloadUrl = await ref.getDownloadURL();
+      isLoading = true;
 
-      print('Video uploaded: $downloadUrl');
+      // Generate unique IDs and timestamps
+      var uuid = Uuid();
+      String highlightId = uuid.v4();
+      String time = DateTime.now().toIso8601String();
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Video uploaded successfully!')),
+      // Upload video to Firebase Storage
+      Reference storageRef =
+          storage.ref().child('highlight_videos/$highlightId');
+      await storageRef.putFile(videoFile!);
+      String videoUrl = await storageRef.getDownloadURL();
+
+      // Create VideoModel
+      VideoModel videoModel = VideoModel(
+        HighlightId: highlightId,
+        Hightlightvideo: videoUrl,
+        time: time,
+        userId: StaticData.userModel!.UserId, // Replace with the actual user ID
       );
-    } catch (e) {
-      print('Error uploading video: $e');
+
+      // Save video metadata to Firestore
+      await _firestore
+          .collection('highlight_videos')
+          .doc(highlightId)
+          .set(videoModel.toMap());
+
+      print("Video uploaded with HighlightId: $highlightId");
+
+      // Show success message
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to upload video. Try again.')),
+        SnackBar(
+          content: Text("Video uploaded successfully!"),
+          backgroundColor: Colors.green,
+        ),
+      );
+
+      // Reset video picker
+      videoFile = null;
+    } catch (e) {
+      print("Error uploading video: $e");
+      // Show error message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Failed to upload video. Try again!"),
+          backgroundColor: Colors.red,
+        ),
       );
     } finally {
-      isloadingvideo = false;
+      isLoading = false;
+    }
+  }
+
+  late VideoPlayerController controller;
+
+  void showVideoDialog(BuildContext context, String videoUrl) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Play Video"),
+          content: SizedBox(
+            height: 400,
+            child: VideoPlayerWidget(videoUrl: videoUrl),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                controller.pause();
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text("Close"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> deleteVideo(BuildContext context, String highlightId) async {
+    try {
+      // Delete video metadata from Firestore
+      await _firestore.collection('highlight_videos').doc(highlightId).delete();
+
+      // Delete video file from Firebase Storage
+      await storage.ref().child('highlight_videos/$highlightId').delete();
+
+      // Show success message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Video deleted successfully!"),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      print("Error deleting video: $e");
+      // Show error message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Error deleting video: $e"),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  Future<void> pickAndUploadVideo(BuildContext context) async {
+    // Pick a video first
+    await pickVideo(context);
+
+    // After picking the video, upload it
+    if (videoFile != null) {
+      await uploadVideo(context);
+    }
+  }
+
+  //////////////////timing set salon ////////////////////
+  // Schedule data for each day
+  Map<String, bool> officeStatus = {
+    "Sunday": false,
+    "Monday": false,
+    "Tuesday": false,
+    "Wednesday": false,
+    "Thursday": false,
+    "Friday": false,
+    "Saturday": false,
+  };
+
+  Map<String, String> officeOpenTimes = {
+    "Sunday": "Closed",
+    "Monday": "5:00 PM",
+    "Tuesday": "5:00 PM",
+    "Wednesday": "5:00 PM",
+    "Thursday": "5:00 PM",
+    "Friday": "5:00 PM",
+    "Saturday": "Closed",
+  };
+
+  Map<String, String> officeCloseTimes = {
+    "Sunday": "Closed",
+    "Monday": "9:00 PM",
+    "Tuesday": "9:00 PM",
+    "Wednesday": "9:00 PM",
+    "Thursday": "9:00 PM",
+    "Friday": "9:00 PM",
+    "Saturday": "Closed",
+  };
+
+  // Firebase Firestore and Auth references
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  Future<void> saveScheduleToFirebase(BuildContext context) async {
+    try {
+      // Set loading state to true to show the spinner
+      isLoading = true;
+      update(); // This will trigger the UI update
+
+      User? user = _auth.currentUser;
+      if (user != null) {
+        await _firestore
+            .collection('office_schedules')
+            .doc(StaticData.userModel!.UserId)
+            .set({
+          'officeStatus': officeStatus,
+          'officeOpenTimes': officeOpenTimes,
+          'officeCloseTimes': officeCloseTimes,
+        });
+
+        // Show success message as Toast
+        Fluttertoast.showToast(
+          msg: "Salon schedule updated successfully!",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+      } else {
+        // Show error message as Toast (user not logged in)
+        Fluttertoast.showToast(
+          msg: "User not logged in!",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+      }
+    } catch (e) {
+      // Show error message as Toast
+      Fluttertoast.showToast(
+        msg: "Error saving schedule!",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+    } finally {
+      // Set loading state to false to hide the spinner after the operation
+      isLoading = false;
+      update(); // This will trigger the UI update
+    }
+  }
+
+  // Method to pick time for opening and closing
+  Future<void> pickTime(
+      BuildContext context, String day, bool isOpeningTime) async {
+    TimeOfDay? selectedTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+
+    if (selectedTime != null) {
+      String formattedTime = selectedTime.format(context);
+      if (isOpeningTime) {
+        officeOpenTimes[day] = formattedTime;
+      } else {
+        officeCloseTimes[day] = formattedTime;
+      }
       update();
     }
+  }
+
+  void showScheduleDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Center(child: Text("Salon Schedule")),
+        content: TweenAnimationBuilder(
+          tween: Tween<double>(begin: 0.8, end: 1.0), // Animation for scaling
+          duration: Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+          builder: (context, double scale, child) {
+            return Transform.scale(
+              scale: scale, // Apply the scale animation to the content
+              child: StreamBuilder<DocumentSnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('office_schedules')
+                    .doc(StaticData.userModel!.UserId)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                  if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  }
+                  if (!snapshot.hasData || !snapshot.data!.exists) {
+                    return Center(child: Text('No schedule available'));
+                  }
+
+                  // Fetch schedule data
+                  Map<String, dynamic> schedule =
+                      snapshot.data!.data() as Map<String, dynamic>;
+                  Map<String, bool> officeStatus =
+                      Map<String, bool>.from(schedule['officeStatus']);
+                  Map<String, String> officeOpenTimes =
+                      Map<String, String>.from(schedule['officeOpenTimes']);
+                  Map<String, String> officeCloseTimes =
+                      Map<String, String>.from(schedule['officeCloseTimes']);
+
+                  return SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        for (String day in officeStatus.keys)
+                          ListTile(
+                            title: Container(
+                              width: 500,
+                              child: Text(
+                                day,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            subtitle: officeStatus[day]!
+                                ? Text(
+                                    "Open: ${officeOpenTimes[day]} - Close: ${officeCloseTimes[day]}",
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.green,
+                                    ),
+                                  )
+                                : Text(
+                                    "Closed",
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.red,
+                                    ),
+                                  ),
+                          ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            );
+          },
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text("Close"),
+          ),
+        ],
+      ),
+    );
   }
 }

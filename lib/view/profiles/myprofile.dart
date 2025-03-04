@@ -11,18 +11,20 @@ import 'package:beautybazzle/model/servic_data.dart';
 
 import 'package:beautybazzle/utiils/static_data.dart';
 import 'package:beautybazzle/view/bottom_bar/bottom_Nav_bar.dart';
+
 import 'package:beautybazzle/view/categorie/beauty_product.dart';
-import 'package:beautybazzle/view/categorie/salon.dart';
+
 import 'package:beautybazzle/view/profiles/editProfile.dart';
+import 'package:beautybazzle/view/setting/setting.dart';
+import 'package:beautybazzle/view/setting/showschedule.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_stars/flutter_rating_stars.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:uuid/uuid.dart';
 
 import '../../model/addservices.dart';
 
@@ -78,38 +80,38 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                       SizedBox(
                         height: height * 0.05,
                       ),
-                      // Row(
-                      //   children: [
-                      //     InkWell(
-                      //       onTap: () {
-                      //         Navigator.push(
-                      //             context,
-                      //             MaterialPageRoute(
-                      //               builder: (context) => BottomNavBar(),
-                      //             ));
-                      //       },
-                      //       child: CircleAvatar(
-                      //         radius: 18,
-                      //         backgroundColor: Colors.white,
-                      //         child: const Icon(Icons.arrow_back,
-                      //             color: Colors.black),
-                      //       ),
-                      //     ),
-                      //     SizedBox(
-                      //       width: width * 0.25,
-                      //     ),
-                      //     obj.usermodel == null || obj.usermodel!.name == ""
-                      //         ? const SizedBox()
-                      //         : Text(
-                      //             "${obj.usermodel!.name}",
-                      //             style: TextStyle(
-                      //               fontSize: width * 0.05,
-                      //               fontWeight: FontWeight.w600,
-                      //               color: Colors.black,
-                      //             ),
-                      //           ),
-                      //   ],
-                      // ),
+                      Row(
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => BottomNavBar(),
+                                  ));
+                            },
+                            child: CircleAvatar(
+                              radius: 18,
+                              backgroundColor: Colors.white,
+                              child: const Icon(Icons.arrow_back,
+                                  color: Colors.black),
+                            ),
+                          ),
+                          SizedBox(
+                            width: width * 0.25,
+                          ),
+                          obj.usermodel == null || obj.usermodel!.name == ""
+                              ? const SizedBox()
+                              : Text(
+                                  "${obj.usermodel!.name}",
+                                  style: TextStyle(
+                                    fontSize: width * 0.05,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                        ],
+                      ),
                       Container(
                         height: height * 0.13,
                         child: Row(
@@ -343,12 +345,22 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                                           ),
                                         )),
                                   ),
-                                  CircleAvatar(
-                                    radius: 15,
-                                    backgroundColor: Colors.white,
-                                    child: Icon(
-                                      Icons.settings,
-                                      color: Colors.black,
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                SettingScreen()),
+                                      );
+                                    },
+                                    child: CircleAvatar(
+                                      radius: 15,
+                                      backgroundColor: Colors.white,
+                                      child: Icon(
+                                        Icons.settings,
+                                        color: Colors.black,
+                                      ),
                                     ),
                                   )
                                 ],
@@ -429,21 +441,26 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceEvenly,
                                             children: [
-                                              Container(
-                                                decoration: BoxDecoration(
-                                                  shape: BoxShape.circle,
-                                                  border: Border.all(
-                                                    color: Colors.black45,
-                                                  ),
-                                                ),
-                                                child: CircleAvatar(
-                                                    radius: 27,
-                                                    backgroundColor:
-                                                        Colors.white,
-                                                    child: Icon(
-                                                      Icons.camera_alt,
+                                              InkWell(
+                                                onTap: () =>
+                                                    obj.pickAndUploadVideo(
+                                                        context),
+                                                child: Container(
+                                                  decoration: BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    border: Border.all(
                                                       color: Colors.black45,
-                                                    )),
+                                                    ),
+                                                  ),
+                                                  child: CircleAvatar(
+                                                      radius: 27,
+                                                      backgroundColor:
+                                                          Colors.white,
+                                                      child: Icon(
+                                                        Icons.camera_alt,
+                                                        color: Colors.black45,
+                                                      )),
+                                                ),
                                               ),
                                               Text(
                                                 "Hightlights",
@@ -475,12 +492,122 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                                                             MainAxisAlignment
                                                                 .spaceEvenly,
                                                         children: [
-                                                          CircleAvatar(
-                                                            radius: 27,
-                                                            backgroundImage:
-                                                                AssetImage(
-                                                                    StaticData
-                                                                        .myDp),
+                                                          StreamBuilder<
+                                                              QuerySnapshot>(
+                                                            stream: FirebaseFirestore
+                                                                .instance
+                                                                .collection(
+                                                                    'highlight_videos')
+                                                                .snapshots(),
+                                                            builder: (BuildContext
+                                                                    context,
+                                                                AsyncSnapshot<
+                                                                        QuerySnapshot>
+                                                                    snapshot) {
+                                                              if (snapshot
+                                                                      .connectionState ==
+                                                                  ConnectionState
+                                                                      .waiting) {
+                                                                return const Center(
+                                                                    child:
+                                                                        CircularProgressIndicator());
+                                                              }
+                                                              if (snapshot
+                                                                  .hasError) {
+                                                                return Center(
+                                                                    child: Text(
+                                                                        'Error: ${snapshot.error}'));
+                                                              }
+                                                              if (!snapshot
+                                                                      .hasData ||
+                                                                  snapshot
+                                                                      .data!
+                                                                      .docs
+                                                                      .isEmpty) {
+                                                                return const Center(
+                                                                    child: Text(
+                                                                        'No videos available'));
+                                                              }
+
+                                                              return Container(
+                                                                height: height *
+                                                                    0.1,
+                                                                width: width,
+                                                                color: Colors
+                                                                    .amber,
+                                                                child: ListView
+                                                                    .builder(
+                                                                  scrollDirection:
+                                                                      Axis.horizontal,
+                                                                  itemCount:
+                                                                      snapshot
+                                                                          .data!
+                                                                          .docs
+                                                                          .length,
+                                                                  itemBuilder:
+                                                                      (context,
+                                                                          index) {
+                                                                    var videoData = snapshot
+                                                                            .data!
+                                                                            .docs[
+                                                                                index]
+                                                                            .data()
+                                                                        as Map<
+                                                                            String,
+                                                                            dynamic>;
+                                                                    String
+                                                                        videoUrl =
+                                                                        videoData['Hightlightvideo'] ??
+                                                                            '';
+                                                                    String
+                                                                        thumbnailUrl =
+                                                                        videoData['thumbnailUrl'] ??
+                                                                            ''; // Adjust if the thumbnail key is different
+
+                                                                    return Padding(
+                                                                      padding:
+                                                                          const EdgeInsets.all(
+                                                                              8.0),
+                                                                      child:
+                                                                          GestureDetector(
+                                                                        onTap: () => obj.showVideoDialog(
+                                                                            context,
+                                                                            videoUrl), // Show video dialog
+                                                                        child:
+                                                                            Stack(
+                                                                          children: [
+                                                                            // Thumbnail container
+                                                                            Container(
+                                                                              width: MediaQuery.of(context).size.width * 0.4,
+                                                                              decoration: BoxDecoration(
+                                                                                border: Border.all(color: Colors.black45),
+                                                                                image: DecorationImage(
+                                                                                  fit: BoxFit.cover,
+                                                                                  image: CachedNetworkImageProvider(thumbnailUrl),
+                                                                                ),
+                                                                                borderRadius: BorderRadius.circular(10),
+                                                                              ),
+                                                                            ),
+                                                                            Positioned(
+                                                                              bottom: 0,
+                                                                              left: 0,
+                                                                              child: Container(
+                                                                                color: Colors.black.withOpacity(0.5),
+                                                                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                                                                child: const Text(
+                                                                                  "Play",
+                                                                                  style: TextStyle(color: Colors.white),
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                    );
+                                                                  },
+                                                                ),
+                                                              );
+                                                            },
                                                           ),
                                                           Text(
                                                             "Hightlights",
@@ -941,11 +1068,6 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                                                                         (String
                                                                             value) {
                                                                       if (value ==
-                                                                          'update') {
-                                                                        obj.showUpdateServiceDialog(
-                                                                            context,
-                                                                            model);
-                                                                      } else if (value ==
                                                                           'delete') {
                                                                         showDialog(
                                                                           context:
@@ -979,19 +1101,6 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                                                                         (BuildContext
                                                                             context) {
                                                                       return [
-                                                                        PopupMenuItem<
-                                                                            String>(
-                                                                          value:
-                                                                              'update',
-                                                                          child:
-                                                                              Row(
-                                                                            children: const [
-                                                                              Icon(Icons.edit, color: Colors.blue),
-                                                                              SizedBox(width: 8),
-                                                                              Text('Update'),
-                                                                            ],
-                                                                          ),
-                                                                        ),
                                                                         PopupMenuItem<
                                                                             String>(
                                                                           value:

@@ -1,3 +1,4 @@
+import 'package:beautybazzle/controller/editprofilecontroller.dart';
 import 'package:beautybazzle/model/servic_data.dart';
 import 'package:beautybazzle/utiils/static_data.dart';
 import 'package:beautybazzle/view/orders/check_out.dart';
@@ -5,6 +6,7 @@ import 'package:beautybazzle/view/profiles/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_stars/flutter_rating_stars.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get_state_manager/src/simple/get_state.dart';
 
 class BeautyProductScreen extends StatefulWidget {
   const BeautyProductScreen({super.key});
@@ -43,74 +45,73 @@ class _BeautyProductScreenState extends State<BeautyProductScreen>
     super.dispose();
   }
 
-  bool isFavorite = false;
-
-  void toggleFavorite() {
-    setState(() {
-      isFavorite = !isFavorite; // Toggle favorite state
-    });
-
-    // Show toast message
-    Fluttertoast.showToast(
-      msg: isFavorite
-          ? "Successfully added to favorites"
-          : "Removed from favorites",
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.CENTER,
-      backgroundColor: Colors.pink[200],
-      textColor: Colors.black,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
 
-    return DefaultTabController(
-      length: 1,
-      child: Scaffold(
-        body: Stack(
-          children: [
-            CustomScrollView(
-              slivers: [
-                SliverAppBar(
-                  expandedHeight: 250.0,
-                  flexibleSpace: FlexibleSpaceBar(
-                    background: Center(
-                      child: Stack(
-                        children: [
-                          Container(
-                            decoration: const BoxDecoration(
-                              image: DecorationImage(
-                                fit: BoxFit.cover,
-                                image: AssetImage("images/product.jpg"),
+    return GetBuilder<ProfileController>(builder: (obj) {
+      return DefaultTabController(
+        length: 1,
+        child: Scaffold(
+          body: Stack(
+            children: [
+              CustomScrollView(
+                slivers: [
+                  SliverAppBar(
+                    expandedHeight: 250.0,
+                    flexibleSpace: FlexibleSpaceBar(
+                      background: Center(
+                        child: Stack(
+                          children: [
+                            Center(
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  image: obj.usermodel!.SalonPicture != ""
+                                      ? DecorationImage(
+                                          fit: BoxFit.cover,
+                                          image: NetworkImage(StaticData
+                                              .userModel!.SalonPicture),
+                                        )
+                                      : null,
+                                ),
+                                child: obj.usermodel!.SalonPicture == ""
+                                    ? CircleAvatar(
+                                        radius: 100,
+                                        backgroundColor: Colors.pink[200],
+                                        child: const Icon(
+                                          Icons.camera_alt,
+                                          size: 50,
+                                          color: Colors.white,
+                                        ),
+                                      )
+                                    : null,
                               ),
-                            ),
-                          ),
-                        ],
+                            )
+                          ],
+                        ),
                       ),
                     ),
+                    backgroundColor: Colors.white,
+                    floating: true,
+                    pinned: false,
                   ),
-                  backgroundColor: Colors.white,
-                  floating: true,
-                  pinned: false,
-                ),
-                SliverList(
-                  delegate: SliverChildListDelegate([
-                    SlideTransition(
-                      position: _slideAnimation,
-                      child: _buildProductDetails(context, height, width),
-                    ),
-                  ]),
-                ),
-              ],
-            ),
-            _buildBottomBar(context, height, width),
-          ],
+                  SliverList(
+                    delegate: SliverChildListDelegate([
+                      SlideTransition(
+                        position: _slideAnimation,
+                        child: _buildProductDetails(context, height, width),
+                      ),
+                    ]),
+                  ),
+                ],
+              ),
+              _buildBottomBar(context, height, width),
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    });
   }
 
   Widget _buildProductDetails(

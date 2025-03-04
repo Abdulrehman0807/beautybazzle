@@ -7,6 +7,7 @@ import 'package:beautybazzle/model/servic_data.dart';
 import 'package:beautybazzle/utiils/static_data.dart';
 import 'package:beautybazzle/view/appoinment/appointment_book.dart';
 import 'package:beautybazzle/view/profiles/profile.dart';
+import 'package:beautybazzle/view/setting/showschedule.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_stars/flutter_rating_stars.dart';
@@ -416,20 +417,20 @@ class _SalonScreenState extends State<SalonScreen>
                                             mainAxisAlignment:
                                                 MainAxisAlignment.center,
                                             children: [
-                                              CircleAvatar(
-                                                  backgroundColor: Colors.white,
-                                                  radius: 15,
-                                                  child: Icon(
-                                                    Icons.access_time_filled,
-                                                    color: Colors.black,
-                                                  )),
-                                              Text(
-                                                "Sun - Mon",
-                                                style: TextStyle(
-                                                    fontSize: width * 0.035,
-                                                    color: Colors.black,
-                                                    fontWeight:
-                                                        FontWeight.w500),
+                                              InkWell(
+                                                onTap: () =>
+                                                    obj.showScheduleDialog(
+                                                        context),
+                                                child: Container(
+                                                  child: Text(
+                                                    "View Schedule",
+                                                    style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: width * 0.03,
+                                                        fontWeight:
+                                                            FontWeight.w400),
+                                                  ),
+                                                ),
                                               ),
                                             ],
                                           ),
@@ -912,10 +913,13 @@ class _SalonScreenState extends State<SalonScreen>
                                                 children: [
                                                   Padding(
                                                     padding:
-                                                        const EdgeInsets.all(
-                                                            8.0),
+                                                        const EdgeInsets.only(
+                                                            left: 15.0,
+                                                            right: 8,
+                                                            top: 10,
+                                                            bottom: 10),
                                                     child: Container(
-                                                      width: width * 0.45,
+                                                      width: width * 0.4,
                                                       decoration: BoxDecoration(
                                                         border: Border.all(
                                                             color:

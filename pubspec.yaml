@@ -55,6 +55,8 @@ dependencies:
   get: 
   animations: 
   flutter_spinkit:
+  cached_network_image:
+  video_player: 
   # flutter_open_container:
   
 
