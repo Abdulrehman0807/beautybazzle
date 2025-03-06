@@ -72,11 +72,11 @@ class _ProductScreenState extends State<ProductScreen> {
             padding: const EdgeInsets.symmetric(vertical: 4.0),
             child: GestureDetector(
               onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => BeautyProductScreen(),
-                    ));
+                // Navigator.push(
+                //     context,
+                //     MaterialPageRoute(
+                //       builder: (context) => BeautyProductScreen(),
+                //     ));
               },
               child: Container(
                 height: height * 0.12,

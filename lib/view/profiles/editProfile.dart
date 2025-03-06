@@ -17,25 +17,32 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   @override
   void initState() {
-    // print(StaticData.userModel!.ProfilePicture);
     ProfileController.to.nameController.text =
         ProfileController.to.usermodel!.name;
-    ProfileController.to.salonNameController.text =
-        ProfileController.to.usermodel!.SalonName;
+
+    // ProfileController.to.salonNameController.text =
+    //     ProfileController.to.salonmodel!.SalonName!;
+
     ProfileController.to.addressController.text =
         ProfileController.to.usermodel!.Address;
+
     ProfileController.to.youtubeController.text =
         ProfileController.to.usermodel!.YouTube;
+
     ProfileController.to.facebookController.text =
         ProfileController.to.usermodel!.Facebook;
+
     ProfileController.to.instagramController.text =
         ProfileController.to.usermodel!.Instagram;
+
     ProfileController.to.tiktokController.text =
         ProfileController.to.usermodel!.TikTok;
+
     ProfileController.to.aboutMeController.text =
         ProfileController.to.usermodel!.AboutMe;
-    ProfileController.to.salonDescriptionController.text =
-        ProfileController.to.usermodel!.salonDescription;
+
+    // ProfileController.to.salonDescriptionController.text =
+    //     ProfileController.to.salonmodel!.salonDescription!;
     super.initState();
   }
 
@@ -129,23 +136,22 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                           children: [
                                             CircleAvatar(
                                               radius: 35,
-                                              backgroundImage:
-                                                  obj.usermodel!.SalonPicture !=
-                                                          ""
-                                                      ? NetworkImage(StaticData
-                                                          .userModel!
-                                                          .SalonPicture)
-                                                      : null,
+                                              backgroundImage: obj.salonmodel!
+                                                          .SalonPicture !=
+                                                      ""
+                                                  ? NetworkImage(obj.salonmodel!
+                                                      .SalonPicture!)
+                                                  : null,
                                               backgroundColor: Colors.pink[200],
-                                              child:
-                                                  obj.usermodel!.SalonPicture ==
-                                                          ""
-                                                      ? const Icon(
-                                                          Icons.camera_alt,
-                                                          size: 30,
-                                                          color: Colors.white,
-                                                        )
-                                                      : null,
+                                              child: obj.salonmodel!
+                                                          .SalonPicture ==
+                                                      ""
+                                                  ? const Icon(
+                                                      Icons.camera_alt,
+                                                      size: 30,
+                                                      color: Colors.white,
+                                                    )
+                                                  : null,
                                             ),
                                             if (obj.isLoadingSalon)
                                               const SpinKitSpinningLines(

@@ -365,7 +365,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                 ],
                               ),
                             ),
-                            StaticData.userModel!.SalonName == ""
+                            obj.salonmodel!.SalonName == ""
                                 ? SizedBox()
                                 : Column(
                                     children: [
@@ -397,16 +397,15 @@ class _ProfileScreenState extends State<ProfileScreen>
                                           child: ListTile(
                                             leading: CircleAvatar(
                                               radius: 35,
-                                              backgroundImage: obj.usermodel!
+                                              backgroundImage: obj.salonmodel!
                                                           .SalonPicture !=
                                                       ""
-                                                  ? NetworkImage(StaticData
-                                                      .userModel!
-                                                      .SalonPicture) // Show the salon picture if available
+                                                  ? NetworkImage(obj.salonmodel!
+                                                      .SalonPicture!) // Show the salon picture if available
                                                   : null, // If no salon picture, it will be null
                                               backgroundColor: Colors.pink[
                                                   200], // Background color if no image
-                                              child: obj.usermodel!
+                                              child: obj.salonmodel!
                                                           .SalonPicture ==
                                                       ""
                                                   ? const Icon(
@@ -417,7 +416,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                                   : null, // No icon if salon picture exists
                                             ),
                                             title: Text(
-                                              "${StaticData.userModel!.SalonName}",
+                                              "${obj.salonmodel!.SalonName}",
                                               style: TextStyle(
                                                 fontSize: width * 0.04,
                                                 fontWeight: FontWeight.w600,
@@ -1071,13 +1070,13 @@ class _ProfileScreenState extends State<ProfileScreen>
                                                       as Map<String, dynamic>);
                                               return GestureDetector(
                                                 onTap: () {
-                                                  Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          const BeautyProductScreen(),
-                                                    ),
-                                                  );
+                                                  // Navigator.push(
+                                                  //   context,
+                                                  //   MaterialPageRoute(
+                                                  //     builder: (context) =>
+                                                  //         const BeautyProductScreen(),
+                                                  //   ),
+                                                  // );
                                                 },
                                                 child: Padding(
                                                   padding:

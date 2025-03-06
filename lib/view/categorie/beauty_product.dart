@@ -1,15 +1,21 @@
 import 'package:beautybazzle/controller/editprofilecontroller.dart';
+import 'package:beautybazzle/model/addproduct.dart';
 import 'package:beautybazzle/model/servic_data.dart';
 import 'package:beautybazzle/utiils/static_data.dart';
+import 'package:beautybazzle/view/categorie/products_category.dart';
 import 'package:beautybazzle/view/orders/check_out.dart';
 import 'package:beautybazzle/view/profiles/profile.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_stars/flutter_rating_stars.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
 
 class BeautyProductScreen extends StatefulWidget {
-  const BeautyProductScreen({super.key});
+  final ProductModel product;
+
+  const BeautyProductScreen({required this.product, Key? key})
+      : super(key: key);
 
   @override
   State<BeautyProductScreen> createState() => _BeautyProductScreenState();
@@ -45,6 +51,7 @@ class _BeautyProductScreenState extends State<BeautyProductScreen>
     super.dispose();
   }
 
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
@@ -64,30 +71,39 @@ class _BeautyProductScreenState extends State<BeautyProductScreen>
                       background: Center(
                         child: Stack(
                           children: [
-                            Center(
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  image: obj.usermodel!.SalonPicture != ""
-                                      ? DecorationImage(
-                                          fit: BoxFit.cover,
-                                          image: NetworkImage(StaticData
-                                              .userModel!.SalonPicture),
-                                        )
-                                      : null,
-                                ),
-                                child: obj.usermodel!.SalonPicture == ""
-                                    ? CircleAvatar(
-                                        radius: 100,
-                                        backgroundColor: Colors.pink[200],
-                                        child: const Icon(
-                                          Icons.camera_alt,
-                                          size: 50,
-                                          color: Colors.white,
-                                        ),
-                                      )
-                                    : null,
-                              ),
-                            )
+                            Image.network(widget.product.productPic ?? ''),
+                            // Center(
+                            //   child:
+
+                            //   Container(
+                            //     decoration: BoxDecoration(
+
+                            //   image:
+                            // obj.usermodel!.SalonPicture != ""
+                            //       ? DecorationImage(
+                            //           fit: BoxFit.cover,
+                            //           image: NetworkImage(StaticData
+                            //               .userModel!.SalonPicture),
+                            //         )
+                            //       : null,
+                            // ),
+                            // child: obj.usermodel!.SalonPicture == ""
+                            //     ? CircleAvatar(
+                            //         radius: 100,
+                            //         backgroundColor: Colors.pink[200],
+                            //         child: const Icon(
+                            //           Icons.camera_alt,
+                            //           size: 50,
+                            //           color: Colors.white,
+                            //         ),
+                            //       )
+
+                            //     : null,
+
+                            //     )
+
+                            //   ),
+                            // )
                           ],
                         ),
                       ),
@@ -126,7 +142,7 @@ class _BeautyProductScreenState extends State<BeautyProductScreen>
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "Fizza Beauty Cream",
+                widget.product.productName ?? '',
                 style: TextStyle(
                   fontSize: width * 0.035,
                   fontWeight: FontWeight.w400,
@@ -239,7 +255,8 @@ class _BeautyProductScreenState extends State<BeautyProductScreen>
           ),
         ),
         subtitle: Text(
-          "Fizza Beauty Cream nourishes and hydrates for a radiant, even-toned complexion, reducing dark spots and fine lines with its lightweight, non-greasy formula. Suitable for all skin types, it leaves skin soft and glowing all day.",
+          widget.product.productDescription ?? 'No Description',
+          // "Fizza Beauty Cream nourishes and hydrates for a radiant, even-toned complexion, reducing dark spots and fine lines with its lightweight, non-greasy formula. Suitable for all skin types, it leaves skin soft and glowing all day.",
           style: TextStyle(
             fontSize: width * 0.036,
             fontWeight: FontWeight.w400,
@@ -250,60 +267,151 @@ class _BeautyProductScreenState extends State<BeautyProductScreen>
   }
 
   Widget _buildRelatedProductsTab(double height, double width) {
-    return Container(
-      height: UserModel1.mylist.length * height * 0.13,
-      width: width,
-      child: Column(
-        children: UserModel1.mylist.map((item) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4.0),
-            child: GestureDetector(
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => BeautyProductScreen(),
-                    ));
-              },
-              child: Container(
-                height: height * 0.1,
-                width: width,
-                decoration: BoxDecoration(
-                  border:
-                      Border.all(color: Colors.black12, width: width * 0.002),
-                ),
-                child: ListTile(
-                  leading: Container(
-                    height: height * 0.07,
-                    width: width * 0.15,
-                    decoration: BoxDecoration(
-                      image: const DecorationImage(
-                        fit: BoxFit.cover,
-                        image: AssetImage("images/product.jpg"),
+    return
+
+        // Container(
+        //   height: UserModel1.mylist.length * height * 0.13,
+        //   width: width,
+        //   child: Column(
+        //     children: UserModel1.mylist.map((item) {
+        //       return Padding(
+        //         padding: const EdgeInsets.symmetric(vertical: 4.0),
+        //         child: GestureDetector(
+        //           onTap: () {
+        //             // Navigator.push(
+        //             //     context,
+        //             //     MaterialPageRoute(
+        //             //       builder: (context) => BeautyProductScreen(),
+        //             //     ));
+        //           },
+        //           child: Container(
+        //             height: height * 0.1,
+        //             width: width,
+        //             decoration: BoxDecoration(
+        //               border:
+        //                   Border.all(color: Colors.black12, width: width * 0.002),
+        //             ),
+        //             child: ListTile(
+        //               leading: Container(
+        //                 height: height * 0.07,
+        //                 width: width * 0.15,
+        //                 decoration: BoxDecoration(
+        //                   image: const DecorationImage(
+        //                     fit: BoxFit.cover,
+        //                     image: AssetImage("images/product.jpg"),
+        //                   ),
+        //                   borderRadius: BorderRadius.circular(10),
+        //                 ),
+        //               ),
+        //               title: Text(
+        //                 "Fizza Beauty Cream",
+        //                 style: TextStyle(
+        //                   fontSize: width * 0.04,
+        //                   fontWeight: FontWeight.w500,
+        //                 ),
+        //               ),
+        //               subtitle: Text(
+        //                 "A nourishing cream that brightens, hydrates, and smooths skin for a radiant, even-toned glow.",
+        //                 style: TextStyle(
+        //                   fontSize: width * 0.03,
+        //                   fontWeight: FontWeight.w400,
+        //                   overflow: TextOverflow.ellipsis,
+        //                 ),
+        //               ),
+        //             ),
+        //           ),
+        //         ),
+        //       );
+        //     }).toList(),
+        //   ),
+        Expanded(
+      child: StreamBuilder<QuerySnapshot>(
+        stream: _firestore
+            .collection('products')
+            .where('SalonId',
+                isEqualTo: widget.product.userId) // Assuming userId is salonId
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
+
+          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+            return const Center(child: Text('No other products available'));
+          }
+
+          var products = snapshot.data!.docs
+              .map((doc) =>
+                  ProductModel.fromMap(doc.data() as Map<String, dynamic>))
+              .where((product) =>
+                  product.productId !=
+                  widget.product.productId) // Exclude the current product
+              .toList();
+
+          return Container(
+            height:
+                products.length * height * 0.13, // Adjust height dynamically
+            width: width,
+            child: Column(
+              children: products.map((product) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4.0),
+                  child: GestureDetector(
+                    onTap: () {
+                      // Navigate to the details screen for the selected product
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ProductScreen(),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      height: height * 0.1,
+                      width: width,
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                            color: Colors.black12, width: width * 0.002),
                       ),
-                      borderRadius: BorderRadius.circular(10),
+                      child: ListTile(
+                        leading: Container(
+                          height: height * 0.07,
+                          width: width * 0.15,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              fit: BoxFit.cover,
+                              image: NetworkImage(product.productPic ?? ''),
+                            ),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        title: Text(
+                          product.productName ?? 'No Name',
+                          style: TextStyle(
+                            fontSize: width * 0.04,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        subtitle: Text(
+                          product.productDescription ?? 'No Description',
+                          style: TextStyle(
+                            fontSize: width * 0.03,
+                            fontWeight: FontWeight.w400,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-                  title: Text(
-                    "Fizza Beauty Cream",
-                    style: TextStyle(
-                      fontSize: width * 0.04,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  subtitle: Text(
-                    "A nourishing cream that brightens, hydrates, and smooths skin for a radiant, even-toned glow.",
-                    style: TextStyle(
-                      fontSize: width * 0.03,
-                      fontWeight: FontWeight.w400,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ),
-              ),
+                );
+              }).toList(),
             ),
           );
-        }).toList(),
+        },
       ),
     );
   }
@@ -354,7 +462,7 @@ class _BeautyProductScreenState extends State<BeautyProductScreen>
             ),
           ),
           Text(
-            "\$40.00",
+            'Price: \$${widget.product.productPrice ?? 'N/A'}',
             style: TextStyle(
               fontSize: width * 0.05,
               fontWeight: FontWeight.w700,

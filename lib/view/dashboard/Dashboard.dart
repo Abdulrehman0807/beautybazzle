@@ -1,3 +1,4 @@
+import 'package:beautybazzle/model/addproduct.dart';
 import 'package:beautybazzle/model/servic_data.dart';
 import 'package:beautybazzle/utiils/static_data.dart';
 import 'package:beautybazzle/view/categorie/beauty_product.dart';
@@ -11,6 +12,7 @@ import 'package:beautybazzle/view/categorie/salon_category.dart';
 import 'package:beautybazzle/view/categorie/services_categraties.dart';
 import 'package:beautybazzle/view/categorie/specialists.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_stars/flutter_rating_stars.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -138,6 +140,46 @@ class _DashboardScreenState extends State<DashboardScreen> {
       backgroundColor: Colors.pink[200],
       textColor: Colors.black,
     );
+  }
+
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  List<ProductModel> productList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchSalonsAndProducts();
+  }
+
+  Future<void> _fetchSalonsAndProducts() async {
+    try {
+      // Fetch all salons
+      QuerySnapshot salonSnapshot = await _firestore.collection('salons').get();
+
+      for (var salonDoc in salonSnapshot.docs) {
+        String salonId = salonDoc.id;
+
+        // Fetch products for the current salon
+        QuerySnapshot productSnapshot = await _firestore
+            .collection('products')
+            .where('SalonId', isEqualTo: salonId)
+            .get();
+
+        if (productSnapshot.docs.isNotEmpty) {
+          // Get the first product of the salon
+          var firstProductData =
+              productSnapshot.docs.first.data() as Map<String, dynamic>;
+          ProductModel firstProduct = ProductModel.fromMap(firstProductData);
+
+          // Add the first product to the product list
+          setState(() {
+            productList.add(firstProduct);
+          });
+        }
+      }
+    } catch (e) {
+      print("Error fetching salons and products: $e");
+    }
   }
 
   @override
@@ -751,193 +793,234 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       ),
                     ),
                     Container(
-                        height: height * 0.25,
-                        width: width,
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: 7,
-                          itemBuilder: (context, index) {
-                            return Padding(
-                              padding: const EdgeInsets.all(8),
-                              child: GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            BeautyProductScreen(),
-                                      ));
-                                },
-                                child: Card(
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10)),
-                                  elevation: 2,
-                                  child: Container(
-                                    height: height * 0.26,
-                                    width: width * 0.35,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        Container(
-                                          width: width * 0.33,
-                                          height: height * 0.13,
-                                          decoration: BoxDecoration(
-                                            border: Border.all(
-                                                color: Colors.black12),
-                                            borderRadius:
-                                                BorderRadius.circular(15),
-                                            image: DecorationImage(
-                                                fit: BoxFit.cover,
-                                                image: AssetImage(
-                                                    "images/product.jpg")),
-                                          ),
-                                        ),
-                                        Container(
-                                          height: height * 0.09,
-                                          width: width * 0.3,
-                                          // color: Colors.blue,
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceEvenly,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Container(
-                                                child: Text(
-                                                  "Fizza Beauty Cream",
-                                                  style: TextStyle(
-                                                    fontSize: width * 0.033,
-                                                    fontWeight: FontWeight.w500,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                  ),
-                                                ),
-                                              ),
-                                              Row(
-                                                children: [
-                                                  SizedBox(
-                                                    child: RichText(
-                                                        text:
-                                                            TextSpan(children: [
-                                                      TextSpan(
-                                                          text: "\$",
-                                                          style: TextStyle(
-                                                              color: Colors.red,
-                                                              fontSize:
-                                                                  width * 0.032,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w400)),
-                                                      TextSpan(
-                                                          text: "600",
-                                                          style: TextStyle(
-                                                              color: Colors.red,
-                                                              fontSize:
-                                                                  width * 0.035,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w400))
-                                                    ])),
-                                                  ),
-                                                  SizedBox(
-                                                    width: width * 0.148,
-                                                  ),
-                                                  GestureDetector(
-                                                    onTap: () => toggleFavorite(
-                                                        favoriteProductIndices,
-                                                        index), // Pass the correct favorite set for products
-                                                    child: CircleAvatar(
-                                                      backgroundColor:
-                                                          Colors.white,
-                                                      radius: 13,
-                                                      child: Icon(
-                                                        favoriteProductIndices
-                                                                .contains(
-                                                                    index) // Use favoriteProductIndices to check if the item is in favorites
-                                                            ? Icons
-                                                                .favorite // Filled heart if favorited
-                                                            : Icons
-                                                                .favorite_border, // Outline heart if not favorited
-                                                        color: favoriteProductIndices
-                                                                .contains(
-                                                                    index) // Red if favorited, grey if not
-                                                            ? Colors.red
-                                                            : Colors.grey,
-                                                        size: 19,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              Center(
-                                                child: Row(
-                                                  children: [
-                                                    RatingStars(
-                                                      value: rating,
-                                                      onValueChanged:
-                                                          (newRating) {},
-                                                      starCount:
-                                                          1, // Number of stars
-                                                      starSize:
-                                                          13, // Size of the stars
-                                                      starColor: Color.fromARGB(
-                                                          255, 241, 134, 170),
-                                                      valueLabelColor:
-                                                          Color.fromRGBO(
-                                                              240, 134, 169, 1),
-                                                      starSpacing:
-                                                          2, // Space between the stars
-                                                      valueLabelVisibility:
-                                                          false,
-                                                    ),
-                                                    SizedBox(
-                                                      width: width * 0.01,
-                                                    ),
-                                                    RichText(
-                                                        text:
-                                                            TextSpan(children: [
-                                                      TextSpan(
-                                                          text: '$rating',
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.black,
-                                                              fontSize:
-                                                                  width * 0.032,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500)),
-                                                      TextSpan(
-                                                          text: "  (324)",
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.black,
-                                                              fontSize:
-                                                                  width * 0.032,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w400))
-                                                    ])),
-                                                    SizedBox(
-                                                      width: width * 0.04,
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
+                      height: height * 0.25,
+                      width: width,
+                      child:
+
+                          // ListView.builder(
+                          //   scrollDirection: Axis.horizontal,
+                          //   itemCount: 7,
+                          //   itemBuilder: (context, index) {
+                          //     return Padding(
+                          //       padding: const EdgeInsets.all(8),
+                          //       child: GestureDetector(
+                          //         onTap: () {
+                          //           Navigator.push(
+                          //               context,
+                          //               MaterialPageRoute(
+                          //                 builder: (context) =>
+                          //                     BeautyProductScreen(),
+                          //               ));
+                          //         },
+                          //         child: Card(
+                          //           shape: RoundedRectangleBorder(
+                          //               borderRadius: BorderRadius.circular(10)),
+                          //           elevation: 2,
+                          //           child: Container(
+                          //             height: height * 0.26,
+                          //             width: width * 0.35,
+                          //             decoration: BoxDecoration(
+                          //               borderRadius: BorderRadius.circular(10),
+                          //             ),
+                          //             child: Column(
+                          //               mainAxisAlignment:
+                          //                   MainAxisAlignment.spaceEvenly,
+                          //               children: [
+                          //                 Container(
+                          //                   width: width * 0.33,
+                          //                   height: height * 0.13,
+                          //                   decoration: BoxDecoration(
+                          //                     border: Border.all(
+                          //                         color: Colors.black12),
+                          //                     borderRadius:
+                          //                         BorderRadius.circular(15),
+                          //                     image: DecorationImage(
+                          //                         fit: BoxFit.cover,
+                          //                         image: AssetImage(
+                          //                             "images/product.jpg")),
+                          //                   ),
+                          //                 ),
+                          //                 Container(
+                          //                   height: height * 0.09,
+                          //                   width: width * 0.3,
+                          //                   // color: Colors.blue,
+                          //                   child: Column(
+                          //                     mainAxisAlignment:
+                          //                         MainAxisAlignment.spaceEvenly,
+                          //                     crossAxisAlignment:
+                          //                         CrossAxisAlignment.start,
+                          //                     children: [
+                          //                       Container(
+                          //                         child: Text(
+                          //                           "Fizza Beauty Cream",
+                          //                           style: TextStyle(
+                          //                             fontSize: width * 0.033,
+                          //                             fontWeight: FontWeight.w500,
+                          //                             overflow:
+                          //                                 TextOverflow.ellipsis,
+                          //                           ),
+                          //                         ),
+                          //                       ),
+                          //                       Row(
+                          //                         children: [
+                          //                           SizedBox(
+                          //                             child: RichText(
+                          //                                 text:
+                          //                                     TextSpan(children: [
+                          //                               TextSpan(
+                          //                                   text: "\$",
+                          //                                   style: TextStyle(
+                          //                                       color: Colors.red,
+                          //                                       fontSize:
+                          //                                           width * 0.032,
+                          //                                       fontWeight:
+                          //                                           FontWeight
+                          //                                               .w400)),
+                          //                               TextSpan(
+                          //                                   text: "600",
+                          //                                   style: TextStyle(
+                          //                                       color: Colors.red,
+                          //                                       fontSize:
+                          //                                           width * 0.035,
+                          //                                       fontWeight:
+                          //                                           FontWeight
+                          //                                               .w400))
+                          //                             ])),
+                          //                           ),
+                          //                           SizedBox(
+                          //                             width: width * 0.148,
+                          //                           ),
+                          //                           GestureDetector(
+                          //                             onTap: () => toggleFavorite(
+                          //                                 favoriteProductIndices,
+                          //                                 index), // Pass the correct favorite set for products
+                          //                             child: CircleAvatar(
+                          //                               backgroundColor:
+                          //                                   Colors.white,
+                          //                               radius: 13,
+                          //                               child: Icon(
+                          //                                 favoriteProductIndices
+                          //                                         .contains(
+                          //                                             index) // Use favoriteProductIndices to check if the item is in favorites
+                          //                                     ? Icons
+                          //                                         .favorite // Filled heart if favorited
+                          //                                     : Icons
+                          //                                         .favorite_border, // Outline heart if not favorited
+                          //                                 color: favoriteProductIndices
+                          //                                         .contains(
+                          //                                             index) // Red if favorited, grey if not
+                          //                                     ? Colors.red
+                          //                                     : Colors.grey,
+                          //                                 size: 19,
+                          //                               ),
+                          //                             ),
+                          //                           ),
+                          //                         ],
+                          //                       ),
+                          //                       Center(
+                          //                         child: Row(
+                          //                           children: [
+                          //                             RatingStars(
+                          //                               value: rating,
+                          //                               onValueChanged:
+                          //                                   (newRating) {},
+                          //                               starCount:
+                          //                                   1, // Number of stars
+                          //                               starSize:
+                          //                                   13, // Size of the stars
+                          //                               starColor: Color.fromARGB(
+                          //                                   255, 241, 134, 170),
+                          //                               valueLabelColor:
+                          //                                   Color.fromRGBO(
+                          //                                       240, 134, 169, 1),
+                          //                               starSpacing:
+                          //                                   2, // Space between the stars
+                          //                               valueLabelVisibility:
+                          //                                   false,
+                          //                             ),
+                          //                             SizedBox(
+                          //                               width: width * 0.01,
+                          //                             ),
+                          //                             RichText(
+                          //                                 text:
+                          //                                     TextSpan(children: [
+                          //                               TextSpan(
+                          //                                   text: '$rating',
+                          //                                   style: TextStyle(
+                          //                                       color:
+                          //                                           Colors.black,
+                          //                                       fontSize:
+                          //                                           width * 0.032,
+                          //                                       fontWeight:
+                          //                                           FontWeight
+                          //                                               .w500)),
+                          //                               TextSpan(
+                          //                                   text: "  (324)",
+                          //                                   style: TextStyle(
+                          //                                       color:
+                          //                                           Colors.black,
+                          //                                       fontSize:
+                          //                                           width * 0.032,
+                          //                                       fontWeight:
+                          //                                           FontWeight
+                          //                                               .w400))
+                          //                             ])),
+                          //                             SizedBox(
+                          //                               width: width * 0.04,
+                          //                             ),
+                          //                           ],
+                          //                         ),
+                          //                       ),
+                          //                     ],
+                          //                   ),
+                          //                 )
+                          //               ],
+                          //             ),
+                          //           ),
+                          //         ),
+                          //       ),
+                          //     );
+                          //   },
+                          // )
+                          ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: productList.length,
+                        itemBuilder: (context, index) {
+                          ProductModel product = productList[index];
+                          return GestureDetector(
+                            onTap: () {
+                              // Navigate to the details screen
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      BeautyProductScreen(product: product),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              width: 150,
+                              margin: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                image: DecorationImage(
+                                  fit: BoxFit.cover,
+                                  image: NetworkImage(product.productPic ?? ''),
                                 ),
                               ),
-                            );
-                          },
-                        )),
+                              child: Center(
+                                child: Text(
+                                  product.productName ?? '',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
                     SizedBox(
                       height: height * 0.015,
                     ),

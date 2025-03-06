@@ -17,6 +17,7 @@ import 'package:beautybazzle/view/categorie/beauty_product.dart';
 import 'package:beautybazzle/view/profiles/editProfile.dart';
 import 'package:beautybazzle/view/setting/setting.dart';
 import 'package:beautybazzle/view/setting/showschedule.dart';
+import 'package:beautybazzle/view/setting/showvideo.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -27,6 +28,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 
 import '../../model/addservices.dart';
+import '../../model/addvideo.dart';
 
 class MyProfileScreen extends StatefulWidget {
   const MyProfileScreen({super.key});
@@ -366,8 +368,8 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                                 ],
                               ),
                             ),
-                            obj.usermodel == null ||
-                                    obj.usermodel!.SalonName == ""
+                            obj.salonmodel == null ||
+                                    obj.salonmodel!.SalonName == ""
                                 ? const SizedBox(
                                     height: 500,
                                     width: 500,
@@ -395,15 +397,15 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                                           leading: CircleAvatar(
                                             radius: 35,
                                             backgroundImage:
-                                                obj.usermodel!.SalonPicture !=
+                                                obj.salonmodel!.SalonPicture !=
                                                         ""
-                                                    ? NetworkImage(StaticData
-                                                        .userModel!
-                                                        .SalonPicture)
+                                                    ? NetworkImage(obj
+                                                        .salonmodel!
+                                                        .SalonPicture!)
                                                     : null,
                                             backgroundColor: Colors.pink[200],
                                             child:
-                                                obj.usermodel!.SalonPicture ==
+                                                obj.salonmodel!.SalonPicture ==
                                                         ""
                                                     ? const Icon(
                                                         Icons.camera_alt,
@@ -413,7 +415,7 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                                                     : null,
                                           ),
                                           title: Text(
-                                            "${obj.usermodel!.SalonName}",
+                                            "${obj.salonmodel!.SalonName}",
                                             style: TextStyle(
                                               fontSize: width * 0.04,
                                               fontWeight: FontWeight.w600,
@@ -443,8 +445,7 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                                             children: [
                                               InkWell(
                                                 onTap: () =>
-                                                    obj.pickAndUploadVideo(
-                                                        context),
+                                                    obj.pickVideo(context),
                                                 child: Container(
                                                   decoration: BoxDecoration(
                                                     shape: BoxShape.circle,
@@ -472,161 +473,107 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                                               ),
                                             ],
                                           ),
-                                          Expanded(
-                                            child: Container(
-                                                height: height * 0.12,
+                                          SizedBox(
+                                            width: width * 0.04,
+                                          ),
+                                          StreamBuilder<QuerySnapshot>(
+                                            stream: FirebaseFirestore.instance
+                                                .collection('highlight_videos')
+                                                .snapshots(),
+                                            builder: (BuildContext context,
+                                                AsyncSnapshot<QuerySnapshot>
+                                                    snapshot) {
+                                              if (snapshot.connectionState ==
+                                                  ConnectionState.waiting) {
+                                                return const Center(
+                                                    child:
+                                                        CircularProgressIndicator());
+                                              }
+
+                                              if (snapshot.hasError) {
+                                                return Center(
+                                                    child: Text(
+                                                        'Error: ${snapshot.error}'));
+                                              }
+
+                                              if (!snapshot.hasData ||
+                                                  snapshot.data!.docs.isEmpty) {
+                                                return const Center(
+                                                    child: Text(
+                                                        'No videos available'));
+                                              }
+
+                                              // Get the video data from Firestore
+                                              final videoDocs =
+                                                  snapshot.data!.docs;
+
+                                              return Container(
+                                                height: height * 0.07,
+                                                width: width * 0.8,
+                                                // color: Colors.amber,
                                                 child: ListView.builder(
                                                   scrollDirection:
                                                       Axis.horizontal,
-                                                  itemCount: 3,
+                                                  itemCount: videoDocs.length,
                                                   itemBuilder:
                                                       (context, index) {
-                                                    return Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                        left: 15,
-                                                        right: 5,
-                                                      ),
-                                                      child: Column(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceEvenly,
-                                                        children: [
-                                                          StreamBuilder<
-                                                              QuerySnapshot>(
-                                                            stream: FirebaseFirestore
-                                                                .instance
-                                                                .collection(
-                                                                    'highlight_videos')
-                                                                .snapshots(),
-                                                            builder: (BuildContext
-                                                                    context,
-                                                                AsyncSnapshot<
-                                                                        QuerySnapshot>
-                                                                    snapshot) {
-                                                              if (snapshot
-                                                                      .connectionState ==
-                                                                  ConnectionState
-                                                                      .waiting) {
-                                                                return const Center(
-                                                                    child:
-                                                                        CircularProgressIndicator());
-                                                              }
-                                                              if (snapshot
-                                                                  .hasError) {
-                                                                return Center(
-                                                                    child: Text(
-                                                                        'Error: ${snapshot.error}'));
-                                                              }
-                                                              if (!snapshot
-                                                                      .hasData ||
-                                                                  snapshot
-                                                                      .data!
-                                                                      .docs
-                                                                      .isEmpty) {
-                                                                return const Center(
-                                                                    child: Text(
-                                                                        'No videos available'));
-                                                              }
+                                                    final videoData =
+                                                        videoDocs[index].data()
+                                                            as Map<String,
+                                                                dynamic>;
+                                                    final videoUrl = videoData[
+                                                            'highlightVideo'] ??
+                                                        '';
+                                                    final thumbnailUrl =
+                                                        videoData[
+                                                                'thumbnailUrl'] ??
+                                                            '';
 
-                                                              return Container(
-                                                                height: height *
-                                                                    0.1,
-                                                                width: width,
-                                                                color: Colors
-                                                                    .amber,
-                                                                child: ListView
-                                                                    .builder(
-                                                                  scrollDirection:
-                                                                      Axis.horizontal,
-                                                                  itemCount:
-                                                                      snapshot
-                                                                          .data!
-                                                                          .docs
-                                                                          .length,
-                                                                  itemBuilder:
-                                                                      (context,
-                                                                          index) {
-                                                                    var videoData = snapshot
-                                                                            .data!
-                                                                            .docs[
-                                                                                index]
-                                                                            .data()
-                                                                        as Map<
-                                                                            String,
-                                                                            dynamic>;
-                                                                    String
-                                                                        videoUrl =
-                                                                        videoData['Hightlightvideo'] ??
-                                                                            '';
-                                                                    String
-                                                                        thumbnailUrl =
-                                                                        videoData['thumbnailUrl'] ??
-                                                                            ''; // Adjust if the thumbnail key is different
-
-                                                                    return Padding(
-                                                                      padding:
-                                                                          const EdgeInsets.all(
-                                                                              8.0),
-                                                                      child:
-                                                                          GestureDetector(
-                                                                        onTap: () => obj.showVideoDialog(
-                                                                            context,
-                                                                            videoUrl), // Show video dialog
-                                                                        child:
-                                                                            Stack(
-                                                                          children: [
-                                                                            // Thumbnail container
-                                                                            Container(
-                                                                              width: MediaQuery.of(context).size.width * 0.4,
-                                                                              decoration: BoxDecoration(
-                                                                                border: Border.all(color: Colors.black45),
-                                                                                image: DecorationImage(
-                                                                                  fit: BoxFit.cover,
-                                                                                  image: CachedNetworkImageProvider(thumbnailUrl),
-                                                                                ),
-                                                                                borderRadius: BorderRadius.circular(10),
-                                                                              ),
-                                                                            ),
-                                                                            Positioned(
-                                                                              bottom: 0,
-                                                                              left: 0,
-                                                                              child: Container(
-                                                                                color: Colors.black.withOpacity(0.5),
-                                                                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                                                                                child: const Text(
-                                                                                  "Play",
-                                                                                  style: TextStyle(color: Colors.white),
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                      ),
-                                                                    );
-                                                                  },
-                                                                ),
-                                                              );
-                                                            },
-                                                          ),
-                                                          Text(
-                                                            "Hightlights",
-                                                            style: TextStyle(
-                                                              fontSize:
-                                                                  width * 0.025,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .fade,
+                                                    return GestureDetector(
+                                                      onTap: () =>
+                                                          obj.showVideoDialog(
+                                                              context,
+                                                              videoUrl),
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(3.0),
+                                                        child: Container(
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10),
+                                                            image:
+                                                                DecorationImage(
+                                                              fit: BoxFit.cover,
+                                                              image: NetworkImage(
+                                                                  thumbnailUrl),
                                                             ),
                                                           ),
-                                                        ],
+                                                          child: CircleAvatar(
+                                                            radius: 30,
+                                                            backgroundColor:
+                                                                Colors
+                                                                    .pink[200],
+                                                            child: const Center(
+                                                              child: Icon(
+                                                                Icons
+                                                                    .play_circle_filled,
+                                                                color: Colors
+                                                                    .white,
+                                                                size: 25,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
                                                       ),
                                                     );
                                                   },
-                                                )),
+                                                ),
+                                              );
+                                            },
                                           ),
                                         ],
                                       ),
@@ -1594,15 +1541,15 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                                                                             dynamic>);
                                                                 return GestureDetector(
                                                                   onTap: () {
-                                                                    Navigator
-                                                                        .push(
-                                                                      context,
-                                                                      MaterialPageRoute(
-                                                                        builder:
-                                                                            (context) =>
-                                                                                const BeautyProductScreen(),
-                                                                      ),
-                                                                    );
+                                                                    // Navigator
+                                                                    //     .push(
+                                                                    //   context,
+                                                                    //   MaterialPageRoute(
+                                                                    //     builder:
+                                                                    //         (context) =>
+                                                                    //             const BeautyProductScreen(),
+                                                                    //   ),
+                                                                    // );
                                                                   },
                                                                   child:
                                                                       Padding(

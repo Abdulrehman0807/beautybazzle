@@ -1,8 +1,10 @@
+import 'package:beautybazzle/model/addsalon.dart';
 import 'package:beautybazzle/model/signup_model.dart';
 import 'package:flutter/material.dart';
 
 class StaticData {
   static UserModels? userModel;
+
   ///////////////////Color//////////////
   static Color primaryColor = Colors.red;
   static Color secoundryColor = Color(0xFFFFCCBC);

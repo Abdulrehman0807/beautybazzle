@@ -1,5 +1,6 @@
 import 'package:beautybazzle/controller/editprofilecontroller.dart';
 import 'package:beautybazzle/model/addoffer.dart';
+import 'package:beautybazzle/model/addsalon.dart';
 import 'package:beautybazzle/model/addservices.dart';
 import 'package:beautybazzle/model/addspecialist.dart';
 import 'package:beautybazzle/model/addwork.dart';
@@ -79,61 +80,53 @@ class _SalonScreenState extends State<SalonScreen>
                   SliverAppBar(
                     expandedHeight: 250.0,
                     flexibleSpace: FlexibleSpaceBar(
-                      background: Stack(
-                        children: [
-                          Center(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                image: obj.usermodel!.SalonPicture != ""
-                                    ? DecorationImage(
-                                        fit: BoxFit.cover,
-                                        image: NetworkImage(
-                                            StaticData.userModel!.SalonPicture),
-                                      )
-                                    : null,
-                              ),
-                              child: obj.usermodel!.SalonPicture == ""
-                                  ? CircleAvatar(
-                                      radius: 100,
-                                      backgroundColor: Colors.pink[200],
-                                      child: const Icon(
-                                        Icons.camera_alt,
-                                        size: 50,
-                                        color: Colors.white,
-                                      ),
-                                    )
-                                  : null,
-                            ),
-                          )
+                      background: StreamBuilder<QuerySnapshot>(
+                        stream: FirebaseFirestore.instance
+                            .collection('salons')
+                            .where("userId",
+                                isEqualTo: StaticData.userModel!.UserId)
+                            .snapshots(),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<QuerySnapshot> snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          }
+                          if (snapshot.hasError) {
+                            return Center(
+                                child: Text('Error: ${snapshot.error}'));
+                          }
+                          if (!snapshot.hasData ||
+                              snapshot.data!.docs.isEmpty) {
+                            return const Center(
+                                child: Text('No salons available'));
+                          }
 
-                          // Center(
-                          //     child:
-                          //      Container(
-                          //   decoration: BoxDecoration(
-                          //       image: DecorationImage(
-                          //           fit: BoxFit.cover,
-                          //           image:  )),
-                          // )),
-                          // Padding(
-                          //   padding: const EdgeInsets.only(left: 350, top: 40),
-                          //   child: GestureDetector(
-                          //     onTap: toggleFavorite,
-                          //     child: CircleAvatar(
-                          //         backgroundColor: Colors.white,
-                          //         radius: 18,
-                          //         child: Center(AssetImage("images/salon.jpeg")
-                          //           child: Icon(
-                          //             isFavorite
-                          //                 ? Icons.favorite
-                          //                 : Icons.favorite_border,
-                          //             color:
-                          //                 isFavorite ? Colors.red : Colors.grey,
-                          //             size: 25,
-                          //           ),
-                          //         )),
-                          //   ),
-                          // ),
-                        ],
+                          var salonData = snapshot.data!.docs[0];
+                          String? salonPicture = salonData['SalonPicture'];
+                          String displayImage = salonPicture ?? '';
+
+                          return Container(
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                fit: BoxFit.cover,
+                                image: NetworkImage(displayImage),
+                              ),
+                            ),
+                            child: salonPicture == null
+                                ? CircleAvatar(
+                                    radius: 100,
+                                    backgroundColor: Colors.pink[200],
+                                    child: const Icon(
+                                      Icons.camera_alt,
+                                      size: 50,
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                : null,
+                          );
+                        },
                       ),
                     ),
                     backgroundColor: Colors.white,
@@ -217,7 +210,7 @@ class _SalonScreenState extends State<SalonScreen>
                                 width: width,
                                 child: ListTile(
                                   title: Text(
-                                    "${obj.usermodel!.SalonName}",
+                                    "${obj.salonmodel!.SalonName}",
                                     style: TextStyle(
                                         fontSize: width * 0.06,
                                         fontWeight: FontWeight.w600),
@@ -440,7 +433,7 @@ class _SalonScreenState extends State<SalonScreen>
                                   )),
                             ),
                             obj.usermodel == null ||
-                                    obj.usermodel!.salonDescription == ""
+                                    obj.salonmodel!.salonDescription == ""
                                 ? const SizedBox()
                                 : Container(
                                     child: ListTile(
@@ -451,7 +444,7 @@ class _SalonScreenState extends State<SalonScreen>
                                             fontWeight: FontWeight.w600),
                                       ),
                                       subtitle: Text(
-                                        "${obj.usermodel!.salonDescription}",
+                                        "${obj.salonmodel!.salonDescription}",
                                         style: TextStyle(
                                             fontSize: width * 0.036,
                                             fontWeight: FontWeight.w400,

@@ -26,7 +26,6 @@ class LOginSignupController extends GetxController {
   final TextEditingController instagramController = TextEditingController();
   final TextEditingController tiktokController = TextEditingController();
   final TextEditingController aboutMeController = TextEditingController();
-  final TextEditingController salonPictureController = TextEditingController();
   final TextEditingController salonDescriptionController =
       TextEditingController();
 
@@ -43,15 +42,15 @@ class LOginSignupController extends GetxController {
     nameController.clear();
     phoneNumberController.clear();
     salonNameController.clear();
+    salonDescriptionController.clear();
     facebookController.clear();
     youtubeController.clear();
     instagramController.clear();
     tiktokController.clear();
-    salonPictureController.clear();
-    aboutMeController.clear();
+
     aboutMeController.clear();
     profilePictureController.clear();
-    salonDescriptionController.clear();
+
     update();
   }
 
@@ -134,17 +133,14 @@ class LOginSignupController extends GetxController {
     String name = nameController.text.trim();
     String password = passwordController.text.trim();
     String phoneNumber = phoneNumberController.text.trim();
-    String salonName = salonNameController.text.trim();
+
     String address = addressController.text.trim();
     String profilePicture = profilePictureController.text.trim();
     String youtube = youtubeController.text.trim();
-
     String facebook = facebookController.text.trim();
     String instagram = instagramController.text.trim();
     String tiktok = tiktokController.text.trim();
     String aboutMe = aboutMeController.text.trim();
-    String salonPicture = salonPictureController.text.trim();
-    String salonDescription = salonDescriptionController.text.trim();
 
     changeLoadingStatus(true);
 
@@ -177,7 +173,6 @@ class LOginSignupController extends GetxController {
         password: password,
         PhoneNumber: phoneNumber,
         UserId: userId,
-        SalonName: salonName,
         Address: address,
         ProfilePicture: profilePicture,
         YouTube: youtube,
@@ -185,8 +180,6 @@ class LOginSignupController extends GetxController {
         Instagram: instagram,
         TikTok: tiktok,
         AboutMe: aboutMe,
-        SalonPicture: salonPicture,
-        salonDescription: salonDescription,
       );
       await FirebaseFirestore.instance
           .collection("Users")

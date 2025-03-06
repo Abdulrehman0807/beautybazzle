@@ -1,12 +1,13 @@
 import 'dart:io';
 import 'package:beautybazzle/model/addoffer.dart';
 import 'package:beautybazzle/model/addproduct.dart';
+import 'package:beautybazzle/model/addsalon.dart';
 import 'package:beautybazzle/model/addservices.dart';
 import 'package:beautybazzle/model/addspecialist.dart';
 import 'package:beautybazzle/model/addvideo.dart';
 import 'package:beautybazzle/model/addwork.dart';
 import 'package:beautybazzle/model/signup_model.dart';
-import 'package:beautybazzle/view/setting/insta.dart';
+import 'package:beautybazzle/view/setting/videoplay.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -24,6 +25,7 @@ class ProfileController extends GetxController {
   static ProfileController get to => Get.find();
   final formKey = GlobalKey<FormState>();
   UserModels? usermodel;
+  SalonModel? salonmodel;
   final TextEditingController nameController = TextEditingController();
   final TextEditingController salonNameController = TextEditingController();
   final TextEditingController salonDescriptionController =
@@ -60,12 +62,15 @@ class ProfileController extends GetxController {
   File? specialistPic;
   File? recentWorkPic;
   File? servicePic;
+  XFile? SalonPicture;
   final ImagePicker picker = ImagePicker();
   String? offerPicUrl;
   String? productPicUrl;
+  String? salonPictureUrl;
   String? specialistPicUrl;
   String? recentworkPicUrl;
   String? servicePicUrl;
+
   bool isLoading = false;
   bool isLoadingSalon = false;
   bool isLoadingProfile = false;
@@ -141,7 +146,26 @@ class ProfileController extends GetxController {
         UserModels.fromMap(snapshot.docs[0].data() as Map<String, dynamic>);
     StaticData.userModel = model;
     usermodel = model;
+
+    QuerySnapshot snapshotSalon = await firestore
+        .collection("Salons")
+        .where("UserId", isEqualTo: userID)
+        .get();
+    SalonModel smodel =
+        SalonModel.fromMap(snapshot.docs[0].data() as Map<String, dynamic>);
+    //StaticData.salonmodel = smodel;
+    salonmodel = smodel;
     update();
+
+    // QuerySnapshot snapshotprofilepicture = await firestore
+    //     .collection("ProfilePicture")
+    //     .where("UserId", isEqualTo: userID)
+    //     .get();
+    // UserModels pmodel =
+    //     UserModels.fromMap(snapshot.docs[0].data() as Map<String, dynamic>);
+    // StaticData.userModel = model;
+    // usermodel = pmodel;
+    // update();
   }
 
   Future<void> saveProfileData(BuildContext context) async {
@@ -226,36 +250,7 @@ class ProfileController extends GetxController {
     );
   }
 
-// Upload Salon Picture
-  Future<void> pickSalonPicture(BuildContext context) async {
-    showDialog(
-      context: context,
-      builder: (BuildContext dc) {
-        return AlertDialog(
-          title: const Text('Select Image Source'),
-          content: const Text('Choose an image from the camera or gallery.'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                pickFromCamera(isSalon: true, context: context);
-              },
-              child: const Text('Camera'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                pickFromGallery(isSalon: true, context: context);
-              },
-              child: const Text('Gallery'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-// Upload Profile Picture
+///////////////////// upload picture //////////////////
   Future<void> pickProfilePicture(BuildContext context) async {
     showDialog(
       context: context,
@@ -267,14 +262,14 @@ class ProfileController extends GetxController {
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                pickFromCamera(isSalon: false, context: context);
+                pickFromCamera(context);
               },
               child: const Text('Camera'),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                pickFromGallery(isSalon: false, context: context);
+                pickFromGallery(context);
               },
               child: const Text('Gallery'),
             ),
@@ -284,69 +279,58 @@ class ProfileController extends GetxController {
     );
   }
 
-// Pick from Gallery
-  Future<void> pickFromGallery(
-      {required bool isSalon, required BuildContext context}) async {
+  // Pick image from Gallery
+  Future<void> pickFromGallery(BuildContext context) async {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       photo = pickedFile;
-      await uploadImage(isSalon: isSalon, context: context);
+      await uploadImage(context);
       update();
     }
   }
 
-// Pick from Camera
-  Future<void> pickFromCamera(
-      {required bool isSalon, required BuildContext context}) async {
+  // Pick image from Camera
+  Future<void> pickFromCamera(BuildContext context) async {
     final pickedFile = await picker.pickImage(source: ImageSource.camera);
     if (pickedFile != null) {
       photo = pickedFile;
-      await uploadImage(isSalon: isSalon, context: context);
+      await uploadImage(context);
       update();
     }
   }
 
-// Upload Image to Firebase Storage and Save to Firestore
-  Future<void> uploadImage(
-      {required bool isSalon, required BuildContext context}) async {
+  // Upload image to Firebase Storage and save URL to Firestore
+  Future<void> uploadImage(BuildContext context) async {
     if (photo == null) return;
 
     // Show loading indicator
-    if (isSalon) {
-      changeLoadingSalon(true);
-    } else {
-      changeLoadingProfile(true);
-    }
+    changeLoadingProfile(true);
 
     try {
-      // Select folder based on the image type (Salon/Profile)
-      final folder = isSalon ? 'salon_pictures' : 'profile_pictures';
-      final ref = storage.ref().child('$folder/${photo!.name}');
-
       // Upload the image to Firebase Storage
+      final ref = FirebaseStorage.instance
+          .ref()
+          .child('profile_pictures/${photo!.name}');
       await ref.putData(
         await photo!.readAsBytes(),
-        firebase_storage.SettableMetadata(contentType: 'image/jpeg'),
+        SettableMetadata(contentType: 'image/jpeg'),
       );
 
       // Get the download URL of the uploaded image
       final downloadUrl = await ref.getDownloadURL();
 
-      // Save the URL to Firestore - Update either profile or salon picture based on the context
-      Map<String, dynamic> updateData;
-      if (isSalon) {
-        updateData = {'SalonPicture': downloadUrl};
-      } else {
-        updateData = {'ProfilePicture': downloadUrl};
-      }
-
-      await firestore
+      // Save the URL to Firestore
+      await FirebaseFirestore.instance
           .collection("Users")
           .doc(StaticData.userModel!.UserId)
-          .update(updateData);
+          .update({'ProfilePicture': downloadUrl});
+
+      // Refresh user profile data
       getUserProfile(StaticData.userModel!.UserId);
+
+      // Show success message
       Fluttertoast.showToast(
-        msg: '${isSalon ? "Salon" : "Profile"} image uploaded successfully!',
+        msg: 'Profile image uploaded successfully!',
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
         timeInSecForIosWeb: 1,
@@ -360,7 +344,7 @@ class ProfileController extends GetxController {
 
       // Show error message with Toast
       Fluttertoast.showToast(
-        msg: 'Failed to upload ${isSalon ? "salon" : "profile"} image!',
+        msg: 'Failed to upload profile image!',
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
         timeInSecForIosWeb: 1,
@@ -370,11 +354,180 @@ class ProfileController extends GetxController {
       );
     } finally {
       // Hide loading indicator
-      if (isSalon) {
+      changeLoadingProfile(false);
+    }
+  }
+
+//////////////////////////// add salon ////////////////////////
+
+  Future<void> pickSalonPicture(BuildContext context) async {
+    showDialog(
+      context: context,
+      builder: (BuildContext dc) {
+        return AlertDialog(
+          title: const Text('Select Image Source'),
+          content: const Text('Choose an image from the camera or gallery.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                salonpickFromCamera(context);
+              },
+              child: const Text('Camera'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                salonpickFromGallery(context);
+              },
+              child: const Text('Gallery'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // Pick image from Gallery
+  Future<void> salonpickFromGallery(BuildContext context) async {
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      SalonPicture = pickedFile;
+      update();
+    }
+  }
+
+  // Pick image from Camera
+  Future<void> salonpickFromCamera(BuildContext context) async {
+    final pickedFile = await picker.pickImage(source: ImageSource.camera);
+    if (pickedFile != null) {
+      SalonPicture = pickedFile;
+      update();
+    }
+  }
+
+  // Upload Salon Picture to Firebase Storage
+  Future<void> uploadSalonPicture(BuildContext context) async {
+    if (SalonPicture == null) return;
+
+    // Show loading indicator
+    changeLoadingSalon(true);
+
+    try {
+      // Upload the image to Firebase Storage
+      final ref = FirebaseStorage.instance
+          .ref()
+          .child('salon_pictures/${SalonPicture!.name}');
+      await ref.putFile(File(SalonPicture!.path));
+
+      // Get the download URL of the uploaded image
+      final downloadUrl = await ref.getDownloadURL();
+
+      // Save the URL to Firestore
+      await FirebaseFirestore.instance
+          .collection("Salons")
+          .doc(salonmodel!.SalonId)
+          .update({'SalonPicture': downloadUrl});
+
+      // Show success message
+      Fluttertoast.showToast(
+        msg: 'Salon image uploaded successfully!',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+    } catch (e) {
+      // Log and show error message if upload fails
+      print('Error uploading salon image: $e');
+
+      // Show error message with Toast
+      Fluttertoast.showToast(
+        msg: 'Failed to upload salon image!',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+    } finally {
+      // Hide loading indicator
+      changeLoadingSalon(false);
+    }
+  }
+
+  // Create Salon Collection in Firestore
+  Future<void> createSalonCollection(BuildContext context) async {
+    try {
+      var uuid = const Uuid();
+      String salonId = uuid.v4();
+      String time = DateTime.now().toIso8601String();
+
+      // Upload the salon picture to Firebase Storage if selected
+      String? salonPictureUrl;
+      if (SalonPicture != null) {
+        // Show loading indicator while uploading image
+        changeLoadingSalon(true);
+
+        final ref = FirebaseStorage.instance
+            .ref()
+            .child('salon_pictures/$salonId'); // Unique file path using salonId
+        await ref.putFile(File(SalonPicture!.path));
+
+        // Get the download URL of the uploaded image
+        salonPictureUrl = await ref.getDownloadURL();
+
+        // Hide loading state after upload is complete
         changeLoadingSalon(false);
-      } else {
-        changeLoadingProfile(false);
       }
+
+      // Create the SalonModel object
+      SalonModel model = SalonModel(
+        SalonId: salonId,
+        SalonName: salonNameController.text,
+        salonDescription: salonDescriptionController.text,
+        SalonPicture:
+            salonPictureUrl ?? '', // Use uploaded image URL or empty string
+        time: time,
+        userId: StaticData.userModel!.UserId,
+      );
+
+      // Save the salon in Firestore
+      await FirebaseFirestore.instance
+          .collection('salons')
+          .doc(salonId)
+          .set(model.toMap());
+
+      print("Salon created with salonId: $salonId");
+
+      // Show success message
+      Fluttertoast.showToast(
+        msg: "Salon created successfully!",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+
+      // Clear form fields and reset the image picker after creation
+      salonNameController.clear();
+      salonDescriptionController.clear();
+      SalonPicture = null;
+      update(); // Update the UI after clearing the form
+    } catch (e) {
+      print("Error creating salon: $e");
+      Fluttertoast.showToast(
+        msg: "Failed to create salon.",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
     }
   }
 
@@ -873,9 +1026,6 @@ class ProfileController extends GetxController {
     );
   }
 
-
-
-  
 //////////////// add product ////////////
 
   Future<void> pickProductImage(BuildContext context) async {
@@ -1630,6 +1780,7 @@ class ProfileController extends GetxController {
   }
 
   //////////////////////////video upload ////////////////////////
+
   File? videoFile;
   Future<void> pickVideo(BuildContext context) async {
     try {
@@ -1641,13 +1792,15 @@ class ProfileController extends GetxController {
       }
     } catch (e) {
       print("Error picking video: $e");
-      // Uncomment to show error message
-      // ScaffoldMessenger.of(GlobalContext.context).showSnackBar(
-      //   SnackBar(
-      //     content: Text("Failed to pick video. Please try again."),
-      //     backgroundColor: Colors.red,
-      //   ),
-      // );
+
+      Fluttertoast.showToast(
+        msg: "Failed to Picking video. Try again!",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
     }
   }
 
@@ -1670,8 +1823,9 @@ class ProfileController extends GetxController {
 
       // Create VideoModel
       VideoModel videoModel = VideoModel(
-        HighlightId: highlightId,
-        Hightlightvideo: videoUrl,
+        highlightId: highlightId,
+        highlightVideo: videoUrl,
+        thumbnailUrl: "",
         time: time,
         userId: StaticData.userModel!.UserId, // Replace with the actual user ID
       );
@@ -1697,11 +1851,13 @@ class ProfileController extends GetxController {
     } catch (e) {
       print("Error uploading video: $e");
       // Show error message
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Failed to upload video. Try again!"),
-          backgroundColor: Colors.red,
-        ),
+      Fluttertoast.showToast(
+        msg: "Failed to upload video. Try again!",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0,
       );
     } finally {
       isLoading = false;
@@ -1709,7 +1865,9 @@ class ProfileController extends GetxController {
   }
 
   late VideoPlayerController controller;
+  bool isPlaying = false;
 
+  // Show video in dialog
   void showVideoDialog(BuildContext context, String videoUrl) {
     showDialog(
       context: context,
@@ -1752,22 +1910,14 @@ class ProfileController extends GetxController {
     } catch (e) {
       print("Error deleting video: $e");
       // Show error message
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Error deleting video: $e"),
-          backgroundColor: Colors.red,
-        ),
+      Fluttertoast.showToast(
+        msg: "Error deleting video: $e",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0,
       );
-    }
-  }
-
-  Future<void> pickAndUploadVideo(BuildContext context) async {
-    // Pick a video first
-    await pickVideo(context);
-
-    // After picking the video, upload it
-    if (videoFile != null) {
-      await uploadVideo(context);
     }
   }
 
@@ -1969,4 +2119,7 @@ class ProfileController extends GetxController {
       ),
     );
   }
+
+  //////////////////////////////// product fetch /////////////
+
 }
