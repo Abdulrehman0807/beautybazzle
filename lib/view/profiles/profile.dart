@@ -1,9 +1,9 @@
-import 'package:beautybazzle/controller/editprofilecontroller.dart';
-import 'package:beautybazzle/model/addoffer.dart';
-import 'package:beautybazzle/model/addproduct.dart';
-import 'package:beautybazzle/model/addservices.dart';
-import 'package:beautybazzle/model/addspecialist.dart';
-import 'package:beautybazzle/model/addwork.dart';
+import 'package:beautybazzle/controller/profile/editprofilecontroller.dart';
+import 'package:beautybazzle/model/addoffer/addoffer.dart';
+import 'package:beautybazzle/model/addproduct/addproduct.dart';
+import 'package:beautybazzle/model/addservice/addservices.dart';
+import 'package:beautybazzle/model/addspecialist/addspecialist.dart';
+import 'package:beautybazzle/model/addwork/addwork.dart';
 import 'package:beautybazzle/model/servic_data.dart';
 import 'package:beautybazzle/utiils/static_data.dart';
 import 'package:beautybazzle/view/appoinment/appointment_book.dart';

@@ -1,9 +1,9 @@
-import 'package:beautybazzle/controller/editprofilecontroller.dart';
-import 'package:beautybazzle/model/addoffer.dart';
-import 'package:beautybazzle/model/addsalon.dart';
-import 'package:beautybazzle/model/addservices.dart';
-import 'package:beautybazzle/model/addspecialist.dart';
-import 'package:beautybazzle/model/addwork.dart';
+import 'package:beautybazzle/controller/profile/editprofilecontroller.dart';
+import 'package:beautybazzle/model/addoffer/addoffer.dart';
+import 'package:beautybazzle/model/addsalon/addsalon.dart';
+import 'package:beautybazzle/model/addservice/addservices.dart';
+import 'package:beautybazzle/model/addspecialist/addspecialist.dart';
+import 'package:beautybazzle/model/addwork/addwork.dart';
 import 'package:beautybazzle/model/servic_data.dart';
 import 'package:beautybazzle/utiils/static_data.dart';
 import 'package:beautybazzle/view/appoinment/appointment_book.dart';
@@ -46,25 +46,6 @@ class _SalonScreenState extends State<SalonScreen>
     _animationController.forward();
   }
 
-  bool isFavorite = false;
-
-  void toggleFavorite() {
-    setState(() {
-      isFavorite = !isFavorite; // Toggle favorite state
-    });
-
-    // Show toast message
-    Fluttertoast.showToast(
-      msg: isFavorite
-          ? "Successfully added to favorites"
-          : "Removed from favorites",
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM,
-      backgroundColor: Colors.pink[200],
-      textColor: Colors.black,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
@@ -100,7 +81,7 @@ class _SalonScreenState extends State<SalonScreen>
                           if (!snapshot.hasData ||
                               snapshot.data!.docs.isEmpty) {
                             return const Center(
-                                child: Text('No salons available'));
+                                child: Text('No salons picture available'));
                           }
 
                           var salonData = snapshot.data!.docs[0];

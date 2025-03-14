@@ -1,4 +1,4 @@
-import 'package:beautybazzle/controller/editprofilecontroller.dart';
+import 'package:beautybazzle/controller/profile/editprofilecontroller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart'; // For the spinner

@@ -1,4 +1,4 @@
-import 'package:beautybazzle/model/addproduct.dart';
+import 'package:beautybazzle/model/addproduct/addproduct.dart';
 import 'package:beautybazzle/model/servic_data.dart';
 import 'package:beautybazzle/utiils/static_data.dart';
 import 'package:beautybazzle/view/categorie/beauty_product.dart';
@@ -702,16 +702,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                                       onValueChanged:
                                                           (newRating) {},
                                                       starCount:
-                                                          5, // Number of stars
+                                                          5, 
                                                       starSize:
-                                                          12, // Size of the stars
+                                                          12, 
                                                       starColor: Color.fromARGB(
                                                           255, 241, 134, 170),
                                                       valueLabelColor:
                                                           Color.fromRGBO(
                                                               240, 134, 169, 1),
                                                       starSpacing:
-                                                          2, // Space between the stars
+                                                          2, 
                                                       valueLabelVisibility:
                                                           false,
                                                     ),

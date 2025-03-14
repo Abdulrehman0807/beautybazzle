@@ -1,12 +1,11 @@
-import 'package:beautybazzle/model/signup_model.dart';
+import 'package:beautybazzle/model/signup_login/signup_model.dart';
 import 'package:beautybazzle/utiils/static_data.dart';
 import 'package:beautybazzle/view/bottom_bar/bottom_Nav_bar.dart';
+import 'package:beautybazzle/view/signup_methods/Signin.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
-
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
@@ -18,6 +17,8 @@ class LOginSignupController extends GetxController {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController phoneNumberController = TextEditingController();
   final TextEditingController salonNameController = TextEditingController();
+  final TextEditingController salonDescriptionController =
+      TextEditingController();
   final TextEditingController addressController = TextEditingController();
   final TextEditingController profilePictureController =
       TextEditingController();
@@ -26,11 +27,16 @@ class LOginSignupController extends GetxController {
   final TextEditingController instagramController = TextEditingController();
   final TextEditingController tiktokController = TextEditingController();
   final TextEditingController aboutMeController = TextEditingController();
-  final TextEditingController salonDescriptionController =
-      TextEditingController();
 
   bool isLoading = false;
   bool isChecked = false;
+
+  @override
+  void onInit() {
+    super.onInit();
+    //checkLoginState(); // Check login state when the controller is initialized
+  }
+
   changeLoadingStatus(bool v) {
     isLoading = v;
     update();
@@ -47,10 +53,8 @@ class LOginSignupController extends GetxController {
     youtubeController.clear();
     instagramController.clear();
     tiktokController.clear();
-
     aboutMeController.clear();
     profilePictureController.clear();
-
     update();
   }
 
@@ -85,12 +89,8 @@ class LOginSignupController extends GetxController {
 
       QuerySnapshot snapshot = await FirebaseFirestore.instance
           .collection("Users")
-          .where("email",
-              isEqualTo:
-                  emailLowercase) // Use the lowercase version of the email
-          .where("password",
-              isEqualTo: passwordController
-                  .text) // Keep password as it is (case-sensitive)
+          .where("email", isEqualTo: emailLowercase)
+          .where("password", isEqualTo: passwordController.text)
           .get();
 
       if (snapshot.docs.isEmpty) {
@@ -102,6 +102,10 @@ class LOginSignupController extends GetxController {
         UserModels model =
             UserModels.fromMap(snapshot.docs[0].data() as Map<String, dynamic>);
         StaticData.userModel = model;
+
+        // Save login state and user details
+        await _saveLoginState(true, model.UserId);
+
         Fluttertoast.showToast(
             msg: "Login Successfully", backgroundColor: Colors.pink[200]);
         Navigator.push(
@@ -133,7 +137,6 @@ class LOginSignupController extends GetxController {
     String name = nameController.text.trim();
     String password = passwordController.text.trim();
     String phoneNumber = phoneNumberController.text.trim();
-
     String address = addressController.text.trim();
     String profilePicture = profilePictureController.text.trim();
     String youtube = youtubeController.text.trim();
@@ -195,6 +198,10 @@ class LOginSignupController extends GetxController {
         fontSize: 16.0,
       );
       StaticData.userModel = model;
+
+      // Save login state and user details
+      await _saveLoginState(true, model.UserId);
+
       clearDAta();
       Navigator.push(
         context,
@@ -319,5 +326,21 @@ class LOginSignupController extends GetxController {
         fontSize: 16.0,
       );
     }
+  }
+
+  // Save login state and user ID
+  Future<void> _saveLoginState(bool isLoggedIn, String userId) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isLoggedIn', isLoggedIn);
+    await prefs.setString('userId', userId);
+  }
+
+  // Logout functionality
+  Future<void> logout() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isLoggedIn', false);
+    await prefs.remove('userId');
+    StaticData.userModel = null; // Clear user data
+    Get.offAll(() => SigninScreen()); // Navigate to login screen
   }
 }

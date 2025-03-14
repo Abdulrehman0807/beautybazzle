@@ -1,5 +1,5 @@
-import 'package:beautybazzle/controller/editprofilecontroller.dart';
-import 'package:beautybazzle/model/addproduct.dart';
+import 'package:beautybazzle/controller/profile/editprofilecontroller.dart';
+import 'package:beautybazzle/model/addproduct/addproduct.dart';
 import 'package:beautybazzle/model/servic_data.dart';
 import 'package:beautybazzle/utiils/static_data.dart';
 import 'package:beautybazzle/view/categorie/products_category.dart';

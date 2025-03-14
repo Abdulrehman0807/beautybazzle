@@ -1,5 +1,5 @@
-import 'package:beautybazzle/controller/editprofilecontroller.dart';
-import 'package:beautybazzle/utiils/static_data.dart';
+import 'package:beautybazzle/controller/profile/editprofilecontroller.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -17,32 +17,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   @override
   void initState() {
-    ProfileController.to.nameController.text =
-        ProfileController.to.usermodel!.name;
+    final ProfileController obj = ProfileController.to;
 
-    // ProfileController.to.salonNameController.text =
-    //     ProfileController.to.salonmodel!.SalonName!;
-
-    ProfileController.to.addressController.text =
-        ProfileController.to.usermodel!.Address;
-
-    ProfileController.to.youtubeController.text =
-        ProfileController.to.usermodel!.YouTube;
-
-    ProfileController.to.facebookController.text =
-        ProfileController.to.usermodel!.Facebook;
-
-    ProfileController.to.instagramController.text =
-        ProfileController.to.usermodel!.Instagram;
-
-    ProfileController.to.tiktokController.text =
-        ProfileController.to.usermodel!.TikTok;
-
-    ProfileController.to.aboutMeController.text =
-        ProfileController.to.usermodel!.AboutMe;
-
-    // ProfileController.to.salonDescriptionController.text =
-    //     ProfileController.to.salonmodel!.salonDescription!;
+    obj.nameController.text = obj.usermodel?.name ?? '';
+    obj.salonNameController.text = obj.salonmodel?.SalonName ?? '';
+    obj.addressController.text = obj.usermodel?.Address ?? '';
+    obj.youtubeController.text = obj.usermodel?.YouTube ?? '';
+    obj.facebookController.text = obj.usermodel?.Facebook ?? '';
+    obj.instagramController.text = obj.usermodel?.Instagram ?? '';
+    obj.tiktokController.text = obj.usermodel?.TikTok ?? '';
+    obj.aboutMeController.text = obj.usermodel?.AboutMe ?? '';
+    obj.salonDescriptionController.text =
+        obj.salonmodel?.salonDescription ?? '';
     super.initState();
   }
 
@@ -93,16 +79,24 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                           children: [
                                             CircleAvatar(
                                               radius: 35,
-                                              backgroundImage: obj.usermodel!
-                                                          .ProfilePicture !=
-                                                      ""
+                                              backgroundImage: obj.usermodel
+                                                              ?.ProfilePicture !=
+                                                          null &&
+                                                      obj
+                                                          .usermodel!
+                                                          .ProfilePicture
+                                                          .isNotEmpty
                                                   ? NetworkImage(obj.usermodel!
                                                       .ProfilePicture)
                                                   : null,
                                               backgroundColor: Colors.blue[200],
-                                              child: obj.usermodel!
-                                                          .ProfilePicture ==
-                                                      ""
+                                              child: obj.usermodel
+                                                              ?.ProfilePicture ==
+                                                          null ||
+                                                      obj
+                                                          .usermodel!
+                                                          .ProfilePicture
+                                                          .isEmpty
                                                   ? const Icon(
                                                       Icons.camera_alt,
                                                       size: 30,
@@ -112,7 +106,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                             ),
                                             if (obj.isLoadingProfile)
                                               const SpinKitSpinningLines(
-                                                color: Colors.white,
+                                                color: Colors.pink,
                                               ),
                                           ],
                                         ),
@@ -136,16 +130,22 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                           children: [
                                             CircleAvatar(
                                               radius: 35,
-                                              backgroundImage: obj.salonmodel!
-                                                          .SalonPicture !=
-                                                      ""
+                                              backgroundImage: obj.salonmodel
+                                                              ?.SalonPicture !=
+                                                          null &&
+                                                      obj
+                                                          .salonmodel!
+                                                          .SalonPicture!
+                                                          .isNotEmpty
                                                   ? NetworkImage(obj.salonmodel!
                                                       .SalonPicture!)
                                                   : null,
                                               backgroundColor: Colors.pink[200],
-                                              child: obj.salonmodel!
-                                                          .SalonPicture ==
-                                                      ""
+                                              child: obj.salonmodel
+                                                              ?.SalonPicture ==
+                                                          null ||
+                                                      obj.salonmodel!
+                                                          .SalonPicture!.isEmpty
                                                   ? const Icon(
                                                       Icons.camera_alt,
                                                       size: 30,
@@ -155,7 +155,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                             ),
                                             if (obj.isLoadingSalon)
                                               const SpinKitSpinningLines(
-                                                color: Colors.white,
+                                                color: Colors.pink,
                                               ),
                                           ],
                                         ),
@@ -202,12 +202,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                           labelText: "Salon Name",
                                           hintText: "Enter your salon's name",
                                         ),
-                                        validator: (value) {
-                                          if (value == null || value.isEmpty) {
-                                            return "Salon Name is required";
-                                          }
-                                          return null;
-                                        },
                                       ),
                                     ),
                                   ],
@@ -511,12 +505,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   labelText: "About Me",
                                   hintText: "Tell us about yourself",
                                 ),
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return "Please enter something about yourself.";
-                                  }
-                                  return null;
-                                },
                               ),
                               SizedBox(
                                 height: 5,
@@ -529,12 +517,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   hintText:
                                       "Tell us about your Salon Description",
                                 ),
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return "Please enter something about your Salon Description.";
-                                  }
-                                  return null;
-                                },
                               ),
                               const SizedBox(height: 20),
                               ElevatedButton(

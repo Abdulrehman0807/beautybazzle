@@ -1,12 +1,12 @@
 import 'dart:io';
-import 'package:beautybazzle/model/addoffer.dart';
-import 'package:beautybazzle/model/addproduct.dart';
-import 'package:beautybazzle/model/addsalon.dart';
-import 'package:beautybazzle/model/addservices.dart';
-import 'package:beautybazzle/model/addspecialist.dart';
-import 'package:beautybazzle/model/addvideo.dart';
-import 'package:beautybazzle/model/addwork.dart';
-import 'package:beautybazzle/model/signup_model.dart';
+import 'package:beautybazzle/model/addoffer/addoffer.dart';
+import 'package:beautybazzle/model/addproduct/addproduct.dart';
+import 'package:beautybazzle/model/addsalon/addsalon.dart';
+import 'package:beautybazzle/model/addservice/addservices.dart';
+import 'package:beautybazzle/model/addspecialist/addspecialist.dart';
+import 'package:beautybazzle/model/addvideo/addvideo.dart';
+import 'package:beautybazzle/model/addwork/addwork.dart';
+import 'package:beautybazzle/model/signup_login/signup_model.dart';
 import 'package:beautybazzle/view/setting/videoplay.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -19,7 +19,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:uuid/uuid.dart';
 import 'package:video_player/video_player.dart';
-import '../utiils/static_data.dart';
+import '../../utiils/static_data.dart';
 
 class ProfileController extends GetxController {
   static ProfileController get to => Get.find();
@@ -52,6 +52,7 @@ class ProfileController extends GetxController {
   final TextEditingController specialistServiceNameController =
       TextEditingController();
   final TextEditingController workTypeController = TextEditingController();
+
   final firebase_storage.FirebaseStorage storage =
       firebase_storage.FirebaseStorage.instance;
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -147,60 +148,50 @@ class ProfileController extends GetxController {
     StaticData.userModel = model;
     usermodel = model;
 
-    QuerySnapshot snapshotSalon = await firestore
-        .collection("Salons")
-        .where("UserId", isEqualTo: userID)
+    QuerySnapshot snapshots = await firestore
+        .collection("salons")
+        .where("userId", isEqualTo: userID)
         .get();
-    SalonModel smodel =
+    SalonModel salonModel =
         SalonModel.fromMap(snapshot.docs[0].data() as Map<String, dynamic>);
-    //StaticData.salonmodel = smodel;
-    salonmodel = smodel;
+    StaticData.salonModel = salonmodel;
+    salonmodel = salonModel;
     update();
-
-    // QuerySnapshot snapshotprofilepicture = await firestore
-    //     .collection("ProfilePicture")
-    //     .where("UserId", isEqualTo: userID)
-    //     .get();
-    // UserModels pmodel =
-    //     UserModels.fromMap(snapshot.docs[0].data() as Map<String, dynamic>);
-    // StaticData.userModel = model;
-    // usermodel = pmodel;
-    // update();
   }
 
-  Future<void> saveProfileData(BuildContext context) async {
-    if (isLoading) return; // Prevent multiple clicks
+  // Future<void> saveProfileData(BuildContext context) async {
+  //   if (isLoading) return;
 
-    changeLoadingStatus(true);
+  //   changeLoadingStatus(true);
 
-    try {
-      String userId = StaticData.userModel!.UserId;
+  //   try {
+  //     String userId = StaticData.userModel!.UserId;
 
-      // Update user profile in Firestore
-      await firestore.collection("Users").doc(userId).update({
-        'name': nameController.text.trim(),
-        'SalonName': salonNameController.text.trim(),
-        'Address': addressController.text.trim(),
-        'YouTube': youtubeController.text.trim(),
-        'Facebook': facebookController.text.trim(),
-        'Instagram': instagramController.text.trim(),
-        'TikTok': tiktokController.text.trim(),
-        'AboutMe': aboutMeController.text.trim(),
-        'salonDescription': salonDescriptionController.text.trim(),
-      });
+  //     // Update user profile in Firestore
+  //     await firestore.collection("Users").doc(userId).update({
+  //       'name': nameController.text.trim(),
+  //       'SalonName': salonNameController.text.trim(),
+  //       'Address': addressController.text.trim(),
+  //       'YouTube': youtubeController.text.trim(),
+  //       'Facebook': facebookController.text.trim(),
+  //       'Instagram': instagramController.text.trim(),
+  //       'TikTok': tiktokController.text.trim(),
+  //       'AboutMe': aboutMeController.text.trim(),
+  //       'salonDescription': salonDescriptionController.text.trim(),
+  //     });
 
-      getUserProfile(userId);
+  //     getUserProfile(userId);
 
-      // Show success message
-      showToast("Profile updated successfully!", Colors.green);
-      Navigator.pop(context); // Navigate back
+  //     // Show success message
+  //     showToast("Profile updated successfully!", Colors.green);
+  //     Navigator.pop(context); // Navigate back
 
-    } catch (e) {
-      showToast("Error updating profile: $e", Colors.red);
-    } finally {
-      changeLoadingStatus(false);
-    }
-  }
+  //   } catch (e) {
+  //     showToast("Error updating profile: $e", Colors.red);
+  //   } finally {
+  //     changeLoadingStatus(false);
+  //   }
+  // }
 
   // Validate YouTube link
   bool isValidYouTubeLink(String url) {
@@ -250,7 +241,165 @@ class ProfileController extends GetxController {
     );
   }
 
-///////////////////// upload picture //////////////////
+  // Future<void> saveProfileData(BuildContext context, {String? salonId}) async {
+  //   if (isLoading) return; // Prevent multiple clicks
+
+  //   changeLoadingStatus(true);
+
+  //   try {
+  //     String userId = StaticData.userModel!.UserId;
+
+  //     // Update user profile in Firestore
+  //     await firestore.collection("Users").doc(userId).update({
+  //       'name': nameController.text.trim(),
+  //       'SalonName': salonNameController.text.trim(),
+  //       'Address': addressController.text.trim(),
+  //       'YouTube': youtubeController.text.trim(),
+  //       'Facebook': facebookController.text.trim(),
+  //       'Instagram': instagramController.text.trim(),
+  //       'TikTok': tiktokController.text.trim(),
+  //       'AboutMe': aboutMeController.text.trim(),
+  //       'salonDescription': salonDescriptionController.text.trim(),
+  //     });
+
+  //     // If salonId is provided, update the salon data as well
+  //     if (salonId != null) {
+  //       await firestore.collection("salons").doc(salonId).update({
+  //         'SalonName': salonNameController.text.trim(),
+  //         'salonDescription': salonDescriptionController.text.trim(),
+  //       });
+  //     }
+
+  //     // Refresh user profile data
+  //     getUserProfile(userId);
+
+  //     // Show success message
+  //     showToast(
+  //       salonId != null
+  //           ? 'Profile and salon updated successfully!'
+  //           : 'Profile updated successfully!',
+  //       Colors.green,
+  //     );
+
+  //     // Navigate back
+  //     Navigator.pop(context);
+  //   } catch (e) {
+  //     // Log and show error message if update fails
+  //     print('Error updating profile: $e');
+  //     showToast("Failed to update profile: $e", Colors.red);
+  //   } finally {
+  //     // Hide loading indicator
+  //     changeLoadingStatus(false);
+  //   }
+  // }
+
+  Future<void> saveProfileData(BuildContext context, {String? salonId}) async {
+    if (isLoading) return;
+
+    changeLoadingStatus(true);
+
+    try {
+      String userId = StaticData.userModel!.UserId;
+
+      // Upload profile picture if a new one is selected
+      String? profilePictureUrl;
+      if (photo != null) {
+        profilePictureUrl = await _uploadImageToFirebase(
+          context,
+          photo!,
+          'profile_pictures/${photo!.name}',
+        );
+      }
+
+      // Update user profile in Firestore
+      await firestore.collection("Users").doc(userId).update({
+        'name': nameController.text.trim(),
+        'SalonName': salonNameController.text.trim(),
+        'Address': addressController.text.trim(),
+        'YouTube': youtubeController.text.trim(),
+        'Facebook': facebookController.text.trim(),
+        'Instagram': instagramController.text.trim(),
+        'TikTok': tiktokController.text.trim(),
+        'AboutMe': aboutMeController.text.trim(),
+        'salonDescription': salonDescriptionController.text.trim(),
+        if (profilePictureUrl != null) 'ProfilePicture': profilePictureUrl,
+      });
+
+      // If salonId is provided, update the salon data as well
+      if (salonId != null) {
+        // Upload salon picture if a new one is selected
+        String? salonPictureUrl;
+        if (SalonPicture != null) {
+          salonPictureUrl = await _uploadImageToFirebase(
+            context,
+            SalonPicture!,
+            'salon_pictures/${SalonPicture!.name}',
+          );
+        }
+
+        await firestore
+            .collection("salons")
+            .doc(StaticData.salonModel!.SalonId)
+            .update({
+          'SalonName': salonNameController.text.trim(),
+          'salonDescription': salonDescriptionController.text.trim(),
+          if (salonPictureUrl != null) 'SalonPicture': salonPictureUrl,
+        });
+      }
+
+      // Refresh user profile data
+      getUserProfile(userId);
+
+      // Show success message
+      showToast(
+        salonId != null
+            ? 'Profile and salon updated successfully!'
+            : 'Profile updated successfully!',
+        Colors.green,
+      );
+
+      // Navigate back
+      Navigator.pop(context);
+    } catch (e) {
+      // Log and show error message if update fails
+      print('Error updating profile: $e');
+      showToast("Failed to update profile: $e", Colors.red);
+    } finally {
+      // Hide loading indicator
+      changeLoadingStatus(false);
+    }
+  }
+
+  Future<String?> _uploadImageToFirebase(
+    BuildContext context,
+    XFile file,
+    String storagePath,
+  ) async {
+    try {
+      // Show loading indicator
+      changeLoadingProfile(true);
+
+      // Upload the image to Firebase Storage
+      final ref = FirebaseStorage.instance.ref().child(storagePath);
+      await ref.putFile(File(file.path));
+
+      // Get the download URL of the uploaded image
+      final downloadUrl = await ref.getDownloadURL();
+
+      // Hide loading indicator
+      changeLoadingProfile(false);
+
+      return downloadUrl;
+    } catch (e) {
+      // Log and show error message if upload fails
+      print('Error uploading image: $e');
+      showToast('Failed to upload image!', Colors.red);
+      changeLoadingProfile(false);
+      return null;
+    }
+  }
+
+///////////////////// upload picture //////////////////////////////////////////
   Future<void> pickProfilePicture(BuildContext context) async {
     showDialog(
       context: context,
@@ -279,7 +428,7 @@ class ProfileController extends GetxController {
     );
   }
 
-  // Pick image from Gallery
+// Pick image from Gallery
   Future<void> pickFromGallery(BuildContext context) async {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
@@ -289,7 +438,7 @@ class ProfileController extends GetxController {
     }
   }
 
-  // Pick image from Camera
+// Pick image from Camera
   Future<void> pickFromCamera(BuildContext context) async {
     final pickedFile = await picker.pickImage(source: ImageSource.camera);
     if (pickedFile != null) {
@@ -299,7 +448,7 @@ class ProfileController extends GetxController {
     }
   }
 
-  // Upload image to Firebase Storage and save URL to Firestore
+// Upload image to Firebase Storage and save URL to Firestore
   Future<void> uploadImage(BuildContext context) async {
     if (photo == null) return;
 
@@ -329,168 +478,86 @@ class ProfileController extends GetxController {
       getUserProfile(StaticData.userModel!.UserId);
 
       // Show success message
-      Fluttertoast.showToast(
-        msg: 'Profile image uploaded successfully!',
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.green,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
+      showToast('Profile image uploaded successfully!', Colors.green);
     } catch (e) {
       // Log and show error message if upload fails
       print('Error uploading image: $e');
-
-      // Show error message with Toast
-      Fluttertoast.showToast(
-        msg: 'Failed to upload profile image!',
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
+      showToast('Failed to upload profile image!', Colors.red);
     } finally {
       // Hide loading indicator
       changeLoadingProfile(false);
     }
   }
 
-//////////////////////////// add salon ////////////////////////
-
+//////////////////////////// add salon //////////////////////////////////////////
+  // Pick Salon Picture (Camera or Gallery)
   Future<void> pickSalonPicture(BuildContext context) async {
-    showDialog(
+    final ImageSource? source = await showDialog<ImageSource>(
       context: context,
-      builder: (BuildContext dc) {
+      builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Select Image Source'),
           content: const Text('Choose an image from the camera or gallery.'),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                salonpickFromCamera(context);
-              },
+              onPressed: () => Navigator.of(context).pop(ImageSource.camera),
               child: const Text('Camera'),
             ),
             TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                salonpickFromGallery(context);
-              },
+              onPressed: () => Navigator.of(context).pop(ImageSource.gallery),
               child: const Text('Gallery'),
             ),
           ],
         );
       },
     );
-  }
 
-  // Pick image from Gallery
-  Future<void> salonpickFromGallery(BuildContext context) async {
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      SalonPicture = pickedFile;
-      update();
+    if (source != null) {
+      await pickAndUploadImage(context, source);
     }
   }
 
-  // Pick image from Camera
-  Future<void> salonpickFromCamera(BuildContext context) async {
-    final pickedFile = await picker.pickImage(source: ImageSource.camera);
+// Helper function to pick and upload an image
+  Future<void> pickAndUploadImage(
+      BuildContext context, ImageSource source) async {
+    final pickedFile = await ImagePicker().pickImage(source: source);
     if (pickedFile != null) {
       SalonPicture = pickedFile;
-      update();
+      await uploadSalonAndCreateCollection(context);
+      update(); 
     }
   }
 
-  // Upload Salon Picture to Firebase Storage
-  Future<void> uploadSalonPicture(BuildContext context) async {
-    if (SalonPicture == null) return;
-
-    // Show loading indicator
+// Upload Salon Picture and Create Salon Collection
+  Future<void> uploadSalonAndCreateCollection(BuildContext context) async {
+ 
     changeLoadingSalon(true);
 
     try {
-      // Upload the image to Firebase Storage
-      final ref = FirebaseStorage.instance
-          .ref()
-          .child('salon_pictures/${SalonPicture!.name}');
-      await ref.putFile(File(SalonPicture!.path));
-
-      // Get the download URL of the uploaded image
-      final downloadUrl = await ref.getDownloadURL();
-
-      // Save the URL to Firestore
-      await FirebaseFirestore.instance
-          .collection("Salons")
-          .doc(salonmodel!.SalonId)
-          .update({'SalonPicture': downloadUrl});
-
-      // Show success message
-      Fluttertoast.showToast(
-        msg: 'Salon image uploaded successfully!',
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.green,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
-    } catch (e) {
-      // Log and show error message if upload fails
-      print('Error uploading salon image: $e');
-
-      // Show error message with Toast
-      Fluttertoast.showToast(
-        msg: 'Failed to upload salon image!',
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
-    } finally {
-      // Hide loading indicator
-      changeLoadingSalon(false);
-    }
-  }
-
-  // Create Salon Collection in Firestore
-  Future<void> createSalonCollection(BuildContext context) async {
-    try {
-      var uuid = const Uuid();
-      String salonId = uuid.v4();
-      String time = DateTime.now().toIso8601String();
+      String? salonPictureUrl;
 
       // Upload the salon picture to Firebase Storage if selected
-      String? salonPictureUrl;
       if (SalonPicture != null) {
-        // Show loading indicator while uploading image
-        changeLoadingSalon(true);
-
         final ref = FirebaseStorage.instance
             .ref()
-            .child('salon_pictures/$salonId'); // Unique file path using salonId
+            .child('salon_pictures/${SalonPicture!.name}');
         await ref.putFile(File(SalonPicture!.path));
 
         // Get the download URL of the uploaded image
         salonPictureUrl = await ref.getDownloadURL();
-
-        // Hide loading state after upload is complete
-        changeLoadingSalon(false);
       }
+
+      // Generate a unique salon ID and timestamp
+      var uuid = const Uuid();
+      String salonId = uuid.v4();
+      String time = DateTime.now().toIso8601String();
 
       // Create the SalonModel object
       SalonModel model = SalonModel(
         SalonId: salonId,
         SalonName: salonNameController.text,
         salonDescription: salonDescriptionController.text,
-        SalonPicture:
-            salonPictureUrl ?? '', // Use uploaded image URL or empty string
+        SalonPicture: salonPictureUrl ?? '',
         time: time,
         userId: StaticData.userModel!.UserId,
       );
@@ -504,30 +571,19 @@ class ProfileController extends GetxController {
       print("Salon created with salonId: $salonId");
 
       // Show success message
-      Fluttertoast.showToast(
-        msg: "Salon created successfully!",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.green,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
+      showToast("Salon created successfully!", Colors.green);
 
       // Clear form fields and reset the image picker after creation
       salonNameController.clear();
       salonDescriptionController.clear();
       SalonPicture = null;
-      update(); // Update the UI after clearing the form
+      update();
     } catch (e) {
-      print("Error creating salon: $e");
-      Fluttertoast.showToast(
-        msg: "Failed to create salon.",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
+      print('Error creating salon: $e');
+      showToast('Failed to create salon!', Colors.red);
+    } finally {
+      // Hide loading indicator
+      changeLoadingSalon(false);
     }
   }
 
@@ -2038,77 +2094,82 @@ class ProfileController extends GetxController {
       context: context,
       builder: (context) => AlertDialog(
         title: Center(child: Text("Salon Schedule")),
-        content: TweenAnimationBuilder(
-          tween: Tween<double>(begin: 0.8, end: 1.0), // Animation for scaling
-          duration: Duration(milliseconds: 500),
-          curve: Curves.easeInOut,
-          builder: (context, double scale, child) {
-            return Transform.scale(
-              scale: scale, // Apply the scale animation to the content
-              child: StreamBuilder<DocumentSnapshot>(
-                stream: FirebaseFirestore.instance
-                    .collection('office_schedules')
-                    .doc(StaticData.userModel!.UserId)
-                    .snapshots(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(child: CircularProgressIndicator());
-                  }
-                  if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
-                  }
-                  if (!snapshot.hasData || !snapshot.data!.exists) {
-                    return Center(child: Text('No schedule available'));
-                  }
+        content: SizedBox(
+          width: MediaQuery.of(context).size.width * 0.8,
+          height:
+              MediaQuery.of(context).size.height * 0.63, // 80% of screen width
+          child: TweenAnimationBuilder(
+            tween: Tween<double>(begin: 0.8, end: 1.0), // Animation for scaling
+            duration: Duration(milliseconds: 500),
+            curve: Curves.easeInOut,
+            builder: (context, double scale, child) {
+              return Transform.scale(
+                scale: scale, // Apply the scale animation to the content
+                child: StreamBuilder<DocumentSnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection('office_schedules')
+                      .doc(StaticData.userModel!.UserId)
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    }
+                    if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    }
+                    if (!snapshot.hasData || !snapshot.data!.exists) {
+                      return Center(child: Text('No schedule available'));
+                    }
 
-                  // Fetch schedule data
-                  Map<String, dynamic> schedule =
-                      snapshot.data!.data() as Map<String, dynamic>;
-                  Map<String, bool> officeStatus =
-                      Map<String, bool>.from(schedule['officeStatus']);
-                  Map<String, String> officeOpenTimes =
-                      Map<String, String>.from(schedule['officeOpenTimes']);
-                  Map<String, String> officeCloseTimes =
-                      Map<String, String>.from(schedule['officeCloseTimes']);
+                    // Fetch schedule data
+                    Map<String, dynamic> schedule =
+                        snapshot.data!.data() as Map<String, dynamic>;
+                    Map<String, bool> officeStatus =
+                        Map<String, bool>.from(schedule['officeStatus']);
+                    Map<String, String> officeOpenTimes =
+                        Map<String, String>.from(schedule['officeOpenTimes']);
+                    Map<String, String> officeCloseTimes =
+                        Map<String, String>.from(schedule['officeCloseTimes']);
 
-                  return SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        for (String day in officeStatus.keys)
-                          ListTile(
-                            title: Container(
-                              width: 500,
-                              child: Text(
-                                day,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
+                    return SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          for (String day in officeStatus.keys)
+                            ListTile(
+                              title: Container(
+                                width: double.infinity, // Use full width
+                                child: Text(
+                                  day,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
+                              subtitle: officeStatus[day]!
+                                  ? Text(
+                                      "Open: ${officeOpenTimes[day]} - Close: ${officeCloseTimes[day]}",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.green,
+                                      ),
+                                    )
+                                  : Text(
+                                      "Closed",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.red,
+                                      ),
+                                    ),
                             ),
-                            subtitle: officeStatus[day]!
-                                ? Text(
-                                    "Open: ${officeOpenTimes[day]} - Close: ${officeCloseTimes[day]}",
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.green,
-                                    ),
-                                  )
-                                : Text(
-                                    "Closed",
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.red,
-                                    ),
-                                  ),
-                          ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            );
-          },
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              );
+            },
+          ),
         ),
         actions: [
           TextButton(

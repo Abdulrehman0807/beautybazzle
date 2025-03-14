@@ -1,4 +1,4 @@
-import 'package:beautybazzle/controller/editprofilecontroller.dart';
+import 'package:beautybazzle/controller/profile/editprofilecontroller.dart';
 import 'package:beautybazzle/utiils/static_data.dart';
 import 'package:beautybazzle/view/dashboard/Dashboard.dart';
 import 'package:beautybazzle/view/appoinment/apponiment_reminder.dart';

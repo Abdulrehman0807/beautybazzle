@@ -1,34 +1,21 @@
-import 'dart:io';
-
 import 'package:animations/animations.dart';
-import 'package:beautybazzle/controller/editprofilecontroller.dart';
-import 'package:beautybazzle/model/addoffer.dart';
-import 'package:beautybazzle/model/addproduct.dart';
-import 'package:beautybazzle/model/addspecialist.dart';
-import 'package:beautybazzle/model/addwork.dart';
-
+import 'package:beautybazzle/controller/profile/editprofilecontroller.dart';
+import 'package:beautybazzle/model/addoffer/addoffer.dart';
+import 'package:beautybazzle/model/addproduct/addproduct.dart';
+import 'package:beautybazzle/model/addspecialist/addspecialist.dart';
+import 'package:beautybazzle/model/addwork/addwork.dart';
 import 'package:beautybazzle/model/servic_data.dart';
-
 import 'package:beautybazzle/utiils/static_data.dart';
 import 'package:beautybazzle/view/bottom_bar/bottom_Nav_bar.dart';
-
-import 'package:beautybazzle/view/categorie/beauty_product.dart';
-
 import 'package:beautybazzle/view/profiles/editProfile.dart';
 import 'package:beautybazzle/view/setting/setting.dart';
-import 'package:beautybazzle/view/setting/showschedule.dart';
-import 'package:beautybazzle/view/setting/showvideo.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_stars/flutter_rating_stars.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
-
-import '../../model/addservices.dart';
-import '../../model/addvideo.dart';
+import '../../model/addservice/addservices.dart';
 
 class MyProfileScreen extends StatefulWidget {
   const MyProfileScreen({super.key});
@@ -65,7 +52,6 @@ class _MyProfileScreenState extends State<MyProfileScreen>
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
-
     return GetBuilder<ProfileController>(builder: (obj) {
       return DefaultTabController(
         length: 4,
@@ -123,12 +109,15 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                             ),
                             CircleAvatar(
                               radius: 50,
-                              backgroundImage: obj.usermodel!.ProfilePicture !=
-                                      ""
-                                  ? NetworkImage(obj.usermodel!.ProfilePicture)
+                              backgroundImage: obj.usermodel != null &&
+                                      obj.usermodel!.ProfilePicture != null &&
+                                      obj.usermodel!.ProfilePicture!.isNotEmpty
+                                  ? NetworkImage(obj.usermodel!.ProfilePicture!)
                                   : null,
                               backgroundColor: Colors.pink[200],
-                              child: obj.usermodel!.ProfilePicture == ""
+                              child: obj.usermodel == null ||
+                                      obj.usermodel!.ProfilePicture == null ||
+                                      obj.usermodel!.ProfilePicture!.isEmpty
                                   ? const Icon(
                                       Icons.camera_alt,
                                       size: 30,
@@ -397,22 +386,31 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                                           leading: CircleAvatar(
                                             radius: 35,
                                             backgroundImage:
-                                                obj.salonmodel!.SalonPicture !=
-                                                        ""
+                                                obj.salonmodel != null &&
+                                                        obj.salonmodel!
+                                                                .SalonPicture !=
+                                                            null &&
+                                                        obj
+                                                            .salonmodel!
+                                                            .SalonPicture!
+                                                            .isNotEmpty
                                                     ? NetworkImage(obj
                                                         .salonmodel!
                                                         .SalonPicture!)
                                                     : null,
                                             backgroundColor: Colors.pink[200],
-                                            child:
-                                                obj.salonmodel!.SalonPicture ==
-                                                        ""
-                                                    ? const Icon(
-                                                        Icons.camera_alt,
-                                                        size: 30,
-                                                        color: Colors.white,
-                                                      )
-                                                    : null,
+                                            child: obj.salonmodel == null ||
+                                                    obj.salonmodel!
+                                                            .SalonPicture ==
+                                                        null ||
+                                                    obj.salonmodel!
+                                                        .SalonPicture!.isEmpty
+                                                ? const Icon(
+                                                    Icons.camera_alt,
+                                                    size: 30,
+                                                    color: Colors.white,
+                                                  )
+                                                : null,
                                           ),
                                           title: Text(
                                             "${obj.salonmodel!.SalonName}",

@@ -1,4 +1,4 @@
-import 'package:beautybazzle/controller/selectedsignupcontoller.dart';
+import 'package:beautybazzle/controller/signinmethod/selectedsignupcontoller.dart';
 import 'package:beautybazzle/utiils/static_data.dart';
 import 'package:beautybazzle/view/signup_methods/Signin.dart';
 

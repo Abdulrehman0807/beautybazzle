@@ -1,4 +1,4 @@
-import 'package:beautybazzle/controller/mycontroller.dart';
+import 'package:beautybazzle/controller/signup/mycontroller.dart';
 import 'package:flutter/material.dart';
 import 'package:beautybazzle/view/changepassword/reset_pasword.dart';
 import 'package:beautybazzle/view/signup_methods/signup.dart';

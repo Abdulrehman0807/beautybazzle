@@ -1,4 +1,4 @@
-import 'package:beautybazzle/controller/mycontroller.dart';
+import 'package:beautybazzle/controller/signup/mycontroller.dart';
 import 'package:beautybazzle/utiils/static_data.dart';
 import 'package:beautybazzle/view/signup_methods/Signin.dart';
 import 'package:flutter/material.dart';

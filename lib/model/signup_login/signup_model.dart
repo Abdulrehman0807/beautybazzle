@@ -7,10 +7,8 @@ class UserModels {
   String password;
   String PhoneNumber;
   String UserId;
-
   String Address;
   String ProfilePicture;
-
   String YouTube;
   String Facebook;
   String Instagram;
