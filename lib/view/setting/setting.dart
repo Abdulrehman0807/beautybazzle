@@ -1,5 +1,4 @@
 import 'package:beautybazzle/controller/profile/editprofilecontroller.dart';
-
 import 'package:beautybazzle/view/setting/showschedule.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -61,22 +60,22 @@ class _SettingScreenState extends State<SettingScreen> {
               );
             },
             child: Container(
-              height: height * 0.06,
-              width: width * 0.96,
+              height: height * 0.05,
+              width: width * 0.95,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Schedule",
+                    "Set Schedule",
                     style: TextStyle(
-                        fontSize: width * 0.06, fontWeight: FontWeight.w500),
+                        fontSize: width * 0.04, fontWeight: FontWeight.w500),
                   ),
                   CircleAvatar(
                     radius: 17,
                     backgroundColor: Colors.white,
                     child: Icon(
                       Icons.chevron_right,
-                      size: width * 0.07,
+                      size: width * 0.055,
                       color: Colors.black,
                     ),
                   )
@@ -87,22 +86,22 @@ class _SettingScreenState extends State<SettingScreen> {
           InkWell(
             onTap: () {},
             child: Container(
-              height: height * 0.06,
+              height: height * 0.05,
               width: width * 0.96,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Schedule",
+                    "Change Password ",
                     style: TextStyle(
-                        fontSize: width * 0.06, fontWeight: FontWeight.w500),
+                        fontSize: width * 0.04, fontWeight: FontWeight.w500),
                   ),
                   CircleAvatar(
                     radius: 17,
                     backgroundColor: Colors.white,
                     child: Icon(
                       Icons.chevron_right,
-                      size: width * 0.07,
+                      size: width * 0.055,
                       color: Colors.black,
                     ),
                   )
@@ -111,22 +110,22 @@ class _SettingScreenState extends State<SettingScreen> {
             ),
           ),
           Container(
-            height: height * 0.06,
+            height: height * 0.05,
             width: width * 0.96,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "Schedule",
+                  "Version ",
                   style: TextStyle(
-                      fontSize: width * 0.06, fontWeight: FontWeight.w500),
+                      fontSize: width * 0.04, fontWeight: FontWeight.w500),
                 ),
                 CircleAvatar(
                   radius: 17,
                   backgroundColor: Colors.white,
                   child: Icon(
                     Icons.chevron_right,
-                    size: width * 0.07,
+                    size: width * 0.055,
                     color: Colors.black,
                   ),
                 )
@@ -134,22 +133,22 @@ class _SettingScreenState extends State<SettingScreen> {
             ),
           ),
           Container(
-            height: height * 0.06,
+            height: height * 0.05,
             width: width * 0.96,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "Schedule",
+                  "Help",
                   style: TextStyle(
-                      fontSize: width * 0.06, fontWeight: FontWeight.w500),
+                      fontSize: width * 0.04, fontWeight: FontWeight.w500),
                 ),
                 CircleAvatar(
                   radius: 17,
                   backgroundColor: Colors.white,
                   child: Icon(
                     Icons.chevron_right,
-                    size: width * 0.07,
+                    size: width * 0.055,
                     color: Colors.black,
                   ),
                 )
@@ -159,7 +158,7 @@ class _SettingScreenState extends State<SettingScreen> {
           GestureDetector(
             // onTap: () => obj.LOginSignupController.to.logout(context),
             child: Container(
-              height: height * 0.06,
+              height: height * 0.05,
               width: width * 0.96,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -167,14 +166,14 @@ class _SettingScreenState extends State<SettingScreen> {
                   Text(
                     "logout",
                     style: TextStyle(
-                        fontSize: width * 0.06, fontWeight: FontWeight.w500),
+                        fontSize: width * 0.04, fontWeight: FontWeight.w500),
                   ),
                   CircleAvatar(
                     radius: 17,
                     backgroundColor: Colors.white,
                     child: Icon(
                       Icons.chevron_right,
-                      size: width * 0.07,
+                      size: width * 0.055,
                       color: Colors.black,
                     ),
                   )

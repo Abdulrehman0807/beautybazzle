@@ -1,9 +1,7 @@
 import 'package:beautybazzle/controller/profile/editprofilecontroller.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-
 import 'package:get/get.dart';
 
 class EditProfileScreen extends StatefulWidget {
@@ -21,6 +19,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
     obj.nameController.text = obj.usermodel?.name ?? '';
     obj.salonNameController.text = obj.salonmodel?.SalonName ?? '';
+
     obj.addressController.text = obj.usermodel?.Address ?? '';
     obj.youtubeController.text = obj.usermodel?.YouTube ?? '';
     obj.facebookController.text = obj.usermodel?.Facebook ?? '';
@@ -61,9 +60,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              SizedBox(
-                                height: height * 0.02,
-                              ),
                               Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceEvenly,
@@ -84,10 +80,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                           null &&
                                                       obj
                                                           .usermodel!
-                                                          .ProfilePicture
+                                                          .ProfilePicture!
                                                           .isNotEmpty
                                                   ? NetworkImage(obj.usermodel!
-                                                      .ProfilePicture)
+                                                      .ProfilePicture!)
                                                   : null,
                                               backgroundColor: Colors.blue[200],
                                               child: obj.usermodel
@@ -95,7 +91,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                           null ||
                                                       obj
                                                           .usermodel!
-                                                          .ProfilePicture
+                                                          .ProfilePicture!
                                                           .isEmpty
                                                   ? const Icon(
                                                       Icons.camera_alt,
@@ -207,12 +203,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   ],
                                 ),
                               ),
-                              const SizedBox(height: 5),
                               TextFormField(
                                 controller: obj.addressController,
                                 decoration: const InputDecoration(
                                   labelText: "Address",
-                                  hintText: "Enter your salon's address",
+                                  hintText: "Enter your address",
                                 ),
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
@@ -221,7 +216,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   return null;
                                 },
                               ),
-                              const SizedBox(height: 5),
                               TextFormField(
                                 controller: obj.youtubeController,
                                 decoration: InputDecoration(
@@ -290,7 +284,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 },
                                 keyboardType: TextInputType.url,
                               ),
-                              const SizedBox(height: 5),
                               TextFormField(
                                 controller: obj.facebookController,
                                 decoration: InputDecoration(
@@ -359,7 +352,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 },
                                 keyboardType: TextInputType.url,
                               ),
-                              const SizedBox(height: 5),
                               TextFormField(
                                 controller: obj.instagramController,
                                 decoration: InputDecoration(
@@ -428,7 +420,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 },
                                 keyboardType: TextInputType.url,
                               ),
-                              const SizedBox(height: 5),
                               TextFormField(
                                 controller: obj.tiktokController,
                                 decoration: InputDecoration(
@@ -497,7 +488,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 },
                                 keyboardType: TextInputType.url,
                               ),
-                              const SizedBox(height: 5),
+                              const SizedBox(height: 2),
                               TextFormField(
                                 controller: obj.aboutMeController,
                                 maxLines: 2,
@@ -506,9 +497,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   hintText: "Tell us about yourself",
                                 ),
                               ),
-                              SizedBox(
-                                height: 5,
-                              ),
+                              const SizedBox(height: 2),
                               TextFormField(
                                 controller: obj.salonDescriptionController,
                                 maxLines: 2,

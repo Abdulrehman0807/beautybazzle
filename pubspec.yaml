@@ -57,7 +57,9 @@ dependencies:
   flutter_spinkit:
   cached_network_image:
   video_player: 
-  # flutter_open_container:
+  date_picker_timeline: 
+  intl: 
+  
   
 
 

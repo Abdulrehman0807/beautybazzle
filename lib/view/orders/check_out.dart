@@ -1,33 +1,50 @@
 import 'package:beautybazzle/view/orders/play_order.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class CheckoutScreen extends StatefulWidget {
-  const CheckoutScreen({super.key});
+  final Map<String, dynamic> product;
+
+  const CheckoutScreen({super.key, required this.product});
 
   @override
   State<CheckoutScreen> createState() => _CheckoutScreenState();
 }
 
 class _CheckoutScreenState extends State<CheckoutScreen> {
-  Map<String, dynamic> product = {
-    "name": "Fizza Beauty Cream",
-    "price": 6.0,
-    "quantity": 1,
-  };
-
-  final double deliveryFee = 2.0; // Flat delivery fee
+  final double deliveryFee = 2.0;
   double subtotal = 0.0;
+  late Map<String, dynamic> product;
+
+  // Helper method to safely convert to double
+  double _parsePrice(dynamic price) {
+    if (price is double) return price;
+    if (price is int) return price.toDouble();
+    if (price is String) return double.tryParse(price) ?? 0.0;
+    return 0.0;
+  }
+
+  // Helper method to safely convert to int
+  int _parseQuantity(dynamic quantity) {
+    if (quantity is int) return quantity;
+    if (quantity is double) return quantity.toInt();
+    if (quantity is String) return int.tryParse(quantity) ?? 1;
+    return 1;
+  }
 
   @override
   void initState() {
     super.initState();
+    product = Map<String, dynamic>.from(widget.product);
+    product['quantity'] = _parseQuantity(product['quantity']);
+    product['price'] = _parsePrice(product['price']);
     updateSubtotal();
   }
 
-  // Update subtotal based on quantity
   void updateSubtotal() {
-    subtotal = product["price"] * product["quantity"];
-    setState(() {}); // Update UI
+    setState(() {
+      subtotal = product['price'] * product['quantity'];
+    });
   }
 
   @override
@@ -44,7 +61,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             Column(
               children: [
                 SizedBox(height: height * 0.03),
-                // Header
+                // Header (unchanged)
                 Container(
                   height: height * 0.09,
                   width: width * 0.99,
@@ -85,173 +102,178 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 ),
                 // Product Details
                 Expanded(
-                  child: Column(
-                    children: [
-                      TweenAnimationBuilder(
-                        duration: Duration(milliseconds: 500),
-                        tween: Tween<double>(
-                            begin: 0.8, end: 1.0), // Scaling effect
-                        curve: Curves.easeOut,
-                        builder: (context, value, child) {
-                          return Transform.scale(
-                            scale: value,
-                            child: child,
-                          );
-                        },
-                        child: AnimatedOpacity(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        TweenAnimationBuilder(
                           duration: Duration(milliseconds: 500),
-                          opacity: 1.0,
-                          child: Card(
-                            elevation: 3,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            child: Container(
-                              height: height * 0.15,
-                              width: width * 0.93,
-                              decoration: BoxDecoration(
+                          tween: Tween<double>(begin: 0.8, end: 1.0),
+                          curve: Curves.easeOut,
+                          builder: (context, value, child) {
+                            return Transform.scale(
+                              scale: value,
+                              child: child,
+                            );
+                          },
+                          child: AnimatedOpacity(
+                            duration: Duration(milliseconds: 500),
+                            opacity: 1.0,
+                            child: Card(
+                              elevation: 3,
+                              shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(15),
                               ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  // Product Image
-                                  Container(
-                                    height: height * 0.13,
-                                    width: width * 0.3,
-                                    decoration: BoxDecoration(
-                                      image: const DecorationImage(
-                                        fit: BoxFit.cover,
-                                        image: AssetImage("images/product.jpg"),
+                              child: Container(
+                                height: height * 0.15,
+                                width: width * 0.93,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    // Product Image
+                                    Container(
+                                      height: height * 0.13,
+                                      width: width * 0.3,
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                          fit: BoxFit.cover,
+                                          image:
+                                              AssetImage("images/product.jpg"),
+                                        ),
+                                        borderRadius: BorderRadius.circular(10),
                                       ),
-                                      borderRadius: BorderRadius.circular(10),
                                     ),
-                                  ),
-                                  // Product Info
-                                  Container(
-                                    height: height * 0.13,
-                                    width: width * 0.55,
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        // Product Name
-                                        Text(
-                                          product["name"],
-                                          style: TextStyle(
-                                            fontSize: width * 0.045,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.black,
+                                    // Product Info
+                                    Container(
+                                      height: height * 0.13,
+                                      width: width * 0.55,
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          // Product Name
+                                          Text(
+                                            product["name"],
+                                            style: TextStyle(
+                                              fontSize: width * 0.045,
+                                              fontWeight: FontWeight.w500,
+                                              color: Colors.black,
+                                            ),
                                           ),
-                                        ),
-                                        // Product Description
-                                        Text(
-                                          "A nourishing cream that brightens, hydrates, and smooths skin for a radiant glow.",
-                                          style: TextStyle(
-                                            fontSize: width * 0.03,
-                                            fontWeight: FontWeight.w400,
-                                            overflow: TextOverflow.ellipsis,
+                                          // Product Description
+                                          Text(
+                                            product["description"] ??
+                                                "",
+                                            style: TextStyle(
+                                              fontSize: width * 0.03,
+                                              fontWeight: FontWeight.w400,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
                                           ),
-                                        ),
-                                        // Price
-                                        RichText(
-                                          text: TextSpan(
+                                          // Price - FIXED VERSION
+                                          RichText(
+                                            text: TextSpan(
+                                              children: [
+                                                TextSpan(
+                                                  text: "\$ ",
+                                                  style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: width * 0.039,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
+                                                TextSpan(
+                                                  text: (product["price"] *
+                                                          product["quantity"])
+                                                      .toStringAsFixed(2),
+                                                  style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: width * 0.034,
+                                                    fontWeight: FontWeight.w400,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          // Quantity Controls
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceEvenly,
                                             children: [
-                                              TextSpan(
-                                                text: "\$ ",
-                                                style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: width * 0.039,
-                                                  fontWeight: FontWeight.w500,
+                                              // Decrement Button
+                                              GestureDetector(
+                                                onTap: () {
+                                                  setState(() {
+                                                    if (product["quantity"] >
+                                                        1) {
+                                                      product["quantity"]--;
+                                                      updateSubtotal();
+                                                    }
+                                                  });
+                                                },
+                                                child: CircleAvatar(
+                                                  radius: 13,
+                                                  backgroundColor:
+                                                      Colors.pink[200],
+                                                  child: Icon(
+                                                    Icons.remove,
+                                                    color: Colors.black,
+                                                  ),
                                                 ),
                                               ),
-                                              TextSpan(
-                                                text: (product["price"] *
-                                                        product["quantity"])
-                                                    .toStringAsFixed(2),
-                                                style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: width * 0.034,
-                                                  fontWeight: FontWeight.w400,
+                                              // Quantity Display
+                                              CircleAvatar(
+                                                radius: 13,
+                                                backgroundColor: Colors.white,
+                                                child: Text(
+                                                  product["quantity"]
+                                                      .toString(),
+                                                  style: TextStyle(
+                                                    color: Colors.black,
+                                                  ),
+                                                ),
+                                              ),
+                                              // Increment Button
+                                              GestureDetector(
+                                                onTap: () {
+                                                  setState(() {
+                                                    product["quantity"]++;
+                                                    updateSubtotal();
+                                                  });
+                                                },
+                                                child: CircleAvatar(
+                                                  radius: 13,
+                                                  backgroundColor:
+                                                      Colors.pink[200],
+                                                  child: Icon(
+                                                    Icons.add,
+                                                    color: Colors.black,
+                                                  ),
                                                 ),
                                               ),
                                             ],
                                           ),
-                                        ),
-                                        // Increment/Decrement
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
-                                          children: [
-                                            // Decrement Button
-                                            GestureDetector(
-                                              onTap: () {
-                                                setState(() {
-                                                  if (product["quantity"] > 1) {
-                                                    product["quantity"]--;
-                                                    updateSubtotal();
-                                                  }
-                                                });
-                                              },
-                                              child: CircleAvatar(
-                                                radius: 13,
-                                                backgroundColor:
-                                                    Colors.pink[200],
-                                                child: Icon(
-                                                  Icons.remove,
-                                                  color: Colors.black,
-                                                ),
-                                              ),
-                                            ),
-                                            // Quantity Display
-                                            CircleAvatar(
-                                              radius: 13,
-                                              backgroundColor: Colors.white,
-                                              child: Text(
-                                                product["quantity"].toString(),
-                                                style: TextStyle(
-                                                  color: Colors.black,
-                                                ),
-                                              ),
-                                            ),
-                                            // Increment Button
-                                            GestureDetector(
-                                              onTap: () {
-                                                setState(() {
-                                                  product["quantity"]++;
-                                                  updateSubtotal();
-                                                });
-                                              },
-                                              child: CircleAvatar(
-                                                radius: 13,
-                                                backgroundColor:
-                                                    Colors.pink[200],
-                                                child: Icon(
-                                                  Icons.add,
-                                                  color: Colors.black,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      )
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ],
             ),
-            // Footer
+            // Footer (unchanged)
             Positioned(
               bottom: 0,
               left: 0,
@@ -270,7 +292,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    // Subtotal and Delivery Fee
+                    // Price Summary
                     Container(
                       height: height * 0.07,
                       width: width * 0.5,
@@ -341,15 +363,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     // Place Order Button
                     GestureDetector(
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => PlayOrderScreen()),
-                        );
+                        _placeOrder(context);
                       },
                       child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 30, vertical: 10),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: width * 0.05, vertical: height * 0.015),
                         decoration: BoxDecoration(
                           color: Color.fromARGB(255, 252, 128, 169),
                           borderRadius: BorderRadius.circular(10),
@@ -370,6 +388,29 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _placeOrder(BuildContext context) {
+    // Prepare order data
+    final orderData = {
+      'product': product,
+      'subtotal': subtotal,
+      'deliveryFee': deliveryFee,
+      'total': subtotal + deliveryFee,
+      'orderDate': DateTime.now().toString(),
+    };
+
+    Fluttertoast.showToast(
+      msg: "Order Placed Successfully!",
+      toastLength: Toast.LENGTH_LONG,
+    );
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PlayOrderScreen(orderData: orderData),
       ),
     );
   }

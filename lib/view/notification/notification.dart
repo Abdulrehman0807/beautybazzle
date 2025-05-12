@@ -1,4 +1,4 @@
-import 'package:beautybazzle/model/servic_data.dart';
+import 'package:beautybazzle/model/addservice/servic_data.dart';
 import 'package:beautybazzle/utiils/static_data.dart';
 import 'package:flutter/material.dart';
 

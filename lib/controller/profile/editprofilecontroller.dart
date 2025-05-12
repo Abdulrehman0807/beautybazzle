@@ -28,6 +28,7 @@ class ProfileController extends GetxController {
   SalonModel? salonmodel;
   final TextEditingController nameController = TextEditingController();
   final TextEditingController salonNameController = TextEditingController();
+
   final TextEditingController salonDescriptionController =
       TextEditingController();
   final TextEditingController addressController = TextEditingController();
@@ -138,7 +139,6 @@ class ProfileController extends GetxController {
   }
 
   getUserProfile(String userID) async {
-// Fetch updated user data
     QuerySnapshot snapshot = await firestore
         .collection("Users")
         .where("UserId", isEqualTo: userID)
@@ -158,40 +158,6 @@ class ProfileController extends GetxController {
     salonmodel = salonModel;
     update();
   }
-
-  // Future<void> saveProfileData(BuildContext context) async {
-  //   if (isLoading) return;
-
-  //   changeLoadingStatus(true);
-
-  //   try {
-  //     String userId = StaticData.userModel!.UserId;
-
-  //     // Update user profile in Firestore
-  //     await firestore.collection("Users").doc(userId).update({
-  //       'name': nameController.text.trim(),
-  //       'SalonName': salonNameController.text.trim(),
-  //       'Address': addressController.text.trim(),
-  //       'YouTube': youtubeController.text.trim(),
-  //       'Facebook': facebookController.text.trim(),
-  //       'Instagram': instagramController.text.trim(),
-  //       'TikTok': tiktokController.text.trim(),
-  //       'AboutMe': aboutMeController.text.trim(),
-  //       'salonDescription': salonDescriptionController.text.trim(),
-  //     });
-
-  //     getUserProfile(userId);
-
-  //     // Show success message
-  //     showToast("Profile updated successfully!", Colors.green);
-  //     Navigator.pop(context); // Navigate back
-
-  //   } catch (e) {
-  //     showToast("Error updating profile: $e", Colors.red);
-  //   } finally {
-  //     changeLoadingStatus(false);
-  //   }
-  // }
 
   // Validate YouTube link
   bool isValidYouTubeLink(String url) {
@@ -240,58 +206,6 @@ class ProfileController extends GetxController {
       fontSize: 16.0,
     );
   }
-
-  // Future<void> saveProfileData(BuildContext context, {String? salonId}) async {
-  //   if (isLoading) return; // Prevent multiple clicks
-
-  //   changeLoadingStatus(true);
-
-  //   try {
-  //     String userId = StaticData.userModel!.UserId;
-
-  //     // Update user profile in Firestore
-  //     await firestore.collection("Users").doc(userId).update({
-  //       'name': nameController.text.trim(),
-  //       'SalonName': salonNameController.text.trim(),
-  //       'Address': addressController.text.trim(),
-  //       'YouTube': youtubeController.text.trim(),
-  //       'Facebook': facebookController.text.trim(),
-  //       'Instagram': instagramController.text.trim(),
-  //       'TikTok': tiktokController.text.trim(),
-  //       'AboutMe': aboutMeController.text.trim(),
-  //       'salonDescription': salonDescriptionController.text.trim(),
-  //     });
-
-  //     // If salonId is provided, update the salon data as well
-  //     if (salonId != null) {
-  //       await firestore.collection("salons").doc(salonId).update({
-  //         'SalonName': salonNameController.text.trim(),
-  //         'salonDescription': salonDescriptionController.text.trim(),
-  //       });
-  //     }
-
-  //     // Refresh user profile data
-  //     getUserProfile(userId);
-
-  //     // Show success message
-  //     showToast(
-  //       salonId != null
-  //           ? 'Profile and salon updated successfully!'
-  //           : 'Profile updated successfully!',
-  //       Colors.green,
-  //     );
-
-  //     // Navigate back
-  //     Navigator.pop(context);
-  //   } catch (e) {
-  //     // Log and show error message if update fails
-  //     print('Error updating profile: $e');
-  //     showToast("Failed to update profile: $e", Colors.red);
-  //   } finally {
-  //     // Hide loading indicator
-  //     changeLoadingStatus(false);
-  //   }
-  // }
 
   Future<void> saveProfileData(BuildContext context, {String? salonId}) async {
     if (isLoading) return;
@@ -398,6 +312,7 @@ class ProfileController extends GetxController {
       return null;
     }
   }
+/////////////////////////////////////////////
 
 ///////////////////// upload picture //////////////////////////////////////////
   Future<void> pickProfilePicture(BuildContext context) async {
@@ -524,13 +439,12 @@ class ProfileController extends GetxController {
     if (pickedFile != null) {
       SalonPicture = pickedFile;
       await uploadSalonAndCreateCollection(context);
-      update(); 
+      update();
     }
   }
 
 // Upload Salon Picture and Create Salon Collection
   Future<void> uploadSalonAndCreateCollection(BuildContext context) async {
- 
     changeLoadingSalon(true);
 
     try {
@@ -572,12 +486,6 @@ class ProfileController extends GetxController {
 
       // Show success message
       showToast("Salon created successfully!", Colors.green);
-
-      // Clear form fields and reset the image picker after creation
-      salonNameController.clear();
-      salonDescriptionController.clear();
-      SalonPicture = null;
-      update();
     } catch (e) {
       print('Error creating salon: $e');
       showToast('Failed to create salon!', Colors.red);
@@ -703,7 +611,7 @@ class ProfileController extends GetxController {
   }
 
 // Function to show the dialog to add an offer
-  void showAddOfferDialog(BuildContext context) {
+  void showAddOfferDialog(BuildContext context, double width, double height) {
     showDialog(
       context: context,
       builder: (BuildContext dc) {
@@ -774,40 +682,37 @@ class ProfileController extends GetxController {
                     ),
                     actions: [
                       Center(
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            if (formKey.currentState!.validate()) {
-                              isLoading = true;
-                              await createOfferCollection(context);
-
-                              isLoading = false;
-                              Navigator.of(dc).pop();
-                            }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.pink[200],
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 130,
-                              vertical: 10,
-                            ),
-                          ),
-                          child: const Text(
-                            "Save",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
+                          child: GestureDetector(
+                        onTap: () async {
+                          if (formKey.currentState!.validate()) {
+                            isLoading = true;
+                            await createOfferCollection(context);
+                            isLoading = false;
+                            Navigator.of(dc).pop();
+                          }
+                        },
+                        child: Container(
+                          height: height * 0.078,
+                          width: width * 0.38,
+                          decoration: BoxDecoration(
+                              color: Colors.pink[200],
+                              borderRadius: BorderRadius.circular(10)),
+                          child: Center(
+                            child: const Text(
+                              "Save",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 5),
+                      )),
+                      const SizedBox(height: 10),
                     ],
                   ),
-                  if (isLoading) // Show the overlay spinner when isLoading is true
+                  if (isLoading)
                     Container(
                       height: 800,
                       width: 500,
@@ -1044,33 +949,33 @@ class ProfileController extends GetxController {
                   ),
                   actions: [
                     Center(
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          if (formKey.currentState!.validate()) {
-                            await createServiceCollection(context);
-                            Navigator.of(dc).pop();
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.pink[200],
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 130,
-                            vertical: 10,
-                          ),
-                        ),
-                        child: const Text(
-                          "Save",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
+                        child: GestureDetector(
+                      onTap: () async {
+                        isLoading = true;
+                        if (formKey.currentState!.validate()) {
+                          await createServiceCollection(context);
+                          isLoading = false;
+                          Navigator.of(dc).pop();
+                        }
+                      },
+                      child: Container(
+                        height: height * 0.05,
+                        width: width * 0.65,
+                        decoration: BoxDecoration(
+                            color: Colors.pink[200],
+                            borderRadius: BorderRadius.circular(10)),
+                        child: Center(
+                          child: const Text(
+                            "Save",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
-                    ),
+                    )),
                     SizedBox(height: height * 0.02),
                   ],
                 );
@@ -1102,70 +1007,141 @@ class ProfileController extends GetxController {
   }
 
 // Create product collection in Firestore
-  Future<void> createProductCollection(BuildContext context) async {
-    if (isLoadingProduct) return; // Prevent multiple submissions
+Future<void> createProductCollection(BuildContext context) async {
+  if (isLoadingProduct) return; // Prevent multiple submissions
 
-    try {
-      isLoadingProduct = true;
-      update(); // Show loading state
+  try {
+    isLoadingProduct = true;
+    update(); // Show loading state
 
-      var uuid = const Uuid();
-      String productId = uuid.v4();
-      String time = DateTime.now().toIso8601String();
-      String? productPicUrl = '';
+    var uuid = const Uuid();
+    String productId = uuid.v4();
+    String time = DateTime.now().toIso8601String();
+    String productPicUrl = '';
 
-      // Upload image to Firebase Storage if an image is selected
-      if (productPic != null) {
-        firebase_storage.Reference ref =
-            firebase_storage.FirebaseStorage.instance.ref().child(
-                'product_pics/$productId'); // Unique file path using productId
-        await ref.putFile(File(productPic!.path));
-        productPicUrl = await ref.getDownloadURL();
-      }
-
-      // Create ProductModel
-      ProductModel model = ProductModel(
-        productId: productId,
-        productName: productNameController.text,
-        productPrice: productPriceController.text,
-        productDescription: productDescriptionController.text,
-        productPic: productPicUrl ?? '',
-        time: time,
-        userId: StaticData.userModel!.UserId,
-      );
-
-      // Save product to Firestore
-      await FirebaseFirestore.instance
-          .collection('products')
-          .doc(productId)
-          .set(model.toMap());
-
-      print("Product created with productId: $productId");
-
-      Fluttertoast.showToast(
-        msg: "Product created successfully!",
-        backgroundColor: Colors.green,
-        textColor: Colors.white,
-      );
-
-      // Clear form fields and reset image picker
-      productNameController.clear();
-      productPriceController.clear();
-      productDescriptionController.clear();
-      productPic = null;
-      update(); // Update the UI
-    } catch (e) {
-      print("Error creating product: $e");
-      Fluttertoast.showToast(
-        msg: "Failed to create product. Try again!",
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-      );
-    } finally {
-      isLoadingProduct = false;
-      update(); // Hide loading state
+    // Upload image to Firebase Storage if an image is selected
+    if (productPic != null) {
+      firebase_storage.Reference ref = firebase_storage.FirebaseStorage.instance
+          .ref()
+          .child('product_pics/$productId'); // Unique file path using productId
+      await ref.putFile(File(productPic!.path));
+      productPicUrl = await ref.getDownloadURL();
     }
+
+    // ✅ Ensure StaticData.userModel and salonId are properly defined
+    String salonId = StaticData.salonModel!.SalonId ?? '';
+    if (salonId.isEmpty) throw Exception('Salon ID is missing.');
+
+    // Create ProductModel
+    ProductModel model = ProductModel(
+      productId: productId,
+      productName: productNameController.text.trim(),
+      productPrice: productPriceController.text.trim(),
+      productDescription: productDescriptionController.text.trim(),
+      productPic: productPicUrl,
+      salonId: salonId,
+      time: time,
+      userId: StaticData.userModel!.UserId,
+    );
+
+    // Save product to Firestore
+    await FirebaseFirestore.instance
+        .collection('products')
+        .doc(productId)
+        .set(model.toMap());
+
+    print("✅ Product created with productId: $productId");
+
+    Fluttertoast.showToast(
+      msg: "Product created successfully!",
+      backgroundColor: Colors.green,
+      textColor: Colors.white,
+    );
+
+    // Clear form fields and reset image picker
+    productNameController.clear();
+    productPriceController.clear();
+    productDescriptionController.clear();
+    productPic = null;
+    update(); // Update the UI
+  } catch (e) {
+    print("❌ Error creating product: $e");
+    Fluttertoast.showToast(
+      msg: "Failed to create product. Try again!",
+      backgroundColor: Colors.red,
+      textColor: Colors.white,
+    );
+  } finally {
+    isLoadingProduct = false;
+    update(); // Hide loading state
   }
+}
+
+  // Future<void> createProductCollection(BuildContext context) async {
+  //   if (isLoadingProduct) return; // Prevent multiple submissions
+
+  //   try {
+  //     isLoadingProduct = true;
+  //     update(); // Show loading state
+
+  //     var uuid = const Uuid();
+  //     String productId = uuid.v4();
+  //     String time = DateTime.now().toIso8601String();
+  //     String? productPicUrl = '';
+
+  //     // Upload image to Firebase Storage if an image is selected
+  //     if (productPic != null) {
+  //       firebase_storage.Reference ref =
+  //           firebase_storage.FirebaseStorage.instance.ref().child(
+  //               'product_pics/$productId'); // Unique file path using productId
+  //       await ref.putFile(File(productPic!.path));
+  //       productPicUrl = await ref.getDownloadURL();
+  //     }
+
+  //     // Create ProductModel
+  //     ProductModel model = ProductModel(
+  //       productId: productId,
+  //       productName: productNameController.text,
+  //       productPrice: productPriceController.text,
+        
+  //       productDescription: productDescriptionController.text,
+  //       productPic: productPicUrl ?? '',
+  //       time: time,
+  //       userId: StaticData.userModel!.UserId,
+  //     );
+
+  //     // Save product to Firestore
+  //     await FirebaseFirestore.instance
+  //         .collection('products')
+  //         .doc(productId)
+  //         .set(model.toMap());
+
+  //     print("Product created with productId: $productId");
+
+  //     Fluttertoast.showToast(
+  //       msg: "Product created successfully!",
+  //       backgroundColor: Colors.green,
+  //       textColor: Colors.white,
+  //     );
+
+  //     // Clear form fields and reset image picker
+  //     productNameController.clear();
+  //     productPriceController.clear();
+  //     productDescriptionController.clear();
+  //     productPic = null;
+  //     update(); // Update the UI
+  //   } catch (e) {
+  //     print("Error creating product: $e");
+  //     Fluttertoast.showToast(
+  //       msg: "Failed to create product. Try again!",
+  //       backgroundColor: Colors.red,
+  //       textColor: Colors.white,
+  //     );
+  //   } finally {
+  //     isLoadingProduct = false;
+  //     update(); // Hide loading state
+  //   }
+  // }
 
 // Delete product from Firestore
   Future<void> deleteProduct(BuildContext context, String productId) async {
@@ -1208,7 +1184,7 @@ class ProfileController extends GetxController {
                   content: Form(
                     key: formKey,
                     child: Container(
-                      height: height * 0.48,
+                      height: height * 0.46,
                       width: width,
                       child: Stack(
                         children: [
@@ -1232,7 +1208,7 @@ class ProfileController extends GetxController {
                                       return null;
                                     },
                                   ),
-                                  SizedBox(height: height * 0.03),
+                                  SizedBox(height: height * 0.01),
 
                                   // Product Price Field
                                   TextFormField(
@@ -1312,33 +1288,56 @@ class ProfileController extends GetxController {
                   ),
                   actions: [
                     Center(
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          if (formKey.currentState!.validate()) {
-                            await createProductCollection(context);
-                            Navigator.of(dc).pop();
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.pink[200],
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 130,
-                            vertical: 10,
-                          ),
-                        ),
-                        child: const Text(
-                          "Save",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
+                        child: GestureDetector(
+                      onTap: () async {
+                        if (formKey.currentState!.validate()) {
+                          await createProductCollection(context);
+                          Navigator.of(dc).pop();
+                        }
+                      },
+                      child: Container(
+                        height: height * 0.05,
+                        width: width * 0.65,
+                        decoration: BoxDecoration(
+                            color: Colors.pink[200],
+                            borderRadius: BorderRadius.circular(10)),
+                        child: Center(
+                          child: const Text(
+                            "Save",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
-                    ),
+                    )),
+                    // Center(
+                    //   child: ElevatedButton(
+                    //     onPressed: () async {
+                    //
+                    //     },
+                    //     style: ElevatedButton.styleFrom(
+                    //       backgroundColor: Colors.pink[200],
+                    //       shape: RoundedRectangleBorder(
+                    //         borderRadius: BorderRadius.circular(10),
+                    //       ),
+                    //       padding: const EdgeInsets.symmetric(
+                    //         horizontal: 130,
+                    //         vertical: 10,
+                    //       ),
+                    //     ),
+                    //     child: const Text(
+                    //       "Save",
+                    //       style: TextStyle(
+                    //         color: Colors.white,
+                    //         fontSize: 20,
+                    //         fontWeight: FontWeight.bold,
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
                     SizedBox(height: height * 0.02),
                   ],
                 );
@@ -1555,40 +1554,32 @@ class ProfileController extends GetxController {
                   ),
                   actions: [
                     Center(
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          if (specialistNameController.text.isNotEmpty &&
-                              specialistServiceNameController.text.isNotEmpty) {
-                            await createSpecialistCollection(context);
-                            Navigator.of(dc).pop();
-                          } else {
-                            Fluttertoast.showToast(
-                              msg: "Please fill all fields",
-                              backgroundColor: Colors.red,
-                              textColor: Colors.white,
-                            );
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.pink[200],
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 130, // Horizontal padding
-                            vertical: 10, // Vertical padding
-                          ),
-                        ),
-                        child: const Text(
-                          "Save",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
+                        child: GestureDetector(
+                      onTap: () async {
+                        if (specialistNameController.text.isNotEmpty &&
+                            specialistServiceNameController.text.isNotEmpty) {
+                          await createSpecialistCollection(context);
+                          Navigator.of(dc).pop();
+                        }
+                      },
+                      child: Container(
+                        height: height * 0.05,
+                        width: width * 0.65,
+                        decoration: BoxDecoration(
+                            color: Colors.pink[200],
+                            borderRadius: BorderRadius.circular(10)),
+                        child: Center(
+                          child: const Text(
+                            "Save",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
-                    ),
+                    )),
                     SizedBox(height: height * 0.02),
                   ],
                 );
@@ -1797,33 +1788,31 @@ class ProfileController extends GetxController {
                   ),
                   actions: [
                     Center(
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          if (formKey.currentState!.validate()) {
-                            await createRecentworkCollection(context);
-                            Navigator.of(dc).pop(); // Close dialog
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.pink[200],
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 130,
-                            vertical: 10,
-                          ),
-                        ),
-                        child: const Text(
-                          "Save",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
+                        child: GestureDetector(
+                      onTap: () async {
+                        if (formKey.currentState!.validate()) {
+                          await createRecentworkCollection(context);
+                          Navigator.of(dc).pop(); // Close dialog
+                        }
+                      },
+                      child: Container(
+                        height: height * 0.05,
+                        width: width * 0.65,
+                        decoration: BoxDecoration(
+                            color: Colors.pink[200],
+                            borderRadius: BorderRadius.circular(10)),
+                        child: Center(
+                          child: const Text(
+                            "Save",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
-                    ),
+                    )),
                     SizedBox(height: height * 0.02),
                   ],
                 );

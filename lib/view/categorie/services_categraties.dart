@@ -1,5 +1,5 @@
-import 'package:beautybazzle/model/servic_data.dart';
-import 'package:beautybazzle/view/appoinment/appointment_book.dart';
+import 'package:beautybazzle/model/addservice/servic_data.dart';
+
 import 'package:flutter/material.dart';
 
 class ServicesCategriesScreen extends StatefulWidget {
@@ -82,11 +82,11 @@ class _ServicesCategriesScreenState extends State<ServicesCategriesScreen>
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     child: GestureDetector(
                       onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => AppointmentBookScreen(),
-                            ));
+                        // Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //       builder: (context) => SalonAppointmentScreen(salon:),
+                        //     ));
                       },
                       child: Container(
                         height: height * 0.12,

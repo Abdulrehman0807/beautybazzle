@@ -3,11 +3,11 @@ import 'package:beautybazzle/utiils/static_data.dart';
 import 'package:beautybazzle/view/bottom_bar/bottom_Nav_bar.dart';
 import 'package:beautybazzle/view/signup_methods/Signin.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:uuid/uuid.dart';
 
 class LOginSignupController extends GetxController {
   static LOginSignupController get to => Get.find();
@@ -123,7 +123,107 @@ class LOginSignupController extends GetxController {
     }
   }
 
+  // Future<void> signUpUser(BuildContext context) async {
+  //   Fluttertoast.showToast(
+  //     msg: "Please fix the errors in the form",
+  //     toastLength: Toast.LENGTH_SHORT,
+  //     gravity: ToastGravity.BOTTOM,
+  //     backgroundColor: Colors.redAccent,
+  //     textColor: Colors.white,
+  //     fontSize: 16.0,
+  //   );
+
+  //   String email = emailController.text.trim();
+  //   String name = nameController.text.trim();
+  //   String password = passwordController.text.trim();
+  //   String phoneNumber = phoneNumberController.text.trim();
+  //   String address = addressController.text.trim();
+  //   String profilePicture = profilePictureController.text.trim();
+  //   String youtube = youtubeController.text.trim();
+  //   String facebook = facebookController.text.trim();
+  //   String instagram = instagramController.text.trim();
+  //   String tiktok = tiktokController.text.trim();
+  //   String aboutMe = aboutMeController.text.trim();
+
+  //   changeLoadingStatus(true);
+
+  //   try {
+  //     QuerySnapshot existingUser = await FirebaseFirestore.instance
+  //         .collection("Users")
+  //         .where("email", isEqualTo: email)
+  //         .get();
+
+  //     if (existingUser.docs.isNotEmpty) {
+  //       Fluttertoast.showToast(
+  //         msg: "This email is already registered",
+  //         toastLength: Toast.LENGTH_SHORT,
+  //         gravity: ToastGravity.BOTTOM,
+  //         backgroundColor: Colors.orangeAccent,
+  //         textColor: Colors.black,
+  //         fontSize: 16.0,
+  //       );
+
+  //       changeLoadingStatus(false);
+  //       return;
+  //     }
+
+  //     var uuid = const Uuid();
+  //     String userId = uuid.v4();
+
+  //     UserModels model = UserModels(
+  //       name: name,
+  //       email: email,
+  //       password: password,
+  //       PhoneNumber: phoneNumber,
+  //       UserId: userId,
+  //       Address: address,
+  //       ProfilePicture: profilePicture,
+  //       YouTube: youtube,
+  //       Facebook: facebook,
+  //       Instagram: instagram,
+  //       TikTok: tiktok,
+  //       AboutMe: aboutMe,
+  //     );
+  //     await FirebaseFirestore.instance
+  //         .collection("Users")
+  //         .doc(userId)
+  //         .set(model.toMap());
+
+  //     Fluttertoast.showToast(
+  //       msg: "User registered successfully!",
+  //       toastLength: Toast.LENGTH_SHORT,
+  //       gravity: ToastGravity.BOTTOM,
+  //       backgroundColor: Colors.green,
+  //       textColor: Colors.white,
+  //       fontSize: 16.0,
+  //     );
+  //     StaticData.userModel = model;
+
+  //     // Save login state and user details
+  //     await _saveLoginState(true, model.UserId);
+
+  //     clearDAta();
+  //     Navigator.push(
+  //       context,
+  //       MaterialPageRoute(
+  //         builder: (context) => BottomNavBar(),
+  //       ),
+  //     );
+  //   } catch (e) {
+  //     Fluttertoast.showToast(
+  //       msg: "Error registering user: $e",
+  //       toastLength: Toast.LENGTH_SHORT,
+  //       gravity: ToastGravity.BOTTOM,
+  //       backgroundColor: Colors.red,
+  //       textColor: Colors.white,
+  //       fontSize: 16.0,
+  //     );
+  //   } finally {
+  //     changeLoadingStatus(false);
+  //   }
+  // }
   Future<void> signUpUser(BuildContext context) async {
+    // Show initial toast message indicating form errors
     Fluttertoast.showToast(
       msg: "Please fix the errors in the form",
       toastLength: Toast.LENGTH_SHORT,
@@ -133,6 +233,7 @@ class LOginSignupController extends GetxController {
       fontSize: 16.0,
     );
 
+    // Collect form data
     String email = emailController.text.trim();
     String name = nameController.text.trim();
     String password = passwordController.text.trim();
@@ -145,9 +246,11 @@ class LOginSignupController extends GetxController {
     String tiktok = tiktokController.text.trim();
     String aboutMe = aboutMeController.text.trim();
 
+    // Show loading status
     changeLoadingStatus(true);
 
     try {
+      // Check if the email is already registered in Firestore
       QuerySnapshot existingUser = await FirebaseFirestore.instance
           .collection("Users")
           .where("email", isEqualTo: email)
@@ -167,9 +270,31 @@ class LOginSignupController extends GetxController {
         return;
       }
 
-      var uuid = const Uuid();
-      String userId = uuid.v4();
+      // Create user with Firebase Authentication
+      UserCredential userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
 
+      // Once the user is created, retrieve their User ID (UID)
+      String userId = userCredential.user?.uid ?? '';
+
+      // If the UID is empty, handle the error
+      if (userId.isEmpty) {
+        Fluttertoast.showToast(
+          msg: "Error registering user: Invalid user ID",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+        changeLoadingStatus(false);
+        return;
+      }
+
+      // Create a user model and store it in Firestore
       UserModels model = UserModels(
         name: name,
         email: email,
@@ -184,6 +309,8 @@ class LOginSignupController extends GetxController {
         TikTok: tiktok,
         AboutMe: aboutMe,
       );
+
+      // Store user data in Firestore
       await FirebaseFirestore.instance
           .collection("Users")
           .doc(userId)
@@ -197,12 +324,15 @@ class LOginSignupController extends GetxController {
         textColor: Colors.white,
         fontSize: 16.0,
       );
+
       StaticData.userModel = model;
 
       // Save login state and user details
       await _saveLoginState(true, model.UserId);
 
       clearDAta();
+
+      // Navigate to the next page after successful registration
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -210,6 +340,7 @@ class LOginSignupController extends GetxController {
         ),
       );
     } catch (e) {
+      // Show error message in case of failure
       Fluttertoast.showToast(
         msg: "Error registering user: $e",
         toastLength: Toast.LENGTH_SHORT,
@@ -219,6 +350,7 @@ class LOginSignupController extends GetxController {
         fontSize: 16.0,
       );
     } finally {
+      // Reset loading state
       changeLoadingStatus(false);
     }
   }

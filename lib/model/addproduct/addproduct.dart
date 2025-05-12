@@ -7,6 +7,7 @@ class ProductModel {
   String? productPic;
   String? productPrice;
   String? productDescription;
+  String salonId;
   String? time;
   String? userId;
 
@@ -16,6 +17,7 @@ class ProductModel {
     this.productPic,
     this.productPrice,
     this.productDescription,
+    required this.salonId,
     this.time,
     this.userId,
   });
@@ -27,6 +29,7 @@ class ProductModel {
     String? productPic,
     String? productPrice,
     String? productDescription,
+    String? salonId,
     String? time,
     String? userId,
   }) {
@@ -36,6 +39,7 @@ class ProductModel {
       productPic: productPic ?? this.productPic,
       productPrice: productPrice ?? this.productPrice,
       productDescription: productDescription ?? this.productDescription,
+      salonId: salonId ?? this.salonId,
       time: time ?? this.time,
       userId: userId ?? this.userId,
     );
@@ -49,19 +53,21 @@ class ProductModel {
       'productPic': productPic,
       'productPrice': productPrice,
       'productDescription': productDescription,
+      'salonId': salonId,
       'time': time,
       'userId': userId,
     };
   }
 
   // Convert map to object
-  factory ProductModel.fromMap(Map<String, dynamic> map) {
+  factory ProductModel.fromMap(Map<String, dynamic> map, [String? docId]) {
     return ProductModel(
-      productId: map['productId'] as String?,
+      productId: docId ?? map['productId'] as String?,
       productName: map['productName'] as String?,
       productPic: map['productPic'] as String?,
       productPrice: map['productPrice'] as String?,
       productDescription: map['productDescription'] as String?,
+      salonId: map['salonId'] ?? map['SalonId'] ?? '', // handle both formats
       time: map['time'] as String?,
       userId: map['userId'] as String?,
     );
@@ -76,7 +82,7 @@ class ProductModel {
 
   @override
   String toString() {
-    return 'ProductModel(productId: $productId, productName: $productName, productPic: $productPic, productPrice: $productPrice, productDescription: $productDescription, time: $time, userId: $userId)';
+    return 'ProductModel(productId: $productId, productName: $productName, productPic: $productPic, productPrice: $productPrice, productDescription: $productDescription, salonId: $salonId, time: $time, userId: $userId)';
   }
 
   @override
@@ -88,6 +94,7 @@ class ProductModel {
         other.productPic == productPic &&
         other.productPrice == productPrice &&
         other.productDescription == productDescription &&
+        other.salonId == salonId &&
         other.time == time &&
         other.userId == userId;
   }
@@ -99,6 +106,7 @@ class ProductModel {
         productPic.hashCode ^
         productPrice.hashCode ^
         productDescription.hashCode ^
+        salonId.hashCode ^
         time.hashCode ^
         userId.hashCode;
   }

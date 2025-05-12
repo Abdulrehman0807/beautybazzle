@@ -1,425 +1,579 @@
 import 'package:beautybazzle/view/orders/address.dart';
-import 'package:beautybazzle/view/orders/order_done.dart';
 import 'package:beautybazzle/view/orders/payment_method.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class PlayOrderScreen extends StatefulWidget {
-  const PlayOrderScreen({super.key});
+  final Map<String, dynamic> orderData;
+
+  const PlayOrderScreen({super.key, required this.orderData});
 
   @override
   State<PlayOrderScreen> createState() => _PlayOrderScreenState();
 }
 
 class _PlayOrderScreenState extends State<PlayOrderScreen> {
+  List<Map<String, dynamic>> addresses = [];
+  List<Map<String, dynamic>> paymentCards = [];
+  Map<String, dynamic>? selectedAddress;
   String? selectedCard;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize with default data
+    addresses = [
+      {
+        'type': 'Home',
+        'name': 'John Doe',
+        'address': '123 Main Street, Apartment 4B',
+        'city': 'New York',
+        'postalCode': '10001',
+        'phone': '555-123-4567',
+      },
+      {
+        'type': 'Work',
+        'name': 'John Doe',
+        'address': '456 Business Ave, Floor 5',
+        'city': 'New York',
+        'postalCode': '10002',
+        'phone': '555-987-6543',
+      }
+    ];
+    selectedAddress = addresses[0];
+
+    paymentCards = [
+      {
+        'type': 'Visa',
+        'name': 'John Doe',
+        'cardNumber': '4242424242424242',
+        'expiryDate': '12/25',
+        'securityCode': '123',
+        'postalCode': '10001',
+        'nickName': 'My Visa Card',
+      }
+    ];
+    selectedCard = paymentCards[0]['nickName'];
+  }
+
+  void _addNewAddress(Map<String, dynamic> newAddress) {
+    setState(() {
+      addresses.add(newAddress);
+      selectedAddress = newAddress;
+    });
+  }
+
+  void _addNewCard(Map<String, dynamic> newCard) {
+    setState(() {
+      paymentCards.add(newCard);
+      selectedCard = newCard['nickName'];
+    });
+  }
+
+  double _toDouble(dynamic value) {
+    if (value is double) return value;
+    if (value is int) return value.toDouble();
+    if (value is String) return double.tryParse(value) ?? 0.0;
+    return 0.0;
+  }
 
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
 
+    final subtotal = _toDouble(widget.orderData['subtotal']);
+    final deliveryFee = _toDouble(widget.orderData['deliveryFee']);
+    final total = _toDouble(widget.orderData['total']);
+    final product = widget.orderData['product'] ?? {};
+
     return Scaffold(
-      body: Stack(
+      body: Column(
         children: [
-          Column(
-            children: [
-              SizedBox(height: height * 0.03),
-              Header(title: "Order Play", icon: Icons.task_alt),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      SizedBox(height: height * 0.02),
-                      AddressSection(height: height, width: width),
-                      SizedBox(height: height * 0.02),
-                      PaymentMethodSection(
-                        height: height,
-                        width: width,
-                        selectedCard: selectedCard,
-                        onCardSelected: (value) {
-                          setState(() {
-                            selectedCard = value;
-                          });
-                        },
-                      ),
-                      SizedBox(height: height * 0.02),
-                      AddcardButton(
-                        label: "+ Add Card",
-                        width: width,
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => PaymentMethodScreen(),
-                            ),
-                          );
-                        },
-                      ),
-                    ],
+          SizedBox(height: height * 0.02),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                InkWell(
+                  onTap: () => Navigator.pop(context),
+                  child: CircleAvatar(
+                    radius: 18,
+                    backgroundColor: Colors.white,
+                    child: const Icon(Icons.arrow_back, color: Colors.black),
                   ),
                 ),
-              ),
-            ],
-          ),
-          BottomBar(
-            height: height,
-            width: width,
-            totalPrice: "\$600.00",
-            onPlayNow: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => OrderDoneScreen(),
+                Text(
+                  "Order Summery",
+                  style: TextStyle(
+                    fontSize: width * 0.05,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black,
+                  ),
                 ),
-              );
-            },
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class Header extends StatelessWidget {
-  final String title;
-  final IconData icon;
-
-  const Header({
-    required this.title,
-    required this.icon,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.09,
-      color: Colors.white,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.black),
-            onPressed: () => Navigator.pop(context),
-          ),
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: width * 0.05,
-              fontWeight: FontWeight.w500,
-              color: Colors.black,
+                CircleAvatar(
+                  radius: 20,
+                  backgroundColor: Colors.white,
+                  child:
+                      const Icon(Icons.person, size: 26, color: Colors.black),
+                ),
+              ],
             ),
           ),
-          Icon(icon, size: 24, color: Colors.black),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.all(width * 0.05),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Product Summary
+                  _buildProductCard(width, product),
+                  SizedBox(height: height * 0.03),
+
+                  // Address Section
+                  _buildAddressSection(height, width),
+                  SizedBox(height: height * 0.03),
+
+                  // Payment Method
+                  _buildPaymentSection(width),
+                  SizedBox(height: height * 0.03),
+
+                  // Order Summary
+                  _buildOrderSummary(width, subtotal, deliveryFee, total),
+                ],
+              ),
+            ),
+          ),
+
+          // Bottom Checkout Bar
+          _buildCheckoutBar(width, total),
         ],
       ),
     );
   }
-}
 
-class AddressSection extends StatelessWidget {
-  final double height;
-  final double width;
-
-  const AddressSection({required this.height, required this.width});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        SectionTitle(title: "Address", width: width),
-        TweenAnimationBuilder(
-          tween: Tween<double>(begin: 0, end: 1),
-          duration: const Duration(milliseconds: 500),
-          builder: (context, value, child) {
-            return Opacity(
-              opacity: value,
-              child: Transform.translate(
-                offset: Offset(0, (1 - value) * 50),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    CircleAvatar(
-                      radius: height * 0.05,
-                      backgroundColor: Colors.black12,
-                      child: Icon(FontAwesomeIcons.locationDot,
-                          color: Colors.black, size: width * 0.08),
+  Widget _buildProductCard(double width, Map<String, dynamic> product) {
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      child: Padding(
+        padding: EdgeInsets.all(width * 0.04),
+        child: Row(
+          children: [
+            Container(
+              width: width * 0.2,
+              height: width * 0.2,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                image: DecorationImage(
+                  fit: BoxFit.cover,
+                  image: NetworkImage(product['imageUrl'] ?? ''),
+                ),
+              ),
+            ),
+            SizedBox(width: width * 0.04),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    product['name'] ?? 'Product',
+                    style: TextStyle(
+                      fontSize: width * 0.045,
+                      fontWeight: FontWeight.bold,
                     ),
-                    SizedBox(
-                      width: width * 0.6,
-                      child: ListTile(
-                        title: Text(
-                          "Home",
-                          style: TextStyle(
-                            fontSize: width * 0.045,
-                            fontWeight: FontWeight.w500,
+                  ),
+                  Text(
+                    'Quantity: ${product['quantity']}',
+                    style: TextStyle(fontSize: width * 0.035),
+                  ),
+                ],
+              ),
+            ),
+            Text(
+              '\$${(product['price'] ?? 0).toStringAsFixed(2)}',
+              style: TextStyle(
+                fontSize: width * 0.045,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAddressSection(double height, double width) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Delivery Address',
+          style: TextStyle(
+            fontSize: width * 0.045,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        SizedBox(height: height * 0.02),
+
+        // Address List
+        Column(
+          children: addresses.map((address) {
+            bool isSelected = selectedAddress == address;
+            return GestureDetector(
+              onTap: () => setState(() => selectedAddress = address),
+              child: Container(
+                margin: const EdgeInsets.only(bottom: 10),
+                padding: EdgeInsets.all(width * 0.04),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: isSelected ? Colors.pink[200]! : Colors.grey[300]!,
+                    width: isSelected ? 2 : 1,
+                  ),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      _getAddressIcon(address['type']),
+                      color: isSelected ? Colors.pink[200] : Colors.grey,
+                    ),
+                    SizedBox(width: width * 0.04),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            address['type'],
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: width * 0.04,
+                            ),
                           ),
-                        ),
-                        subtitle: Text(
-                          "Qasba Gujrat District Muzaffargarh",
-                          style: TextStyle(fontSize: width * 0.035),
-                        ),
+                          Text(address['address']),
+                          Text('${address['city']}, ${address['postalCode']}'),
+                          Text(address['phone']),
+                        ],
                       ),
                     ),
+                    if (isSelected)
+                      Icon(Icons.check_circle, color: Colors.pink[200]),
                   ],
                 ),
               ),
             );
-          },
+          }).toList(),
         ),
-        SizedBox(
-          height: height * 0.01,
-        ),
-        GestureDetector(
-          onTap: () {
+
+        // Add New Address Button
+        SizedBox(height: height * 0.02),
+        OutlinedButton(
+          onPressed: () {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => NewAddressScreen(),
+                builder: (context) => NewAddressScreen(
+                  onSaveAddress: _addNewAddress,
+                ),
               ),
             );
           },
-          child: AddcardButton(
-            label: "+ Add new address",
-            width: width,
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => NewAddressScreen(),
-                ),
-              );
-            },
+          style: OutlinedButton.styleFrom(
+            foregroundColor: Colors.pink[200],
+            side: BorderSide(color: Colors.pink[200]!),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            minimumSize: Size(width * 0.9, height * 0.06),
           ),
+          child: const Text('+ Add New Address'),
         ),
       ],
     );
   }
-}
 
-class PaymentMethodSection extends StatelessWidget {
-  final double height;
-  final double width;
-  final String? selectedCard;
-  final ValueChanged<String?> onCardSelected;
+  IconData _getAddressIcon(String type) {
+    switch (type) {
+      case 'Work':
+        return Icons.work;
+      case 'Other':
+        return Icons.location_city;
+      default:
+        return Icons.home;
+    }
+  }
 
-  const PaymentMethodSection({
-    required this.height,
-    required this.width,
-    required this.selectedCard,
-    required this.onCardSelected,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final paymentMethods = [
-      {"name": "Visa Card", "image": "images/visa.png"},
-      {"name": "Master Card", "image": "images/mastercard.png"},
-      {"name": "Cash on Delivery", "image": "images/cashondelivery.jpg"},
-    ];
-
+  Widget _buildPaymentSection(double width) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SectionTitle(title: "Payment Method", width: width),
-        ...paymentMethods.map((method) {
-          return TweenAnimationBuilder(
-            tween: Tween<double>(begin: 0, end: 1),
-            duration: const Duration(milliseconds: 500),
-            builder: (context, value, child) {
-              return Opacity(
-                opacity: value,
-                child: Transform.translate(
-                  offset: Offset(0, (1 - value) * 50),
-                  child: PaymentMethodCard(
-                    name: method["name"]!,
-                    imagePath: method["image"]!,
-                    isSelected: selectedCard == method["name"],
-                    onSelected: () => onCardSelected(method["name"]),
-                  ),
+        Text(
+          'Payment Method',
+          style: TextStyle(
+            fontSize: width * 0.045,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        SizedBox(height: width * 0.03),
+
+        // Saved Cards
+        ...paymentCards.map((card) {
+          bool isSelected = selectedCard == card['nickName'];
+          return GestureDetector(
+            onTap: () => setState(() => selectedCard = card['nickName']),
+            child: Container(
+              margin: const EdgeInsets.only(bottom: 10),
+              padding: EdgeInsets.all(width * 0.04),
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: isSelected ? Colors.pink[200]! : Colors.grey[300]!,
+                  width: isSelected ? 2 : 1,
                 ),
-              );
-            },
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    _getCardIcon(card['type']),
+                    color: isSelected ? Colors.pink[200] : Colors.grey,
+                  ),
+                  SizedBox(width: width * 0.04),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        card['type'],
+                        style: TextStyle(
+                          fontSize: width * 0.04,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      Text(
+                        '•••• •••• •••• ${card['cardNumber'].substring(card['cardNumber'].length - 4)}',
+                        style: TextStyle(fontSize: width * 0.035),
+                      ),
+                      Text(card['nickName']),
+                    ],
+                  ),
+                  const Spacer(),
+                  if (isSelected)
+                    Icon(Icons.check_circle, color: Colors.pink[200]),
+                ],
+              ),
+            ),
           );
         }).toList(),
+
+        // Add New Card Button
+        SizedBox(height: width * 0.03),
+        OutlinedButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PaymentMethodScreen(
+                  onSaveCard: _addNewCard,
+                ),
+              ),
+            );
+          },
+          style: OutlinedButton.styleFrom(
+            foregroundColor: Colors.pink[200],
+            side: BorderSide(color: Colors.pink[200]!),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            minimumSize: Size(width * 0.9, 50),
+          ),
+          child: const Text('+ Add New Card'),
+        ),
       ],
     );
   }
-}
 
-class PaymentMethodCard extends StatelessWidget {
-  final String name;
-  final String imagePath;
-  final bool isSelected;
-  final VoidCallback onSelected;
+  IconData _getCardIcon(String cardType) {
+    switch (cardType) {
+      case 'Visa':
+        return FontAwesomeIcons.ccVisa;
+      case 'MasterCard':
+        return FontAwesomeIcons.ccMastercard;
+      case 'American Express':
+        return FontAwesomeIcons.ccAmex;
+      default:
+        return FontAwesomeIcons.creditCard;
+    }
+  }
 
-  const PaymentMethodCard({
-    required this.name,
-    required this.imagePath,
-    required this.isSelected,
-    required this.onSelected,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-
-    return GestureDetector(
-      onTap: onSelected,
-      child: Card(
-        elevation: 1,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
-        ),
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: width * 0.03),
-          height: MediaQuery.of(context).size.height * 0.1,
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: isSelected ? Colors.pink : Colors.black12,
-            ),
-            borderRadius: BorderRadius.circular(15),
+  Widget _buildOrderSummary(
+    double width,
+    double subtotal,
+    double deliveryFee,
+    double total,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Order Summary',
+          style: TextStyle(
+            fontSize: width * 0.045,
+            fontWeight: FontWeight.bold,
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        ),
+        SizedBox(height: width * 0.03),
+        _buildSummaryRow('Subtotal', subtotal, width),
+        _buildSummaryRow('Delivery Fee', deliveryFee, width),
+        Divider(thickness: 1, height: 30),
+        _buildSummaryRow('Total', total, width, isTotal: true),
+      ],
+    );
+  }
+
+  Widget _buildSummaryRow(String label, double value, double width,
+      {bool isTotal = false}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: width * 0.04,
+              fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
+            ),
+          ),
+          Text(
+            '\$${value.toStringAsFixed(2)}',
+            style: TextStyle(
+              fontSize: width * 0.04,
+              fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCheckoutBar(double width, double total) {
+    return Container(
+      padding: EdgeInsets.all(width * 0.05),
+      decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border(top: BorderSide(color: Colors.grey[300]!))),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CircleAvatar(
-                radius: 25,
-                backgroundImage: AssetImage(imagePath),
+              Text(
+                'Total',
+                style: TextStyle(fontSize: width * 0.035),
               ),
-              SizedBox(
-                width: width * 0.02,
-              ),
-              Expanded(
-                child: Text(
-                  name,
-                  style: TextStyle(
-                    fontSize: width * 0.04,
-                    fontWeight: FontWeight.w500,
-                  ),
+              Text(
+                '\$${total.toStringAsFixed(2)}',
+                style: TextStyle(
+                  fontSize: width * 0.045,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-              if (isSelected)
-                const Icon(Icons.check_circle,
-                    color: Color.fromARGB(255, 252, 128, 169))
-              else
-                const Icon(Icons.circle_outlined, color: Colors.black),
             ],
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class AddcardButton extends StatelessWidget {
-  final String label;
-  final double width;
-  final VoidCallback onPressed;
-
-  const AddcardButton({
-    required this.label,
-    required this.width,
-    required this.onPressed,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onPressed,
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 10),
-        height: MediaQuery.of(context).size.height * 0.05,
-        width: width * 0.8,
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.black),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Center(
-          child: Text(
-            label,
-            style: const TextStyle(color: Color.fromARGB(255, 252, 128, 169)),
+          SizedBox(
+            width: width * 0.4,
+            child: ElevatedButton(
+              onPressed: _placeOrder,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.pink[200],
+                padding: const EdgeInsets.symmetric(vertical: 15),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+              ),
+              child: const Text(
+                'PLACE ORDER',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ),
           ),
-        ),
+        ],
+      ),
+    );
+  }
+
+  void _placeOrder() {
+    if (selectedAddress == null) {
+      Fluttertoast.showToast(msg: 'Please select an address');
+      return;
+    }
+
+    if (selectedCard == null) {
+      Fluttertoast.showToast(msg: 'Please select a payment method');
+      return;
+    }
+
+    final selectedCardData = paymentCards.firstWhere(
+      (card) => card['nickName'] == selectedCard,
+      orElse: () => {},
+    );
+
+    final completeOrder = {
+      ...widget.orderData,
+      'paymentMethod': selectedCardData,
+      'address': selectedAddress,
+      'status': 'Processing',
+      'orderDate': DateTime.now().toIso8601String(),
+    };
+
+    // Here you would typically send the order to your backend
+    print('Order placed: $completeOrder');
+
+    // Navigate to order confirmation
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => OrderDoneScreen(orderData: completeOrder),
       ),
     );
   }
 }
 
-class SectionTitle extends StatelessWidget {
-  final String title;
-  final double width;
+class OrderDoneScreen extends StatelessWidget {
+  final Map<String, dynamic> orderData;
 
-  const SectionTitle({required this.title, required this.width});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      width: width * 0.9,
-      child: Text(
-        title,
-        style: TextStyle(
-          fontSize: width * 0.045,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-    );
-  }
-}
-
-class BottomBar extends StatelessWidget {
-  final double height;
-  final double width;
-  final String totalPrice;
-  final VoidCallback onPlayNow;
-
-  const BottomBar({
-    required this.height,
-    required this.width,
-    required this.totalPrice,
-    required this.onPlayNow,
-  });
+  const OrderDoneScreen({super.key, required this.orderData});
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
-      bottom: 0,
-      left: 0,
-      right: 0,
-      child: Container(
-        padding: EdgeInsets.all(20),
-        height: height * 0.1,
-        color: Colors.white,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              "Total: $totalPrice",
-              style: TextStyle(
-                fontSize: width * 0.05,
-                fontWeight: FontWeight.bold,
-              ),
+            const Icon(Icons.check_circle, color: Colors.green, size: 100),
+            const SizedBox(height: 20),
+            const Text(
+              'Order Placed Successfully!',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            GestureDetector(
-              onTap: onPlayNow,
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-                decoration: BoxDecoration(
-                  color: Color.fromARGB(255, 252, 128, 169),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Text(
-                  "Play Now",
-                  style: TextStyle(
-                    fontSize: width * 0.04,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.white,
-                  ),
-                ),
+            const SizedBox(height: 20),
+            Text('Order ID: ${orderData['orderId'] ?? 'N/A'}'),
+            const SizedBox(height: 40),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.pink[200],
+                // padding: const EdgeInsets.symmetric(vertical: 15),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
               ),
+              onPressed: () =>
+                  Navigator.popUntil(context, (route) => route.isFirst),
+              child: const Text('Back to Home'),
             ),
+            const SizedBox(height: 40),
           ],
         ),
       ),

@@ -22,6 +22,7 @@ class SalonModel {
     String? SalonName,
     String? SalonPicture,
     String? salonDescription,
+    String? salonAddress,
     String? SalonId,
     String? time,
     String? userId,
@@ -50,8 +51,11 @@ class SalonModel {
   factory SalonModel.fromMap(Map<String, dynamic> map) {
     return SalonModel(
       SalonName: map['SalonName'] != null ? map['SalonName'] as String : null,
-      SalonPicture: map['SalonPicture'] != null ? map['SalonPicture'] as String : null,
-      salonDescription: map['salonDescription'] != null ? map['salonDescription'] as String : null,
+      SalonPicture:
+          map['SalonPicture'] != null ? map['SalonPicture'] as String : null,
+      salonDescription: map['salonDescription'] != null
+          ? map['salonDescription'] as String
+          : null,
       SalonId: map['SalonId'] != null ? map['SalonId'] as String : null,
       time: map['time'] != null ? map['time'] as String : null,
       userId: map['userId'] != null ? map['userId'] as String : null,
@@ -60,7 +64,8 @@ class SalonModel {
 
   String toJson() => json.encode(toMap());
 
-  factory SalonModel.fromJson(String source) => SalonModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory SalonModel.fromJson(String source) =>
+      SalonModel.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() {
@@ -70,23 +75,22 @@ class SalonModel {
   @override
   bool operator ==(covariant SalonModel other) {
     if (identical(this, other)) return true;
-  
-    return 
-      other.SalonName == SalonName &&
-      other.SalonPicture == SalonPicture &&
-      other.salonDescription == salonDescription &&
-      other.SalonId == SalonId &&
-      other.time == time &&
-      other.userId == userId;
+
+    return other.SalonName == SalonName &&
+        other.SalonPicture == SalonPicture &&
+        other.salonDescription == salonDescription &&
+        other.SalonId == SalonId &&
+        other.time == time &&
+        other.userId == userId;
   }
 
   @override
   int get hashCode {
     return SalonName.hashCode ^
-      SalonPicture.hashCode ^
-      salonDescription.hashCode ^
-      SalonId.hashCode ^
-      time.hashCode ^
-      userId.hashCode;
+        SalonPicture.hashCode ^
+        salonDescription.hashCode ^
+        SalonId.hashCode ^
+        time.hashCode ^
+        userId.hashCode;
   }
 }

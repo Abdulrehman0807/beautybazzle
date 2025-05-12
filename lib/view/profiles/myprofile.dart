@@ -4,7 +4,7 @@ import 'package:beautybazzle/model/addoffer/addoffer.dart';
 import 'package:beautybazzle/model/addproduct/addproduct.dart';
 import 'package:beautybazzle/model/addspecialist/addspecialist.dart';
 import 'package:beautybazzle/model/addwork/addwork.dart';
-import 'package:beautybazzle/model/servic_data.dart';
+import 'package:beautybazzle/model/addservice/servic_data.dart';
 import 'package:beautybazzle/utiils/static_data.dart';
 import 'package:beautybazzle/view/bottom_bar/bottom_Nav_bar.dart';
 import 'package:beautybazzle/view/profiles/editProfile.dart';
@@ -619,7 +619,7 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                                               child: GestureDetector(
                                                 onTap: () =>
                                                     obj.showAddOfferDialog(
-                                                        context),
+                                                        context, height, width),
                                                 child: Container(
                                                     height: height * 0.13,
                                                     width: width * 0.28,
